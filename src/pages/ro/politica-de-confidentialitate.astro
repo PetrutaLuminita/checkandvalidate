@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { alternatesFor, staticPath, homePath } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'ro';
+const strings = t(locale);
+const pageId = 'privacy';
+const path = staticPath(pageId, locale);
+const alternates = alternatesFor('static', pageId);
+const lastUpdated = '7 iulie 2026';
+
+const title = 'Politică de confidențialitate | Check and Validate';
+const description =
+  'Cum gestionează Check and Validate modulele cookie, publicitatea Google AdSense și datele tale, explicat într-un limbaj simplu.';
+
+const schema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: strings.breadcrumbHome, item: new URL(homePath(locale), Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Politică de confidențialitate', item: new URL(path, Astro.site).toString() },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path={path} alternates={alternates} schema={schema}>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href={homePath(locale)}>{strings.breadcrumbHome}</a>
+    <span class="sep">&gt;</span>
+    <span aria-current="page">Politică de confidențialitate</span>
+  </nav>
+
+  <h1>Politică de confidențialitate</h1>
+  <p class="disclaimer">Ultima actualizare: {lastUpdated}</p>
+
+  <p>
+    Această pagină explică ce date colectează Check and Validate, de ce și cum le poți controla.
+    Am păstrat un limbaj simplu, în locul unui text juridic dens.
+  </p>
+
+  <h2>Ce nu face acest site</h2>
+  <p>
+    Fiecare validator de pe acest site rulează integral în browserul tău. Numerele pe care le
+    introduci într-un instrument, cum ar fi un CNP, un DNI, un NIE sau un IBAN, nu sunt niciodată
+    trimise către un server, stocate într-o bază de date sau văzute de altcineva. Nu există niciun
+    sistem de conturi și nu trebuie să te înregistrezi.
+  </p>
+
+  <h2>Module cookie</h2>
+  <p>
+    Acest site folosește module cookie în două scopuri: pentru a reține dacă ai acceptat sau
+    refuzat notificarea privind modulele cookie și pentru a susține publicitatea descrisă mai jos.
+    Browserul îți permite să blochezi sau să ștergi modulele cookie oricând din setările sale, deși
+    acest lucru poate face ca banner-ul cookie să reapară la următoarea vizită.
+  </p>
+
+  <h2>Google AdSense și publicitatea de la terți</h2>
+  <p>
+    Check and Validate folosește Google AdSense pentru a afișa reclame, ceea ce permite site-ului să
+    rămână gratuit. Google și alți furnizori de publicitate terți folosesc module cookie pentru a
+    afișa reclame pe baza vizitelor anterioare ale unui utilizator pe acest site și pe alte site-uri
+    de pe web. Acest lucru este numit uneori publicitate bazată pe interese sau publicitate
+    personalizată. Funcționează prin urmărirea tiparelor de navigare la nivel de browser sau de
+    dispozitiv, nu prin identificarea persoanei tale, și nu include identificatori personali precum
+    numele, adresa de domiciliu sau adresa de e-mail.
+  </p>
+  <p>
+    Explicația proprie a Google despre modul în care compania și partenerii săi gestionează datele
+    colectate pe site-urile care folosesc serviciile sale este disponibilă la
+    <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>.
+  </p>
+
+  <h2>Opțiunile tale privind publicitatea</h2>
+  <p>
+    Dacă preferi să nu vezi reclame personalizate, îți poți ajusta setările direct la Google, la
+    <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a>,
+    sau poți folosi instrumentele de renunțare la nivel de industrie de la
+    <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a>.
+    Ambele îți permit să renunți la publicitatea bazată pe interese pe multe site-uri și
+    agenți de publicitate participanți, nu doar pe acesta.
+  </p>
+  <p>
+    Poți dezactiva complet modulele cookie și din setările browserului, ceea ce se aplică atât
+    modulelor cookie folosite pentru publicitate, cât și celui folosit de acest site pentru a reține
+    alegerea ta din banner-ul cookie. Acest lucru poate face ca unele facilități, cum ar fi
+    reținerea acelei alegeri între vizite, să nu mai funcționeze așa cum te-ai aștepta.
+  </p>
+
+  <h2>Vizitatorii din Spațiul Economic European și Regatul Unit</h2>
+  <p>
+    Deoarece acest site se adresează vizitatorilor din Uniunea Europeană, inclusiv din România și
+    Spania, precum și din Regatul Unit, vizitatorilor din aceste regiuni li se afișează un mesaj de
+    consimțământ care le permite să aleagă dacă doresc să permită publicitatea personalizată, în
+    conformitate cu cerințele certificate de consimțământ ale Google. Alegerea ta este reținută,
+    astfel încât să nu fii întrebat la fiecare vizită.
+  </p>
+
+  <h2>Analiză de trafic</h2>
+  <p>
+    Acest site poate folosi un instrument de analiză respectuos față de confidențialitate pentru a
+    înțelege traficul general, cum ar fi ce pagini sunt vizitate și aproximativ câți oameni vizitează
+    site-ul, astfel încât acesta să poată fi îmbunătățit. Orice analiză folosită aici nu te
+    identifică personal și este separată de modulele cookie de publicitate descrise mai sus.
+  </p>
+
+  <h2>Confidențialitatea copiilor</h2>
+  <p>
+    Acest site nu se adresează copiilor sub 13 ani și nu colectează cu bună știință informații
+    personale de la aceștia.
+  </p>
+
+  <h2>Modificări ale acestei politici</h2>
+  <p>
+    Dacă această politică se modifică, versiunea actualizată va fi publicată pe această pagină, cu o
+    nouă dată de tip ultima actualizare în partea de sus.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Întrebările despre această politică pot fi trimise la
+    <a href="mailto:contact@checkandvalidate.com">contact@checkandvalidate.com</a>.
+  </p>
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+// Short consent banner, translated per language. It deliberately does not name
+// "Google AdSense"; it links to this language's own Privacy Policy using a
+// relative path, where the advertising and cookies details live.
+//
+// AdSense requires a certified consent management platform (CMP) for EEA/UK
+// visitors, and both Romania and Spain are in the EU. Do not hand-roll an IAB
+// TCF signal here. Instead, once approved, insert Google's Funding Choices
+// script tag in BaseLayout.astro's <head> (see the commented integration point
+// there) and it will present the certified consent UI itself. This banner is a
+// lightweight fallback / placeholder until that script is wired in.
+import { staticPath } from '../i18n/config.js';
+import { t } from '../i18n/ui.js';
+
+const { locale } = Astro.props;
+const strings = t(locale);
+const privacyHref = staticPath('privacy', locale);
+---
+
+<div class="cookie-banner" id="cookie-banner" hidden>
+  <div class="cookie-banner-inner">
+    <p>
+      {strings.cookieText}
+      <a href={privacyHref}>{strings.cookiePrivacyLink}</a>
+    </p>
+    <div class="cookie-banner-actions">
+      <button class="btn btn-secondary" id="cookie-decline" type="button">{strings.cookieDecline}</button>
+      <button class="btn" id="cookie-accept" type="button">{strings.cookieAccept}</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Consent choice is stored once and remembered across the whole site,
+  // regardless of which language version the visitor first landed on.
+  const STORAGE_KEY = 'cav-cookie-consent';
+  const banner = document.getElementById('cookie-banner');
+  const acceptBtn = document.getElementById('cookie-accept');
+  const declineBtn = document.getElementById('cookie-decline');
+
+  if (banner && !localStorage.getItem(STORAGE_KEY)) {
+    banner.hidden = false;
+  }
+
+  function setConsent(value: string) {
+    localStorage.setItem(STORAGE_KEY, value);
+    if (banner) banner.hidden = true;
+    // Integration point: when Google Funding Choices / Consent Mode is wired
+    // in, forward this choice to the CMP here before the ad scripts load.
+  }
+
+  acceptBtn?.addEventListener('click', () => setConsent('accepted'));
+  declineBtn?.addEventListener('click', () => setConsent('declined'));
+</script>

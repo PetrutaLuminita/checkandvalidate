@@ -1,0 +1,139 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Calculadora de DNI/NIE | Check and Validate';
+const description =
+  'Calculadora gratuita de la letra del DNI y del NIE. Calcula la letra correcta de un número de identidad o comprueba si la letra de un DNI o NIE ya emitido es la que le corresponde.';
+const summary =
+  'Calcula la letra de control de un DNI o NIE español, o pega un documento completo para comprobar si su letra es correcta. Cambia entre los dos modos con los botones de abajo.';
+
+const strings = {
+  locale,
+  toggle: { calc: 'Calcular letra', validate: 'Comprobar un documento' },
+  modes: {
+    calc: {
+      label: 'Número de DNI o NIE (sin la letra)',
+      hint: '8 cifras para un DNI, o X, Y o Z seguida de 7 cifras para un NIE.',
+      submit: 'Calcular letra',
+    },
+    validate: {
+      label: 'DNI o NIE completo (con la letra)',
+      hint: 'Incluye la letra al final, por ejemplo 12345678Z.',
+      submit: 'Comprobar documento',
+    },
+  },
+  calc: {
+    headline: 'Letra de control: {letter}',
+    typeLabel: 'Tipo de documento',
+    letterLabel: 'Letra de control',
+    fullLabel: 'Número completo',
+  },
+  validate: {
+    validHeadline: 'La letra es correcta',
+    invalidHeadline: 'La letra es incorrecta',
+    validNote: 'Para {number}, la letra correcta es {letter}, que es la que lleva este documento.',
+    invalidNote: 'Para {number}, la letra correcta es {expected}, no {given}.',
+    typeLabel: 'Tipo de documento',
+    numberLabel: 'Número',
+    expectedLabel: 'Letra correcta',
+  },
+  err: {
+    emptyCalc: 'Introduce un número de DNI o NIE.',
+    formatCalc: 'Introduce 8 cifras para un DNI, o una letra X, Y o Z seguida de 7 cifras para un NIE.',
+    emptyValidate: 'Introduce un DNI o NIE completo.',
+    formatValidate: 'Introduce un DNI o NIE completo con su letra, por ejemplo 12345678Z.',
+  },
+};
+
+const faq = [
+  {
+    question: '¿Qué diferencia hay entre el DNI y el NIE?',
+    answer:
+      'El DNI es el número de identidad de los ciudadanos españoles: ocho cifras y una letra. El NIE es el número de los extranjeros en España: una letra inicial X, Y o Z, después siete cifras y una letra final. Los dos usan el mismo método para obtener esa última letra.',
+  },
+  {
+    question: '¿Cómo se elige la letra?',
+    answer:
+      'El número se divide entre 23 y el resto indica una letra dentro de una lista fija de 23. Son 23 letras porque se dejan fuera la I, la O, la U y la Ñ para no confundirlas con cifras ni entre sí.',
+  },
+  {
+    question: '¿Por qué se cambia primero la letra del NIE por un número?',
+    answer:
+      'El NIE empieza por una letra, pero el cálculo necesita cifras. Por eso la X pasa a 0, la Y a 1 y la Z a 2. Tras ese cambio, el NIE se trata como un número de ocho cifras y sigue los mismos pasos que un DNI.',
+  },
+  {
+    question: '¿Una letra correcta significa que el DNI es real?',
+    answer:
+      'No. La letra solo demuestra que el número y la letra son coherentes entre sí. No significa que el documento se haya emitido ni que pertenezca a una persona concreta. Es una comprobación de formato, no una consulta a un registro.',
+  },
+  {
+    question: '¿Puedo usarlo si no recuerdo la letra de mi documento?',
+    answer:
+      'Sí. Cambia al modo de cálculo, escribe las ocho cifras de tu DNI o la letra y las siete cifras de tu NIE, y la herramienta te devuelve la letra que le corresponde.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="dni-nie" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <div class="mode-toggle" role="group" aria-label="Elegir modo">
+      <button type="button" id="mode-calc" aria-pressed="true">Calcular letra</button>
+      <button type="button" id="mode-validate" aria-pressed="false">Comprobar un documento</button>
+    </div>
+
+    <form class="calc-box" id="dni-form" novalidate>
+      <div class="field" id="dni-field">
+        <label for="dni-input" id="dni-label">Número de DNI o NIE (sin la letra)</label>
+        <span class="hint" id="dni-hint">8 cifras para un DNI, o X, Y o Z seguida de 7 cifras para un NIE.</span>
+        <input type="text" id="dni-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="12345678" />
+        <span class="error-msg" id="dni-error"></span>
+      </div>
+      <button type="submit" class="btn" id="dni-submit">Calcular letra</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/dni-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      La letra final de un DNI o de un NIE español no se elige libremente. Se calcula a partir de
+      las cifras, y por eso un pequeño error en el número casi siempre produce una letra distinta
+      y delata la equivocación.
+    </p>
+    <p>
+      Para un DNI, se toman las ocho cifras como un único número y se dividen entre 23. El resto,
+      un valor de 0 a 22, es una posición en la lista fija de letras T, R, W, A, G, M, Y, F, P, D,
+      X, B, N, J, Z, S, Q, V, H, L, C, K, E. La letra que ocupa esa posición es la letra de
+      control. El NIE funciona igual, salvo que su letra inicial se convierte antes en una cifra:
+      la X en 0, la Y en 1 y la Z en 2.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de ejemplo 12345678, que es un ejemplo y no un documento real. Al dividir
+      12345678 entre 23 queda un resto de 14. Contando desde cero, la posición 14 de la lista
+      anterior es la letra Z, así que el DNI completo sería 12345678Z. Para un NIE como X1234567,
+      la X pasa a 0, lo que da 01234567, que dividido entre 23 deja un resto de 19, y la posición
+      19 es la letra L, así que resulta X1234567L.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Viene bien cuando tienes que escribir un DNI o un NIE en un formulario y quieres asegurarte
+      de que es correcto, o cuando un documento está gastado y no se lee bien el último carácter.
+      Quien alquila un piso, abre una cuenta, firma un contrato o rellena una solicitud oficial
+      puede confirmar en segundos que el número y su letra concuerdan, y evitar que un formulario
+      le sea devuelto por un solo carácter equivocado.
+    </p>
+  </Fragment>
+</ToolLayout>

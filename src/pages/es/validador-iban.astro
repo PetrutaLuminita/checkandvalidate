@@ -1,0 +1,123 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de IBAN | Check and Validate';
+const description =
+  'Validador de IBAN gratuito. Comprueba cualquier código IBAN con el algoritmo mod-97 y la longitud oficial por país, y descubre exactamente qué comprobación ha fallado.';
+const summary =
+  'Pega un IBAN, con o sin espacios, para comprobarlo con la longitud oficial de su país y con el dígito de control mod-97 de la norma ISO 7064. Si falla, la herramienta te dice cuál de las dos comprobaciones no ha pasado.';
+
+const strings = {
+  locale,
+  validHeadline: 'IBAN válido',
+  invalidHeadline: 'IBAN no válido',
+  validNote: 'La longitud coincide con el estándar de {cc} y el dígito de control mod-97 es correcto.',
+  err: {
+    empty: 'Introduce un IBAN para comprobarlo.',
+    charset: 'Un IBAN solo puede contener letras y cifras. Quita antes cualquier otro símbolo.',
+    country: 'El código de país {cc} no es un código de país IBAN reconocido.',
+    length: 'Este IBAN tiene {actual} caracteres, pero un IBAN de {cc} debe tener exactamente {expected}.',
+    checksum: 'La comprobación mod-97 ha fallado, así que al menos un carácter es incorrecto o hay dos cambiados de sitio.',
+  },
+  labelCountry: 'Código de país',
+  labelLength: 'Longitud',
+  labelFormatted: 'Formateado',
+  charsWord: 'caracteres',
+};
+
+const faq = [
+  {
+    question: '¿Qué comprueba realmente este validador?',
+    answer:
+      'Dos cosas. Primero, que el IBAN tiene el número exacto de caracteres definido para su país. Segundo, que el dígito de control mod-97 incorporado en el número es correcto. Juntas detectan casi cualquier errata, pero no pueden confirmar que exista una cuenta bancaria real y abierta detrás del número.',
+  },
+  {
+    question: '¿Un IBAN válido significa que la cuenta existe?',
+    answer:
+      'No. La comprobación solo demuestra que el número es coherente consigo mismo y está bien formado. La cuenta podría estar cerrada, o el número podría estar bien formado pero no haberse emitido nunca. Solo el banco puede confirmar que una cuenta es real y está activa.',
+  },
+  {
+    question: '¿Importan los espacios o las minúsculas?',
+    answer:
+      'No. La herramienta quita los espacios y pasa las letras a mayúsculas antes de comprobar, así que ES91 2100 0418 y ES9121000418 se tratan igual. Los bancos escriben el IBAN en grupos de cuatro solo para que sea más fácil de leer.',
+  },
+  {
+    question: '¿Por qué ha fallado mi IBAN por longitud si parecía correcto?',
+    answer:
+      'Cada país fija la longitud de su IBAN. Un IBAN alemán siempre tiene 22 caracteres, uno español 24 y uno rumano 24. Si al tuyo le falta o le sobra un carácter, se ha perdido o añadido una cifra en algún punto, aunque el principio parezca correcto.',
+  },
+  {
+    question: '¿Se envía mi IBAN a algún sitio cuando lo compruebo?',
+    answer:
+      'No. Todo el cálculo se realiza en tu navegador. Nada de lo que escribes se sube, se registra ni se guarda, así que puedes comprobar aquí un número de cuenta real con total seguridad.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="iban" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="iban-form" novalidate>
+      <div class="field" id="iban-field">
+        <label for="iban-input">IBAN</label>
+        <span class="hint">Pégalo con o sin espacios.</span>
+        <input type="text" id="iban-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ES91 2100 0418 4502 0005 1332" />
+        <span class="error-msg" id="iban-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar IBAN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/iban-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un IBAN, o International Bank Account Number, reúne el país, el banco y la cuenta en una
+      sola cadena con una comprobación de seguridad incorporada. La validación tiene dos pasos, y
+      esta herramienta ejecuta los dos.
+    </p>
+    <p>
+      El primer paso es la comprobación de longitud. Cada país registra una longitud fija de IBAN
+      en la norma ISO 13616, así que la herramienta lee el código de país de las dos primeras
+      letras y consulta cuántos caracteres debe tener el IBAN de ese país. Un IBAN del Reino Unido
+      tiene 22 caracteres, Alemania 22, España 24, Rumanía 24 y Noruega es el más corto, con 15.
+      Si la longitud no cuadra, se ha añadido o perdido un carácter y el número no puede ser
+      correcto.
+    </p>
+    <p>
+      El segundo paso es el dígito de control mod-97 de la norma ISO 7064. Los cuatro primeros
+      caracteres (el código de país y los dos dígitos de control) se mueven al final. Cada letra
+      se sustituye entonces por un número, donde A es 10, B es 11, y así hasta la Z, que es 35.
+      Eso convierte todo el IBAN en una única cadena larga de cifras, que se divide entre 97. Si
+      el resto es exactamente 1, la comprobación se supera.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de ejemplo ES91 2100 0418 4502 0005 1332, que sirve de muestra y no es una
+      cuenta real. Tiene 24 caracteres, que es la longitud de España, así que la primera
+      comprobación se supera. Al mover ES91 al final se obtiene 21000418450200051332ES91, y tras
+      sustituir las letras por números y dividir entre 97 el resto sale 1. Las dos comprobaciones
+      pasan, así que el número es un IBAN válido en cuanto a la forma.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Esta es la comprobación que conviene hacer antes de enviar dinero o de dar tu número de
+      cuenta a alguien. Una sola cifra equivocada o cambiada de sitio en un IBAN puede mandar una
+      transferencia al lugar incorrecto o devolverla días después con una comisión. Un autónomo
+      que pone un IBAN en una factura, un casero que escribe los datos bancarios en un contrato o
+      cualquiera que da de alta un nuevo beneficiario puede confirmar en segundos que el número
+      está bien formado y ahorrarse una corrección lenta e incómoda más adelante.
+    </p>
+  </Fragment>
+</ToolLayout>

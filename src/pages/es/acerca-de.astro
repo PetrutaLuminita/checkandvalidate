@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { alternatesFor, staticPath, homePath } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'es';
+const strings = t(locale);
+const pageId = 'about';
+const path = staticPath(pageId, locale);
+const alternates = alternatesFor('static', pageId);
+
+const title = 'Acerca de | Check and Validate';
+const description =
+  'Qué es Check and Validate, para quién está pensado y cómo funcionan sus validadores gratuitos de CNP, DNI/NIE e IBAN sin recopilar tus datos.';
+
+const schema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: strings.breadcrumbHome, item: new URL(homePath(locale), Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Acerca de', item: new URL(path, Astro.site).toString() },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path={path} alternates={alternates} schema={schema}>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href={homePath(locale)}>{strings.breadcrumbHome}</a>
+    <span class="sep">&gt;</span>
+    <span aria-current="page">Acerca de</span>
+  </nav>
+
+  <h1>Acerca de Check and Validate</h1>
+
+  <p>
+    Check and Validate es un conjunto de herramientas pequeño y gratuito para comprobar números de
+    identidad y de cuentas bancarias. De momento cubre tres: el código numérico personal rumano
+    (CNP), el documento nacional de identidad español para ciudadanos y residentes (DNI y NIE) y el
+    número de cuenta bancaria internacional (IBAN). Cada herramienta aplica el algoritmo oficial de
+    ese número y explica, con palabras sencillas, si está bien formado y por qué.
+  </p>
+
+  <h2>Por qué existe este sitio</h2>
+  <p>
+    Estos números son fáciles de teclear mal y molestos cuando se equivocan. Un solo dígito
+    cambiado en un IBAN puede hacer que rebote un pago, y una letra incorrecta en un DNI puede hacer
+    que rechacen un formulario. La mayoría de los validadores que encontramos estaban recargados,
+    escondían la respuesta bajo montones de anuncios o enviaban el número a un servidor sin decirlo.
+    Queríamos algo más rápido y más claro: pegas un número, obtienes una respuesta directa y
+    entiendes el razonamiento que hay detrás.
+  </p>
+
+  <h2>Cómo funcionan las herramientas</h2>
+  <p>
+    Todos los cálculos ocurren en tu navegador. Cuando compruebas un CNP, un DNI, un NIE o un IBAN,
+    los dígitos nunca salen de tu dispositivo. No se sube, guarda ni registra nada, así que puedes
+    comprobar un número real con total tranquilidad. Como la lógica se ejecuta de forma local, las
+    herramientas siguen funcionando aunque se corte tu conexión después de haber cargado la página.
+  </p>
+
+  <h2>Qué no hacen las herramientas</h2>
+  <p>
+    Son validadores de formato y de dígito de control, no bases de datos oficiales. Un resultado
+    válido significa que el número es matemáticamente coherente y está bien estructurado. No
+    significa que el número se haya emitido alguna vez, que pertenezca a una persona concreta o que
+    corresponda a una cuenta activa. Eso solo puede confirmarlo la autoridad emisora o el banco
+    correspondiente.
+  </p>
+
+  <h2>Una nota sobre los idiomas</h2>
+  <p>
+    Check and Validate se publica en inglés, rumano y español. Cada versión está redactada en ese
+    idioma, no traducida por una máquina, y los enlaces de idioma de la cabecera te llevan siempre a
+    la misma herramienta en el idioma que elijas. Si detectas alguna frase que suene rara en
+    cualquiera de los idiomas, nos encantará que nos lo cuentes.
+  </p>
+
+  <h2>Contacto</h2>
+  <p>
+    Las preguntas, correcciones y sugerencias son bienvenidas en
+    <a href="mailto:contact@checkandvalidate.com">contact@checkandvalidate.com</a>. Tienes más
+    detalles en la <a href={staticPath('contact', locale)}>página de contacto</a>.
+  </p>
+</BaseLayout>

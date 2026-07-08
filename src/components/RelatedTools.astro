@@ -1,0 +1,19 @@
+---
+import { relatedTools } from '../i18n/config.js';
+import { t } from '../i18n/ui.js';
+
+const { current, locale } = Astro.props;
+const strings = t(locale);
+const related = relatedTools(current, locale, 2);
+---
+
+<section class="related-tools" aria-label={strings.relatedHeading}>
+  <h2>{strings.relatedHeading}</h2>
+  <ul>
+    {related.map((tool) => (
+      <li>
+        <a href={tool.href}>{tool.name}</a>
+      </li>
+    ))}
+  </ul>
+</section>

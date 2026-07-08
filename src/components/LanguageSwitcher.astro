@@ -1,0 +1,28 @@
+---
+// Links the CURRENT page to its exact equivalent in the other two languages,
+// not just to the other language's homepage. `alternates` is a map of
+// { en, ro, es } relative paths for this same page, built from the shared
+// registry so a tool page points at that tool in every language.
+import { locales, localeNames } from '../i18n/config.js';
+import { t } from '../i18n/ui.js';
+
+const { locale, alternates } = Astro.props;
+const strings = t(locale);
+---
+
+<nav class="lang-switcher" aria-label={strings.languageLabel}>
+  {locales.map((code, i) => (
+    <>
+      {i > 0 && <span class="sep" aria-hidden="true">·</span>}
+      <a
+        href={alternates[code]}
+        lang={code}
+        hreflang={code}
+        aria-current={code === locale ? 'true' : undefined}
+        title={localeNames[code]}
+      >
+        {code}
+      </a>
+    </>
+  ))}
+</nav>

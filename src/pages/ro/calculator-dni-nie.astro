@@ -1,0 +1,140 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Calculator DNI/NIE | Check and Validate';
+const description =
+  'Calculator gratuit pentru litera de control a DNI și NIE spaniol. Calculează litera corectă pentru un număr de act sau verifică dacă litera de pe un DNI sau NIE existent este cea potrivită.';
+const summary =
+  'Calculează litera de control pentru un DNI sau NIE spaniol sau lipește un act complet ca să verifici dacă litera este corectă. Comută între cele două moduri cu butoanele de mai jos.';
+
+const strings = {
+  locale,
+  toggle: { calc: 'Calculează litera', validate: 'Verifică un act complet' },
+  modes: {
+    calc: {
+      label: 'Număr de DNI sau NIE (fără literă)',
+      hint: '8 cifre pentru un DNI, sau X, Y ori Z urmată de 7 cifre pentru un NIE.',
+      submit: 'Calculează litera',
+    },
+    validate: {
+      label: 'DNI sau NIE complet (cu literă)',
+      hint: 'Include litera de control la final, de exemplu 12345678Z.',
+      submit: 'Verifică actul',
+    },
+  },
+  calc: {
+    headline: 'Litera de control: {letter}',
+    typeLabel: 'Tipul actului',
+    letterLabel: 'Litera de control',
+    fullLabel: 'Număr complet',
+  },
+  validate: {
+    validHeadline: 'Litera este corectă',
+    invalidHeadline: 'Litera este greșită',
+    validNote: 'Pentru {number}, litera corectă este {letter}, iar aceasta este litera de pe act.',
+    invalidNote: 'Pentru {number}, litera corectă este {expected}, nu {given}.',
+    typeLabel: 'Tipul actului',
+    numberLabel: 'Număr',
+    expectedLabel: 'Litera corectă',
+  },
+  err: {
+    emptyCalc: 'Introdu un număr de DNI sau NIE.',
+    formatCalc: 'Introdu 8 cifre pentru un DNI, sau o literă X, Y ori Z urmată de 7 cifre pentru un NIE.',
+    emptyValidate: 'Introdu un DNI sau NIE complet.',
+    formatValidate: 'Introdu un DNI sau NIE complet, cu litera de control, de exemplu 12345678Z.',
+  },
+};
+
+const faq = [
+  {
+    question: 'Care este diferența dintre DNI și NIE?',
+    answer:
+      'DNI este numărul de identitate al cetățenilor spanioli: opt cifre și o literă. NIE este numărul de identificare pentru străinii din Spania: o literă inițială X, Y sau Z, apoi șapte cifre și o literă de control. Ambele folosesc aceeași metodă pentru a obține litera finală.',
+  },
+  {
+    question: 'Cum se alege litera de control?',
+    answer:
+      'Numărul se împarte la 23, iar restul indică o literă dintr-o listă fixă de 23. Sunt 23 de litere pentru că lipsesc I, O, U și Ñ, ca să nu fie confundate cu cifrele sau între ele.',
+  },
+  {
+    question: 'De ce se înlocuiește mai întâi litera de la NIE cu o cifră?',
+    answer:
+      'NIE începe cu o literă, dar calculul are nevoie de cifre. De aceea X devine 0, Y devine 1, iar Z devine 2. După această înlocuire, NIE este tratat ca un număr de opt cifre și urmează exact aceiași pași ca un DNI.',
+  },
+  {
+    question: 'O literă corectă înseamnă că actul este real?',
+    answer:
+      'Nu. Litera dovedește doar că numărul și litera sunt coerente între ele. Nu înseamnă că actul a fost emis vreodată sau că aparține unei anumite persoane. Este o verificare de format, nu o căutare într-un registru.',
+  },
+  {
+    question: 'Îl pot folosi dacă am uitat litera de pe propriul act?',
+    answer:
+      'Da. Comută pe modul de calcul, scrie cele opt cifre ale DNI-ului sau litera și cele șapte cifre ale NIE-ului, iar instrumentul îți dă litera care i se potrivește.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="dni-nie" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <div class="mode-toggle" role="group" aria-label="Alege modul">
+      <button type="button" id="mode-calc" aria-pressed="true">Calculează litera</button>
+      <button type="button" id="mode-validate" aria-pressed="false">Verifică un act complet</button>
+    </div>
+
+    <form class="calc-box" id="dni-form" novalidate>
+      <div class="field" id="dni-field">
+        <label for="dni-input" id="dni-label">Număr de DNI sau NIE (fără literă)</label>
+        <span class="hint" id="dni-hint">8 cifre pentru un DNI, sau X, Y ori Z urmată de 7 cifre pentru un NIE.</span>
+        <input type="text" id="dni-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="12345678" />
+        <span class="error-msg" id="dni-error"></span>
+      </div>
+      <button type="submit" class="btn" id="dni-submit">Calculează litera</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/dni-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Litera de la finalul unui DNI sau NIE spaniol nu este aleasă la întâmplare. Se calculează
+      din cifre, motiv pentru care o mică greșeală în număr dă aproape întotdeauna o literă
+      diferită și scoate greșeala la iveală.
+    </p>
+    <p>
+      Pentru un DNI, cele opt cifre se iau ca un singur număr și se împart la 23. Restul, o
+      valoare de la 0 la 22, este o poziție în lista fixă de litere T, R, W, A, G, M, Y, F, P, D,
+      X, B, N, J, Z, S, Q, V, H, L, C, K, E. Litera de pe acea poziție este litera de control. NIE
+      funcționează la fel, doar că litera lui inițială se transformă mai întâi într-o cifră: X în
+      0, Y în 1 și Z în 2.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu 12345678, care este un exemplu și nu un act real. Împărțind
+      12345678 la 23 rămâne restul 14. Numărând de la zero, poziția 14 din lista de mai sus este
+      litera Z, așa că DNI-ul complet ar fi 12345678Z. Pentru un NIE precum X1234567, X devine 0,
+      ceea ce dă 01234567, care împărțit la 23 lasă restul 19, iar poziția 19 este litera L, deci
+      rezultă X1234567L.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Este util când trebuie să scrii un DNI sau un NIE într-un formular și vrei să fii sigur că
+      este corect, sau când un act este uzat și nu se citește clar ultimul caracter. Mulți
+      români lucrează în Spania și primesc un NIE, așa că o verificare rapidă ajută la închirierea
+      unei locuințe, la deschiderea unui cont, la semnarea unui contract sau la completarea unei
+      cereri oficiale. În câteva secunde confirmi că numărul și litera se potrivesc și eviți un
+      formular respins din cauza unui singur caracter greșit.
+    </p>
+  </Fragment>
+</ToolLayout>

@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { tools, toolPath, alternatesFor } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'en';
+const strings = t(locale);
+const alternates = alternatesFor('home');
+
+const title = 'Check and Validate | Free CNP, DNI/NIE, and IBAN Validators';
+const description =
+  'Free validators for the Romanian CNP, the Spanish DNI and NIE, and the IBAN. No sign-up needed. Every check runs in your browser and explains the result.';
+
+const schema = {
+  '@type': 'WebSite',
+  name: 'Check and Validate',
+  url: 'https://checkandvalidate.com',
+  inLanguage: locale,
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path="/en/" alternates={alternates} schema={schema}>
+  <h1>Check and Validate</h1>
+  <p class="tagline">{strings.tagline}</p>
+
+  <p class="section-intro">
+    Three focused tools for checking identity and bank numbers: the Romanian personal numeric
+    code (CNP), the Spanish national ID (DNI and NIE), and the International Bank Account Number
+    (IBAN). Each one runs entirely on this page, uses the official algorithm, and explains what
+    it found. There is nothing to install and no account to create.
+  </p>
+
+  <AdSlot position="home-top" label={strings.adLabel} />
+
+  <h2 class="category-heading">Validators</h2>
+  <div class="tool-grid">
+    {tools.map((tool) => (
+      <a class="tool-card" href={toolPath(tool.id, locale)}>
+        <h3>{tool.name[locale]}</h3>
+        <p>{tool.desc[locale]}</p>
+      </a>
+    ))}
+  </div>
+
+  <p class="home-lang-note">
+    This site is available in English, Romanian, and Spanish. Use the language links in the
+    header to switch, and you will land on the same tool in the language you choose.
+  </p>
+
+  <AdSlot position="home-bottom" label={strings.adLabel} />
+</BaseLayout>

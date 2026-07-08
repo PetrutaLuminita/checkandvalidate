@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { alternatesFor, staticPath, homePath } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'es';
+const strings = t(locale);
+const pageId = 'privacy';
+const path = staticPath(pageId, locale);
+const alternates = alternatesFor('static', pageId);
+const lastUpdated = '7 de julio de 2026';
+
+const title = 'Política de privacidad | Check and Validate';
+const description =
+  'Cómo gestiona Check and Validate las cookies, la publicidad de Google AdSense y tus datos, explicado con palabras sencillas.';
+
+const schema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: strings.breadcrumbHome, item: new URL(homePath(locale), Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Política de privacidad', item: new URL(path, Astro.site).toString() },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path={path} alternates={alternates} schema={schema}>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href={homePath(locale)}>{strings.breadcrumbHome}</a>
+    <span class="sep">&gt;</span>
+    <span aria-current="page">Política de privacidad</span>
+  </nav>
+
+  <h1>Política de privacidad</h1>
+  <p class="disclaimer">Última actualización: {lastUpdated}</p>
+
+  <p>
+    Esta página explica qué datos recopila Check and Validate, por qué y cómo puedes controlarlos.
+    La hemos redactado con palabras sencillas en lugar de con un lenguaje jurídico denso.
+  </p>
+
+  <h2>Lo que este sitio no hace</h2>
+  <p>
+    Todos los validadores de este sitio se ejecutan por completo en tu navegador. Los números que
+    escribes en una herramienta, como un CNP, un DNI, un NIE o un IBAN, nunca se envían a un
+    servidor, ni se guardan en una base de datos, ni los ve nadie más. No hay sistema de cuentas ni
+    nada que registrar.
+  </p>
+
+  <h2>Cookies</h2>
+  <p>
+    Este sitio usa cookies con dos fines: recordar si has aceptado o rechazado el aviso de cookies y
+    dar soporte a la publicidad que se describe más abajo. Tu navegador te permite bloquear o borrar
+    las cookies en cualquier momento desde sus ajustes, aunque hacerlo puede provocar que el aviso
+    de cookies vuelva a aparecer en tu siguiente visita.
+  </p>
+
+  <h2>Google AdSense y publicidad de terceros</h2>
+  <p>
+    Check and Validate usa Google AdSense para mostrar anuncios, que es la forma en que el sitio se
+    mantiene gratuito. Google y otros proveedores de publicidad externos usan cookies para mostrar
+    anuncios basados en las visitas anteriores de una persona a este sitio y a otros sitios de
+    internet. A esto se le llama a veces publicidad basada en intereses o publicidad personalizada.
+    Funciona rastreando patrones de navegación a nivel de navegador o de dispositivo, no
+    identificando quién eres, y no incluye datos personales como tu nombre, tu domicilio o tu correo
+    electrónico.
+  </p>
+  <p>
+    La propia explicación de Google sobre cómo tratan los datos, tanto Google como sus socios,
+    recogidos en sitios que usan sus servicios está disponible en
+    <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>.
+  </p>
+
+  <h2>Tus opciones de publicidad</h2>
+  <p>
+    Si prefieres no ver anuncios personalizados, puedes ajustar tu configuración directamente con
+    Google en
+    <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a>,
+    o usar las herramientas de exclusión de todo el sector disponibles en
+    <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a>.
+    Ambas te permiten excluirte de la publicidad basada en intereses en muchos sitios y anunciantes
+    participantes, no solo en este.
+  </p>
+  <p>
+    También puedes desactivar las cookies por completo desde los ajustes de tu navegador, lo que se
+    aplica tanto a las cookies usadas para la publicidad como a la que este sitio usa para recordar
+    tu elección sobre el aviso de cookies. Si lo haces, algunas comodidades, como recordar esa
+    elección entre visitas, pueden dejar de funcionar como esperas.
+  </p>
+
+  <h2>Visitantes en el Espacio Económico Europeo y el Reino Unido</h2>
+  <p>
+    Dado que este sitio atiende a visitantes de la Unión Europea, incluidas Rumanía y España, y del
+    Reino Unido, a los visitantes de esas regiones se les muestra un mensaje de consentimiento que
+    les permite elegir si autorizan la publicidad personalizada, conforme a los requisitos de
+    consentimiento certificados por Google. Tu elección se recuerda para que no te la pregunten en
+    cada visita.
+  </p>
+
+  <h2>Analítica</h2>
+  <p>
+    Este sitio puede usar una herramienta de analítica respetuosa con la privacidad para entender el
+    tráfico general, como qué páginas se visitan y aproximadamente cuánta gente entra, de modo que
+    el sitio pueda mejorarse. Cualquier analítica que se use aquí no te identifica personalmente y es
+    independiente de las cookies de publicidad descritas más arriba.
+  </p>
+
+  <h2>Privacidad de los menores</h2>
+  <p>
+    Este sitio no está dirigido a menores de 13 años y no recopila de forma consciente información
+    personal de ellos.
+  </p>
+
+  <h2>Cambios en esta política</h2>
+  <p>
+    Si esta política cambia, la versión actualizada se publicará en esta página con una nueva fecha
+    de última actualización en la parte superior.
+  </p>
+
+  <h2>Contacto</h2>
+  <p>
+    Puedes enviar tus preguntas sobre esta política a
+    <a href="mailto:contact@checkandvalidate.com">contact@checkandvalidate.com</a>.
+  </p>
+</BaseLayout>

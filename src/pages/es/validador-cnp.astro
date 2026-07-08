@@ -1,0 +1,133 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de CNP | Check and Validate';
+const description =
+  'Validador de CNP rumano gratuito. Comprueba la estructura y el dígito de control de un Cod Numeric Personal y muestra la fecha de nacimiento, el sexo y el condado que codifica.';
+const summary =
+  'Introduce un CNP rumano de 13 cifras para comprobar su estructura y su dígito de control. Si es válido, la herramienta muestra la fecha de nacimiento, el sexo y el condado de registro que codifica el número.';
+
+const strings = {
+  locale,
+  validHeadline: 'CNP válido',
+  invalidHeadline: 'CNP no válido',
+  validNote: 'La estructura y el dígito de control son correctos. Esto es lo que codifica el número.',
+  residentNote:
+    'La estructura y el dígito de control son correctos. Este código pertenece a un residente extranjero, así que la primera cifra no fija el siglo de nacimiento.',
+  err: {
+    empty: 'Introduce un CNP para comprobarlo.',
+    digits: 'Un CNP solo contiene cifras, sin letras ni otros símbolos.',
+    length: 'Un CNP tiene exactamente 13 cifras, pero este tiene {length}.',
+    sex: 'La primera cifra debe estar entre 1 y 9.',
+    date: 'La fecha de nacimiento codificada en este CNP no es una fecha real del calendario.',
+    county: 'El código de condado {jj} no corresponde a ningún condado rumano.',
+    checksum: 'El dígito de control no coincide con el resto del número, así que no es un CNP válido.',
+  },
+  labelBirthDate: 'Fecha de nacimiento',
+  labelSex: 'Sexo',
+  labelCounty: 'Condado de registro',
+  sexMale: 'Hombre',
+  sexFemale: 'Mujer',
+  sexUnspecified: 'Sin especificar',
+  disclaimer:
+    'Solo se comprueba la estructura matemática del número. No se confirma que el CNP pertenezca a una persona real ni a un documento válido en la actualidad.',
+};
+
+const faq = [
+  {
+    question: '¿Qué es el CNP?',
+    answer:
+      'El CNP, o Cod Numeric Personal, es el número de identificación de 13 cifras que se asigna a cada ciudadano rumano y a los residentes extranjeros registrados. Aparece en el documento de identidad, en el pasaporte y en la mayoría de los trámites oficiales.',
+  },
+  {
+    question: '¿Qué comprueba este validador?',
+    answer:
+      'Confirma que las 13 cifras forman un CNP correcto en su estructura: la fecha codificada es real, el código de condado existe y el dígito de control final coincide con los otros doce. No puede saber si el número pertenece a una persona real.',
+  },
+  {
+    question: '¿Cómo se leen el sexo y la fecha de nacimiento?',
+    answer:
+      'La primera cifra codifica el sexo y el siglo de nacimiento. Por ejemplo, 1 es un hombre nacido entre 1900 y 1999, 2 es una mujer del mismo periodo, y 5 y 6 corresponden a hombres y mujeres nacidos a partir del año 2000. Las seis cifras siguientes son el año, el mes y el día.',
+  },
+  {
+    question: '¿Para qué sirven las dos cifras después de la fecha?',
+    answer:
+      'Son el código de condado, que indica dónde se registró el CNP. Los códigos del 01 al 40 cubren los condados y Bucarest, del 41 al 46 son los seis sectores de Bucarest, y 51 y 52 son Călărași y Giurgiu.',
+  },
+  {
+    question: '¿Puedo generar un CNP con esta herramienta?',
+    answer:
+      'No, y es a propósito. Esto es un validador, no un generador. Comprueba un número que ya tienes; no fabrica ninguno.',
+  },
+  {
+    question: '¿Se guarda o se envía mi CNP a algún sitio?',
+    answer:
+      'No. La comprobación se realiza por completo en tu navegador. Nada de lo que escribes se sube ni se almacena, así que puedes comprobar un CNP real sin que salga de tu dispositivo.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="cnp" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="cnp-form" novalidate>
+      <div class="field" id="cnp-field">
+        <label for="cnp-input">CNP (13 cifras)</label>
+        <span class="hint">Introduce el número tal como aparece en el documento.</span>
+        <input type="text" inputmode="numeric" id="cnp-input" class="mono" autocomplete="off" spellcheck="false" placeholder="1630615123457" />
+        <span class="error-msg" id="cnp-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar CNP</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/cnp-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un CNP no es una cadena de cifras al azar. Sigue el patrón S AA MM DD JJ NNN C, donde cada
+      parte tiene un significado. La primera cifra, S, da el sexo y el siglo de nacimiento. Las
+      seis cifras siguientes son la fecha de nacimiento en forma de año, mes y día. Dos cifras,
+      JJ, son el condado donde se registró el número. Tres cifras, NNN, son un número secuencial,
+      y la última cifra, C, es un dígito de control que enlaza todo el número.
+    </p>
+    <p>
+      El dígito de control es lo que hace que un CNP se compruebe a sí mismo. Cada una de las
+      doce primeras cifras se multiplica por un peso fijo de la secuencia 2, 7, 9, 1, 4, 6, 3, 5,
+      8, 2, 7, 9. Los doce productos se suman y el total se divide entre 11. El resto es el
+      dígito de control, salvo que el resto sea 10, en cuyo caso el dígito pasa a ser 1. Si la
+      última cifra no coincide con este resultado, el número no es un CNP válido.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el CNP de ejemplo 1630615123457, que es solo un ejemplo y no pertenece a nadie.
+      La primera cifra, 1, significa un hombre nacido entre 1900 y 1999. Las seis cifras
+      siguientes, 630615, dan el 15 de junio de 1963. El código de condado 12 es Cluj. Para la
+      última cifra, multiplicamos 1, 6, 3, 0, 6, 1, 5, 1, 2, 3, 4, 5 por los pesos anteriores y
+      sumamos los resultados, que dan 216. Al dividir 216 entre 11 queda un resto de 7, y la
+      última cifra es 7, así que el dígito de control coincide y el número es válido.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Resulta útil siempre que haya que introducir un CNP correctamente en un formulario. En
+      España viven muchas personas de origen rumano, así que una gestoría, un casero o un
+      administrativo pueden encontrarse con un CNP en un documento y querer confirmar que está
+      bien escrito. Pegar el número aquí primero permite detectar una cifra mal tecleada antes de
+      que provoque un formulario rechazado o un desajuste más adelante. También es una forma
+      rápida de entender qué dice un CNP, porque muestra con claridad la fecha de nacimiento, el
+      sexo y el condado.
+    </p>
+  </Fragment>
+</ToolLayout>

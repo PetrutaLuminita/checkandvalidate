@@ -1,0 +1,121 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'IBAN Validator | Check and Validate';
+const description =
+  'Free IBAN validator. Check any International Bank Account Number with the mod-97 checksum and the official per-country length, and see exactly which check failed.';
+const summary =
+  'Paste an IBAN with or without spaces to check it against the official length for its country and the ISO 7064 mod-97 checksum. If it fails, this tool tells you which of the two checks it failed.';
+
+const strings = {
+  locale,
+  validHeadline: 'Valid IBAN',
+  invalidHeadline: 'Not a valid IBAN',
+  validNote: 'The length matches the {cc} standard and the mod-97 checksum is correct.',
+  err: {
+    empty: 'Enter an IBAN to check.',
+    charset: 'An IBAN can only contain letters and digits. Remove any other symbols first.',
+    country: 'The country code {cc} is not a recognised IBAN country code.',
+    length: 'This IBAN has {actual} characters, but a {cc} IBAN must have exactly {expected}.',
+    checksum: 'The mod-97 check failed, so at least one character is wrong or two of them are swapped.',
+  },
+  labelCountry: 'Country code',
+  labelLength: 'Length',
+  labelFormatted: 'Formatted',
+  charsWord: 'characters',
+};
+
+const faq = [
+  {
+    question: 'What does this validator actually check?',
+    answer:
+      'Two things. First, that the IBAN has the exact number of characters defined for its country. Second, that the mod-97 checksum built into the number is correct. Together these catch almost every typo, but they cannot confirm that a real, open bank account sits behind the number.',
+  },
+  {
+    question: 'Does a valid IBAN mean the account exists?',
+    answer:
+      'No. The check only proves the number is internally consistent and correctly formed. An account could have been closed, or the number could be well formed but never issued. Only the bank can confirm an account is real and active.',
+  },
+  {
+    question: 'Do spaces or lower-case letters matter?',
+    answer:
+      'No. The tool removes spaces and converts letters to upper case before checking, so RO49 aaaa 1b31 and RO49AAAA1B31 are treated the same. Banks print IBANs in groups of four only to make them easier to read.',
+  },
+  {
+    question: 'Why did my IBAN fail on length but look right?',
+    answer:
+      'Every country fixes its IBAN length. A German IBAN is always 22 characters, a Spanish one 24, a Romanian one 24. If yours is a character short or long, a digit was dropped or added somewhere, even if the start looks correct.',
+  },
+  {
+    question: 'Is my IBAN sent anywhere when I check it?',
+    answer:
+      'No. The whole calculation runs in your browser. Nothing you type is uploaded, logged, or stored, so it is safe to check a real account number here.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="iban" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="iban-form" novalidate>
+      <div class="field" id="iban-field">
+        <label for="iban-input">IBAN</label>
+        <span class="hint">Paste it with or without spaces.</span>
+        <input type="text" id="iban-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="RO49 AAAA 1B31 0075 9384 0000" />
+        <span class="error-msg" id="iban-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate IBAN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/iban-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      An IBAN, or International Bank Account Number, packs the country, the bank, and the
+      account into one string with a built-in safety check. Validation happens in two steps,
+      and this tool runs both.
+    </p>
+    <p>
+      The first step is the length check. Each country registers a fixed IBAN length with the
+      ISO 13616 standard, so the tool reads the two-letter country code at the start and looks
+      up how many characters that country's IBAN must have. A United Kingdom IBAN is 22
+      characters, Germany is 22, Spain is 24, Romania is 24, and Norway is the shortest at 15.
+      If the length is wrong, a character was added or lost and the number cannot be correct.
+    </p>
+    <p>
+      The second step is the mod-97 checksum from ISO 7064. The first four characters (the
+      country code and two check digits) are moved to the end. Each letter is then replaced by a
+      number, where A is 10, B is 11, and so on up to Z which is 35. That turns the whole IBAN
+      into one long string of digits, which is divided by 97. If the remainder is exactly 1, the
+      checksum passes.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number GB82 WEST 1234 5698 7654 32, which is a made-up example rather than
+      a real account. It has 22 characters, which matches the United Kingdom length, so the first
+      check passes. Moving GB82 to the end gives WEST12345698765432GB82, and after replacing the
+      letters with numbers and dividing by 97 the remainder comes out as 1. Both checks pass, so
+      the number is a valid IBAN in form.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      This is the check to run before you send money or hand your account number to someone.
+      A single wrong or swapped digit in an IBAN can send a transfer to the wrong place or bounce
+      it back days later with a fee. Freelancers pasting an IBAN onto an invoice, a landlord
+      writing bank details into a contract, or anyone setting up a new payee can confirm the
+      number is well formed in a couple of seconds and avoid a slow, awkward correction later.
+    </p>
+  </Fragment>
+</ToolLayout>

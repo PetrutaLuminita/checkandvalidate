@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { alternatesFor, staticPath, homePath } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'ro';
+const strings = t(locale);
+const pageId = 'terms';
+const path = staticPath(pageId, locale);
+const alternates = alternatesFor('static', pageId);
+const lastUpdated = '7 iulie 2026';
+
+const title = 'Termeni și condiții | Check and Validate';
+const description =
+  'Termenii simpli de utilizare pentru Check and Validate, inclusiv punctul important că validatoarele sale au doar rol informativ.';
+
+const schema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: strings.breadcrumbHome, item: new URL(homePath(locale), Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Termeni și condiții', item: new URL(path, Astro.site).toString() },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path={path} alternates={alternates} schema={schema}>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href={homePath(locale)}>{strings.breadcrumbHome}</a>
+    <span class="sep">&gt;</span>
+    <span aria-current="page">Termeni și condiții</span>
+  </nav>
+
+  <h1>Termeni și condiții</h1>
+  <p class="disclaimer">Ultima actualizare: {lastUpdated}</p>
+
+  <p>
+    Folosind Check and Validate, ești de acord cu acești termeni. Sunt scurți și scriși intenționat
+    într-un limbaj simplu.
+  </p>
+
+  <h2>Instrumentele au doar rol informativ</h2>
+  <p>
+    Validatoarele de pe acest site verifică dacă un număr de identitate sau bancar este corect
+    structurat conform algoritmului său publicat. Un rezultat de tip valid înseamnă că numărul este
+    consistent din punct de vedere matematic. Nu reprezintă o confirmare că numărul a fost emis, că
+    este activ în prezent sau că aparține unei anumite persoane ori unui anumit cont. Nu te baza pe
+    aceste instrumente ca unic temei pentru o decizie juridică, financiară sau de identitate. Acolo
+    unde certitudinea contează, confirmă numărul cu autoritatea emitentă sau cu banca respectivă.
+  </p>
+
+  <h2>Fără garanții</h2>
+  <p>
+    Site-ul este furnizat ca atare, fără garanții de niciun fel. Depunem eforturi să menținem
+    algoritmii și datele de referință, cum ar fi lungimile IBAN pe țări și codurile de județ,
+    corecte și actualizate, dar nu putem garanta că fiecare rezultat este lipsit de erori. În
+    limitele permise de lege, nu ne asumăm nicio răspundere pentru vreo pierdere rezultată din
+    utilizarea acestui site.
+  </p>
+
+  <h2>Utilizare acceptabilă</h2>
+  <p>
+    Poți folosi aceste instrumente în mod liber, în scopuri personale și comerciale. Nu ai voie să
+    folosești site-ul într-un mod care încalcă legea, care încearcă să îl perturbe sau să îl
+    suprasolicite ori care prezintă în mod fals rezultatele sale drept un serviciu oficial de
+    verificare.
+  </p>
+
+  <h2>Publicitate</h2>
+  <p>
+    Acest site este susținut prin publicitate, inclusiv Google AdSense. Modul în care funcționează
+    modulele cookie de publicitate și cum le poți controla este explicat în
+    <a href={staticPath('privacy', locale)}>Politica de confidențialitate</a>.
+  </p>
+
+  <h2>Modificări ale acestor termeni</h2>
+  <p>
+    Putem actualiza acești termeni din când în când. Versiunea curentă este întotdeauna cea de pe
+    această pagină, cu data de tip ultima actualizare afișată în partea de sus.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Dacă ceva de aici este neclar, scrie-ne la
+    <a href="mailto:contact@checkandvalidate.com">contact@checkandvalidate.com</a>.
+  </p>
+</BaseLayout>

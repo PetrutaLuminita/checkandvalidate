@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { alternatesFor, staticPath, homePath } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'ro';
+const strings = t(locale);
+const pageId = 'contact';
+const path = staticPath(pageId, locale);
+const alternates = alternatesFor('static', pageId);
+
+const title = 'Contact | Check and Validate';
+const description =
+  'Cum să contactezi Check and Validate cu întrebări, corecturi sau sugestii despre validatoarele de CNP, DNI/NIE și IBAN.';
+
+const schema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: strings.breadcrumbHome, item: new URL(homePath(locale), Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Contact', item: new URL(path, Astro.site).toString() },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path={path} alternates={alternates} schema={schema}>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href={homePath(locale)}>{strings.breadcrumbHome}</a>
+    <span class="sep">&gt;</span>
+    <span aria-current="page">Contact</span>
+  </nav>
+
+  <h1>Contact</h1>
+
+  <p>
+    Check and Validate este gestionat de o echipă mică și citim fiecare mesaj. Cel mai simplu mod de
+    a ne contacta este prin e-mail, la
+    <a href="mailto:contact@checkandvalidate.com">contact@checkandvalidate.com</a>.
+  </p>
+
+  <h2>Pentru ce ne poți scrie</h2>
+  <p>
+    Ne bucurăm să primim un mesaj de la tine dacă se aplică oricare dintre situațiile de mai jos:
+  </p>
+  <ul class="prose">
+    <li>Crezi că un instrument a dat un rezultat greșit pentru un număr despre care știi sigur că este valid sau invalid.</li>
+    <li>O formulare sună nefiresc sau este incorectă în engleză, română sau spaniolă.</li>
+    <li>O lungime de țară, un cod de județ sau alt detaliu de referință pare depășit.</li>
+    <li>Ai o idee pentru un alt tip de număr de identitate sau bancar care ar merita adăugat.</li>
+  </ul>
+
+  <h2>Cum raportezi un rezultat greșit</h2>
+  <p>
+    Dacă un validator pare să greșească, te rugăm să incluzi numărul exact pe care l-ai introdus
+    (poți schimba câteva cifre dacă este un număr personal real, atâta timp cât exemplul mai arată
+    problema), instrumentul folosit și ce te așteptai să se întâmple. Astfel putem reproduce și
+    rezolva problema mult mai repede.
+  </p>
+
+  <h2>Timp de răspuns</h2>
+  <p>
+    De obicei răspundem în câteva zile lucrătoare. Acesta este un site gratuit, întreținut în timpul
+    nostru liber, așa că îți mulțumim pentru răbdare dacă durează puțin mai mult în perioadele
+    aglomerate.
+  </p>
+</BaseLayout>

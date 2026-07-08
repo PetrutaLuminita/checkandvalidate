@@ -1,0 +1,72 @@
+---
+import { tools, staticPages, toolPath, staticPath, homePath } from '../i18n/config.js';
+import { t } from '../i18n/ui.js';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+// `alternates` is threaded down from the layout so the language switcher can
+// jump to the current page in another language.
+const { locale, alternates } = Astro.props;
+const strings = t(locale);
+
+const toolLinks = tools.map((tool) => ({ name: tool.name[locale], href: toolPath(tool.id, locale) }));
+const siteLinks = staticPages.map((page) => ({ name: page.nav[locale], href: staticPath(page.id, locale) }));
+---
+
+<header class="site-header">
+  <div class="header-inner wrap">
+    <a href={homePath(locale)} class="wordmark">Check and Validate</a>
+
+    <div class="header-right">
+      <nav class="main-nav" aria-label="Primary">
+        <div class="nav-group">
+          <button class="nav-label" type="button" aria-haspopup="true">{strings.navToolsLabel}</button>
+          <div class="nav-dropdown">
+            {toolLinks.map((link) => (
+              <a href={link.href}>{link.name}</a>
+            ))}
+          </div>
+        </div>
+        <div class="nav-group">
+          <button class="nav-label" type="button" aria-haspopup="true">{strings.navSiteLabel}</button>
+          <div class="nav-dropdown">
+            {siteLinks.map((link) => (
+              <a href={link.href}>{link.name}</a>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      <LanguageSwitcher locale={locale} alternates={alternates} />
+
+      <button class="hamburger" type="button" aria-expanded="false" aria-controls="mobile-nav" id="hamburger-btn">
+        {strings.menu}
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-nav" id="mobile-nav">
+    <h3>{strings.navToolsLabel}</h3>
+    <ul>
+      {toolLinks.map((link) => (
+        <li><a href={link.href}>{link.name}</a></li>
+      ))}
+    </ul>
+    <h3>{strings.navSiteLabel}</h3>
+    <ul>
+      {siteLinks.map((link) => (
+        <li><a href={link.href}>{link.name}</a></li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('hamburger-btn');
+  const nav = document.getElementById('mobile-nav');
+  if (btn && nav) {
+    btn.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
+</script>

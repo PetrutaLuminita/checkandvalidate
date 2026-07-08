@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { tools, toolPath, alternatesFor } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'ro';
+const strings = t(locale);
+const alternates = alternatesFor('home');
+
+const title = 'Check and Validate | Verificare gratuită CNP, DNI/NIE și IBAN';
+const description =
+  'Validatoare gratuite pentru CNP-ul românesc, pentru DNI și NIE spaniol și pentru IBAN. Fără cont necesar. Fiecare verificare rulează în browserul tău și îți explică rezultatul.';
+
+const schema = {
+  '@type': 'WebSite',
+  name: 'Check and Validate',
+  url: 'https://checkandvalidate.com',
+  inLanguage: locale,
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path="/ro/" alternates={alternates} schema={schema}>
+  <h1>Check and Validate</h1>
+  <p class="tagline">{strings.tagline}</p>
+
+  <p class="section-intro">
+    Trei instrumente clare pentru verificarea numerelor de identitate și a celor bancare: codul
+    numeric personal românesc (CNP), actul de identitate spaniol (DNI și NIE) și codul
+    internațional de cont bancar (IBAN). Fiecare rulează integral pe această pagină, folosește
+    algoritmul oficial și îți explică ce a găsit. Nu ai nimic de instalat și niciun cont de creat.
+  </p>
+
+  <AdSlot position="home-top" label={strings.adLabel} />
+
+  <h2 class="category-heading">Validatoare</h2>
+  <div class="tool-grid">
+    {tools.map((tool) => (
+      <a class="tool-card" href={toolPath(tool.id, locale)}>
+        <h3>{tool.name[locale]}</h3>
+        <p>{tool.desc[locale]}</p>
+      </a>
+    ))}
+  </div>
+
+  <p class="home-lang-note">
+    Acest site este disponibil în engleză, română și spaniolă. Folosește linkurile de limbă din
+    antet ca să comuți, iar vei ajunge pe același instrument în limba pe care o alegi.
+  </p>
+
+  <AdSlot position="home-bottom" label={strings.adLabel} />
+</BaseLayout>

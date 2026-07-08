@@ -1,0 +1,92 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { defaultLocale } from '../i18n/config.js';
+import { t } from '../i18n/ui.js';
+import '../styles/global.css';
+
+const {
+  title,
+  description,
+  locale = 'en',
+  path = '/',
+  alternates = {},
+  schema = null,
+} = Astro.props;
+
+const strings = t(locale);
+const canonicalURL = new URL(path, Astro.site);
+const ogImageURL = new URL('/og-image.svg', Astro.site);
+
+// Reciprocal hreflang set: one entry per language pointing at THIS page's
+// equivalent URL in that language, plus x-default pointing at English. Each
+// page's canonical points at itself, never at the English version, so the
+// three language versions are treated as alternates rather than duplicates.
+const hreflangs = Object.entries(alternates).map(([code, p]) => ({
+  code,
+  href: new URL(p, Astro.site).toString(),
+}));
+const xDefaultHref = alternates[defaultLocale]
+  ? new URL(alternates[defaultLocale], Astro.site).toString()
+  : canonicalURL.toString();
+
+const ogLocaleMap = { en: 'en_US', ro: 'ro_RO', es: 'es_ES' };
+
+const schemaOutput = schema
+  ? Array.isArray(schema)
+    ? { '@context': 'https://schema.org', '@graph': schema }
+    : schema
+  : null;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {hreflangs.map((alt) => (
+      <link rel="alternate" hreflang={alt.code} href={alt.href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Check and Validate" />
+    <meta property="og:locale" content={ogLocaleMap[locale] || 'en_US'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    {schemaOutput && (
+      <script type="application/ld+json" set:html={JSON.stringify(schemaOutput)} />
+    )}
+
+    <!--
+      Google Funding Choices / Consent Mode integration point (EEA + UK).
+      Both Romania and Spain are in the EU, so a certified CMP is required
+      before serving personalized ads. Once approved, add here:
+      <script async src="https://fundingchoicesmessages.google.com/i/YOUR_PUB_ID?ers=1"></script>
+      <script>(function(){function signalGooglefcPresent(){if(!window.frames['googlefcPresent']){if(document.body){const iframe=document.createElement('iframe');iframe.style='width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;';iframe.style.display='none';iframe.name='googlefcPresent';document.body.appendChild(iframe);}else{setTimeout(signalGooglefcPresent,0);}}}signalGooglefcPresent();})();</script>
+    -->
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{strings.skipToContent}</a>
+    <Header locale={locale} alternates={alternates} />
+    <main class="wrap" id="main">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+    <CookieConsent locale={locale} />
+  </body>
+</html>

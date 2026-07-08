@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'CNP Validator | Check and Validate';
+const description =
+  'Free Romanian CNP validator. Check the structure and control digit of a Cod Numeric Personal and read back the date of birth, sex, and county it encodes.';
+const summary =
+  'Enter a 13-digit Romanian CNP to check its structure and control digit. If it is valid, the tool reads back the date of birth, sex, and county of registration that the number encodes.';
+
+const strings = {
+  locale,
+  validHeadline: 'Valid CNP',
+  invalidHeadline: 'Not a valid CNP',
+  validNote: 'The structure and control digit are correct. Here is what the number encodes.',
+  residentNote:
+    'The structure and control digit are correct. This code belongs to a foreign resident, so the century of birth is not fixed by the first digit.',
+  err: {
+    empty: 'Enter a CNP to check.',
+    digits: 'A CNP is made of digits only, with no letters or other symbols.',
+    length: 'A CNP has exactly 13 digits, but this one has {length}.',
+    sex: 'The first digit must be between 1 and 9.',
+    date: 'The birth date encoded in this CNP is not a real calendar date.',
+    county: 'The county code {jj} does not match any Romanian county.',
+    checksum: 'The control digit does not match the rest of the number, so this is not a valid CNP.',
+  },
+  labelBirthDate: 'Date of birth',
+  labelSex: 'Sex',
+  labelCounty: 'County of registration',
+  sexMale: 'Male',
+  sexFemale: 'Female',
+  sexUnspecified: 'Not specified',
+  disclaimer:
+    'This checks only the mathematical structure of the number. It does not confirm that the CNP belongs to a real person or to a currently valid document.',
+};
+
+const faq = [
+  {
+    question: 'What is a CNP?',
+    answer:
+      'The CNP, or Cod Numeric Personal, is the 13-digit personal identification number issued to every Romanian citizen and to registered foreign residents. It appears on the national ID card, the passport, and most official paperwork.',
+  },
+  {
+    question: 'What does the validator confirm?',
+    answer:
+      'It confirms that the 13 digits form a structurally correct CNP: the encoded date is a real calendar date, the county code exists, and the final control digit matches the other twelve. It cannot tell you whether a real person holds that number.',
+  },
+  {
+    question: 'How is the sex and birth date read from the number?',
+    answer:
+      'The first digit encodes both sex and the century of birth. For example 1 is a man born between 1900 and 1999, 2 is a woman in the same period, and 5 and 6 cover men and women born from 2000 onward. The next six digits are the year, month, and day.',
+  },
+  {
+    question: 'What do the two digits after the birth date mean?',
+    answer:
+      'They are the county code, showing where the CNP was registered. Codes 01 to 40 cover the counties and Bucharest, 41 to 46 are the six sectors of Bucharest, and 51 and 52 are Calarasi and Giurgiu.',
+  },
+  {
+    question: 'Can I use this to generate a CNP?',
+    answer:
+      'No, and that is deliberate. This is a validator, not a generator. It checks a number you already have; it will not fabricate one for you.',
+  },
+  {
+    question: 'Is my CNP stored or sent anywhere?',
+    answer:
+      'No. The check runs entirely in your browser. Nothing you type is uploaded or saved, so you can check a real CNP without it leaving your device.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="cnp" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="cnp-form" novalidate>
+      <div class="field" id="cnp-field">
+        <label for="cnp-input">CNP (13 digits)</label>
+        <span class="hint">Enter the number as printed on the ID card.</span>
+        <input type="text" inputmode="numeric" id="cnp-input" class="mono" autocomplete="off" spellcheck="false" placeholder="1630615123457" />
+        <span class="error-msg" id="cnp-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate CNP</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/cnp-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      A CNP is not a random string. It follows the pattern S YY MM DD JJ NNN C, where every part
+      has a meaning. The first digit, S, gives the sex and the century of birth. The next six
+      digits are the date of birth as year, month, and day. Two digits, JJ, are the county where
+      the number was registered. Three digits, NNN, are a sequential number, and the final digit,
+      C, is a control digit that ties the whole number together.
+    </p>
+    <p>
+      The control digit is what makes a CNP self-checking. Each of the first twelve digits is
+      multiplied by a fixed weight from the sequence 2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9. The
+      twelve products are added up, and the total is divided by 11. The remainder is the control
+      digit, except that a remainder of 10 becomes 1. If the digit at the end does not match this
+      result, the number is not a valid CNP.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample CNP 1630615123457, which is an example and does not belong to anyone.
+      The first digit 1 means a man born between 1900 and 1999. The next six digits, 630615,
+      give 15 June 1963. The county code 12 is Cluj. To check the last digit, multiply
+      1, 6, 3, 0, 6, 1, 5, 1, 2, 3, 4, 5 by the weights above and add the results, which comes to
+      216. Dividing 216 by 11 leaves a remainder of 7, and the final digit is 7, so the control
+      digit matches and the number is valid.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      This helps whenever a CNP has to be entered correctly on a form. A payroll or HR clerk
+      keying in a new employee's details, a notary preparing a contract, or someone filling in an
+      online application can paste the number here first and catch a mistyped digit before it
+      causes a rejected form or a mismatch later. It is also a quick way to understand what a
+      CNP on a document is telling you, since it spells out the birth date, sex, and county in
+      plain terms.
+    </p>
+  </Fragment>
+</ToolLayout>

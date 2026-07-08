@@ -1,0 +1,123 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator IBAN | Check and Validate';
+const description =
+  'Validator IBAN gratuit. Verifică orice cod IBAN cu algoritmul mod-97 și cu lungimea oficială pe țară și află exact ce verificare a eșuat.';
+const summary =
+  'Lipește un IBAN, cu sau fără spații, ca să îl verifici după lungimea oficială a țării sale și după suma de control mod-97 din standardul ISO 7064. Dacă este greșit, instrumentul îți spune care dintre cele două verificări a eșuat.';
+
+const strings = {
+  locale,
+  validHeadline: 'IBAN valid',
+  invalidHeadline: 'IBAN invalid',
+  validNote: 'Lungimea corespunde standardului pentru {cc}, iar suma de control mod-97 este corectă.',
+  err: {
+    empty: 'Introdu un IBAN pentru verificare.',
+    charset: 'Un IBAN poate conține doar litere și cifre. Elimină mai întâi orice alt simbol.',
+    country: 'Codul de țară {cc} nu este un cod de țară IBAN recunoscut.',
+    length: 'Acest IBAN are {actual} caractere, dar un IBAN {cc} trebuie să aibă exact {expected}.',
+    checksum: 'Verificarea mod-97 a eșuat, deci cel puțin un caracter este greșit sau două dintre ele sunt inversate.',
+  },
+  labelCountry: 'Cod de țară',
+  labelLength: 'Lungime',
+  labelFormatted: 'Formatat',
+  charsWord: 'caractere',
+};
+
+const faq = [
+  {
+    question: 'Ce verifică de fapt acest validator?',
+    answer:
+      'Două lucruri. Întâi, că IBAN-ul are exact numărul de caractere stabilit pentru țara sa. Apoi, că suma de control mod-97 din interiorul numărului este corectă. Împreună, acestea prind aproape orice greșeală de tastare, dar nu pot confirma că în spatele numărului există un cont bancar real și deschis.',
+  },
+  {
+    question: 'Un IBAN valid înseamnă că există contul?',
+    answer:
+      'Nu. Verificarea dovedește doar că numărul este coerent în sine și corect format. Contul ar putea fi închis, sau numărul ar putea fi bine format, dar niciodată emis. Doar banca poate confirma că un cont este real și activ.',
+  },
+  {
+    question: 'Contează spațiile sau literele mici?',
+    answer:
+      'Nu. Instrumentul elimină spațiile și transformă literele în majuscule înainte de verificare, așa că RO49 aaaa 1b31 și RO49AAAA1B31 sunt tratate la fel. Băncile scriu IBAN-ul în grupuri de câte patru doar ca să fie mai ușor de citit.',
+  },
+  {
+    question: 'De ce a picat IBAN-ul meu la lungime, deși părea corect?',
+    answer:
+      'Fiecare țară are o lungime fixă a IBAN-ului. Un IBAN german are mereu 22 de caractere, unul spaniol 24, iar unul românesc tot 24. Dacă al tău are un caracter în plus sau în minus, undeva a fost pierdută sau adăugată o cifră, chiar dacă începutul pare corect.',
+  },
+  {
+    question: 'IBAN-ul meu este trimis undeva când îl verific?',
+    answer:
+      'Nu. Tot calculul rulează în browserul tău. Nimic din ce introduci nu este încărcat, înregistrat sau salvat, așa că poți verifica în siguranță un număr de cont real aici.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="iban" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="iban-form" novalidate>
+      <div class="field" id="iban-field">
+        <label for="iban-input">IBAN</label>
+        <span class="hint">Lipește-l cu sau fără spații.</span>
+        <input type="text" id="iban-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="RO49 AAAA 1B31 0075 9384 0000" />
+        <span class="error-msg" id="iban-error"></span>
+      </div>
+      <button type="submit" class="btn">Verifică IBAN-ul</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/iban-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un IBAN, adică International Bank Account Number, cuprinde țara, banca și contul într-un
+      singur șir, cu o verificare de siguranță inclusă. Validarea are doi pași, iar acest
+      instrument îi rulează pe amândoi.
+    </p>
+    <p>
+      Primul pas este verificarea lungimii. Fiecare țară înregistrează o lungime fixă a IBAN-ului
+      în standardul ISO 13616, așa că instrumentul citește codul de țară din primele două litere
+      și caută câte caractere trebuie să aibă IBAN-ul acelei țări. Un IBAN din Regatul Unit are 22
+      de caractere, Germania 22, Spania 24, România 24, iar Norvegia este cel mai scurt, cu 15.
+      Dacă lungimea este greșită, un caracter a fost adăugat sau pierdut, iar numărul nu poate fi
+      corect.
+    </p>
+    <p>
+      Al doilea pas este suma de control mod-97 din ISO 7064. Primele patru caractere (codul de
+      țară și cele două cifre de control) sunt mutate la final. Fiecare literă este apoi
+      înlocuită cu un număr, unde A este 10, B este 11 și așa mai departe până la Z, care este 35.
+      Astfel, întregul IBAN devine un singur șir lung de cifre, care se împarte la 97. Dacă restul
+      este exact 1, suma de control este corectă.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu GB82 WEST 1234 5698 7654 32, care este inventat, nu un cont real.
+      Are 22 de caractere, ceea ce corespunde lungimii pentru Regatul Unit, deci prima verificare
+      trece. Mutând GB82 la final obținem WEST12345698765432GB82, iar după înlocuirea literelor cu
+      numere și împărțirea la 97, restul iese exact 1. Ambele verificări trec, deci numărul este
+      un IBAN valid ca formă.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Aceasta este verificarea de făcut înainte să trimiți bani sau să dai numărul tău de cont
+      cuiva. O singură cifră greșită sau inversată într-un IBAN poate trimite un transfer în locul
+      nepotrivit sau îl poate întoarce după câteva zile, cu un comision. Un liber profesionist
+      care pune un IBAN pe o factură, un proprietar care scrie datele bancare într-un contract sau
+      oricine adaugă un nou beneficiar poate confirma în câteva secunde că numărul este bine
+      format și evită o corectură lentă și incomodă mai târziu.
+    </p>
+  </Fragment>
+</ToolLayout>

@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator CNP | Check and Validate';
+const description =
+  'Validator CNP gratuit. Verifică structura și cifra de control a unui Cod Numeric Personal și află data nașterii, sexul și județul codificate în el.';
+const summary =
+  'Introdu un CNP de 13 cifre ca să îi verifici structura și cifra de control. Dacă este valid, instrumentul îți arată data nașterii, sexul și județul de înregistrare pe care le codifică numărul.';
+
+const strings = {
+  locale,
+  validHeadline: 'CNP valid',
+  invalidHeadline: 'CNP invalid',
+  validNote: 'Structura și cifra de control sunt corecte. Iată ce codifică numărul.',
+  residentNote:
+    'Structura și cifra de control sunt corecte. Acest cod aparține unui rezident străin, așa că secolul nașterii nu este fixat de prima cifră.',
+  err: {
+    empty: 'Introdu un CNP pentru verificare.',
+    digits: 'Un CNP conține doar cifre, fără litere sau alte simboluri.',
+    length: 'Un CNP are exact 13 cifre, dar acesta are {length}.',
+    sex: 'Prima cifră trebuie să fie între 1 și 9.',
+    date: 'Data nașterii codificată în acest CNP nu este o dată calendaristică reală.',
+    county: 'Codul de județ {jj} nu corespunde niciunui județ din România.',
+    checksum: 'Cifra de control nu se potrivește cu restul numărului, deci acesta nu este un CNP valid.',
+  },
+  labelBirthDate: 'Data nașterii',
+  labelSex: 'Sex',
+  labelCounty: 'Județul de înregistrare',
+  sexMale: 'Masculin',
+  sexFemale: 'Feminin',
+  sexUnspecified: 'Nespecificat',
+  disclaimer:
+    'Se verifică doar structura matematică a numărului. Nu se confirmă că CNP-ul aparține unei persoane reale sau unui document valabil în prezent.',
+};
+
+const faq = [
+  {
+    question: 'Ce este CNP-ul?',
+    answer:
+      'CNP-ul, adică Codul Numeric Personal, este numărul de identificare de 13 cifre atribuit fiecărui cetățean român și rezidenților străini înregistrați. Apare pe cartea de identitate, pe pașaport și pe majoritatea actelor oficiale.',
+  },
+  {
+    question: 'Ce confirmă acest validator?',
+    answer:
+      'Confirmă că cele 13 cifre formează un CNP corect ca structură: data codificată este o dată reală, codul de județ există, iar cifra de control se potrivește cu celelalte douăsprezece. Nu poate spune dacă numărul aparține unei persoane reale.',
+  },
+  {
+    question: 'Cum se citesc sexul și data nașterii din număr?',
+    answer:
+      'Prima cifră arată sexul și secolul nașterii. De exemplu, 1 înseamnă bărbat născut între 1900 și 1999, 2 înseamnă femeie în aceeași perioadă, iar 5 și 6 acoperă bărbații și femeile născute din anul 2000 încoace. Următoarele șase cifre sunt anul, luna și ziua.',
+  },
+  {
+    question: 'Ce înseamnă cele două cifre de după data nașterii?',
+    answer:
+      'Sunt codul de județ, care arată unde a fost înregistrat CNP-ul. Codurile 01 până la 40 acoperă județele și Bucureștiul, 41 până la 46 sunt cele șase sectoare ale Bucureștiului, iar 51 și 52 sunt Călărași și Giurgiu.',
+  },
+  {
+    question: 'Pot genera un CNP cu acest instrument?',
+    answer:
+      'Nu, și asta este intenționat. Acesta este un validator, nu un generator. Verifică un număr pe care îl ai deja; nu îți fabrică unul.',
+  },
+  {
+    question: 'CNP-ul meu este salvat sau trimis undeva?',
+    answer:
+      'Nu. Verificarea rulează integral în browserul tău. Nimic din ce introduci nu este încărcat sau salvat, așa că poți verifica un CNP real fără ca acesta să îți părăsească dispozitivul.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="cnp" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="cnp-form" novalidate>
+      <div class="field" id="cnp-field">
+        <label for="cnp-input">CNP (13 cifre)</label>
+        <span class="hint">Introdu numărul așa cum este tipărit pe act.</span>
+        <input type="text" inputmode="numeric" id="cnp-input" class="mono" autocomplete="off" spellcheck="false" placeholder="1630615123457" />
+        <span class="error-msg" id="cnp-error"></span>
+      </div>
+      <button type="submit" class="btn">Verifică CNP-ul</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/cnp-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un CNP nu este un șir de cifre la întâmplare. Respectă modelul S AA LL ZZ JJ NNN C, unde
+      fiecare parte are un rost. Prima cifră, S, dă sexul și secolul nașterii. Următoarele șase
+      cifre sunt data nașterii ca an, lună și zi. Două cifre, JJ, arată județul în care a fost
+      înregistrat numărul. Trei cifre, NNN, sunt un număr secvențial, iar ultima cifră, C, este
+      o cifră de control care leagă tot numărul.
+    </p>
+    <p>
+      Cifra de control este cea care face CNP-ul să se verifice singur. Fiecare dintre primele
+      douăsprezece cifre este înmulțită cu o pondere fixă din secvența 2, 7, 9, 1, 4, 6, 3, 5, 8,
+      2, 7, 9. Cele douăsprezece produse se adună, iar totalul se împarte la 11. Restul este
+      cifra de control, cu excepția cazului în care restul este 10, situație în care cifra devine
+      1. Dacă ultima cifră nu se potrivește cu acest rezultat, numărul nu este un CNP valid.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm CNP-ul de exemplu 1630615123457, care este doar un exemplu și nu aparține nimănui.
+      Prima cifră, 1, înseamnă bărbat născut între 1900 și 1999. Următoarele șase cifre, 630615,
+      dau 15 iunie 1963. Codul de județ 12 este Cluj. Pentru ultima cifră, înmulțim
+      1, 6, 3, 0, 6, 1, 5, 1, 2, 3, 4, 5 cu ponderile de mai sus și adunăm rezultatele, care dau
+      216. Împărțind 216 la 11 rămâne restul 7, iar ultima cifră este 7, deci cifra de control se
+      potrivește și numărul este valid.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Este util ori de câte ori un CNP trebuie introdus corect într-un formular. Un contabil sau
+      un coleg de la resurse umane care adaugă datele unui nou angajat, un notar care pregătește
+      un contract sau cineva care completează o cerere online poate lipi mai întâi numărul aici
+      și poate prinde o cifră greșită înainte să ducă la un formular respins sau la o
+      neconcordanță ulterioară. Este și un mod rapid de a înțelege ce spune un CNP de pe un act,
+      pentru că îți arată clar data nașterii, sexul și județul.
+    </p>
+  </Fragment>
+</ToolLayout>

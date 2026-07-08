@@ -1,0 +1,139 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'DNI/NIE Calculator | Check and Validate';
+const description =
+  'Free Spanish DNI and NIE check-letter calculator. Work out the correct letter for an ID number, or confirm whether the letter on an existing DNI or NIE is right.';
+const summary =
+  'Calculate the check letter for a Spanish DNI or NIE, or paste a full document to confirm its letter is correct. Switch between the two modes with the buttons below.';
+
+const strings = {
+  locale,
+  toggle: { calc: 'Calculate letter', validate: 'Check a full ID' },
+  modes: {
+    calc: {
+      label: 'DNI or NIE number (without the letter)',
+      hint: '8 digits for a DNI, or X, Y, or Z followed by 7 digits for a NIE.',
+      submit: 'Calculate letter',
+    },
+    validate: {
+      label: 'Full DNI or NIE (with the letter)',
+      hint: 'Include the check letter at the end, for example 12345678Z.',
+      submit: 'Check ID',
+    },
+  },
+  calc: {
+    headline: 'Check letter: {letter}',
+    typeLabel: 'Document type',
+    letterLabel: 'Check letter',
+    fullLabel: 'Full number',
+  },
+  validate: {
+    validHeadline: 'The letter is correct',
+    invalidHeadline: 'The letter is wrong',
+    validNote: 'For {number}, the correct letter is {letter}, and that is the letter on this document.',
+    invalidNote: 'For {number}, the correct letter is {expected}, not {given}.',
+    typeLabel: 'Document type',
+    numberLabel: 'Number',
+    expectedLabel: 'Correct letter',
+  },
+  err: {
+    emptyCalc: 'Enter a DNI or NIE number.',
+    formatCalc: 'Enter 8 digits for a DNI, or a letter X, Y, or Z followed by 7 digits for a NIE.',
+    emptyValidate: 'Enter a full DNI or NIE.',
+    formatValidate: 'Enter a full DNI or NIE including its check letter, for example 12345678Z.',
+  },
+};
+
+const faq = [
+  {
+    question: 'What is the difference between a DNI and a NIE?',
+    answer:
+      'A DNI is the national ID number for Spanish citizens: eight digits and a letter. A NIE is the identity number for foreigners in Spain: a leading letter X, Y, or Z, then seven digits, then a check letter. Both use the same method to work out that final letter.',
+  },
+  {
+    question: 'How is the check letter chosen?',
+    answer:
+      'The number is divided by 23, and the remainder points to one letter in a fixed list of 23. There are 23 letters because the alphabet used here leaves out I, O, U, and N with a tilde to avoid mixing them up with digits or with each other.',
+  },
+  {
+    question: 'Why does a NIE letter get replaced with a number first?',
+    answer:
+      'A NIE starts with a letter, but the calculation needs digits. So X becomes 0, Y becomes 1, and Z becomes 2. After that swap the NIE is treated as an eight-digit number and follows exactly the same steps as a DNI.',
+  },
+  {
+    question: 'Does a correct letter mean the DNI is real?',
+    answer:
+      'No. The letter only proves the number and letter are consistent with each other. It does not mean the document was ever issued or that it belongs to a particular person. It is a format check, not a lookup.',
+  },
+  {
+    question: 'Can I use this if I forgot the letter on my own document?',
+    answer:
+      'Yes. Switch to the calculate mode, type the eight digits of your DNI or the letter and seven digits of your NIE, and the tool returns the letter that belongs with it.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="dni-nie" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <div class="mode-toggle" role="group" aria-label="Choose mode">
+      <button type="button" id="mode-calc" aria-pressed="true">Calculate letter</button>
+      <button type="button" id="mode-validate" aria-pressed="false">Check a full ID</button>
+    </div>
+
+    <form class="calc-box" id="dni-form" novalidate>
+      <div class="field" id="dni-field">
+        <label for="dni-input" id="dni-label">DNI or NIE number (without the letter)</label>
+        <span class="hint" id="dni-hint">8 digits for a DNI, or X, Y, or Z followed by 7 digits for a NIE.</span>
+        <input type="text" id="dni-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="12345678" />
+        <span class="error-msg" id="dni-error"></span>
+      </div>
+      <button type="submit" class="btn" id="dni-submit">Calculate letter</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/dni-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      The final letter on a Spanish DNI or NIE is not chosen freely. It is calculated from the
+      digits, which is why a small typo in the number almost always produces the wrong letter and
+      gives the mistake away.
+    </p>
+    <p>
+      For a DNI, take the eight digits as a whole number and divide by 23. The remainder, a value
+      from 0 to 22, is a position in the fixed list of letters T, R, W, A, G, M, Y, F, P, D, X, B,
+      N, J, Z, S, Q, V, H, L, C, K, E. The letter at that position is the check letter. A NIE
+      works the same way, except its leading letter is first turned into a digit: X into 0, Y into
+      1, and Z into 2.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number 12345678, which is an example and not a real document. Dividing
+      12345678 by 23 leaves a remainder of 14. Counting from zero, position 14 in the list above
+      is the letter Z, so the full DNI would be 12345678Z. For a NIE such as X1234567, the X
+      becomes 0, giving 01234567, which divided by 23 leaves a remainder of 19, and position 19 is
+      the letter L, giving X1234567L.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      This is handy when you have to write a DNI or NIE onto a form and want to be sure it is
+      right, or when a document is worn and you cannot read the last character clearly. Someone
+      renting a flat, opening an account, signing a contract, or filling in an official
+      application can confirm in seconds that the number and its letter agree, and avoid a form
+      that gets bounced back for a single wrong character.
+    </p>
+  </Fragment>
+</ToolLayout>

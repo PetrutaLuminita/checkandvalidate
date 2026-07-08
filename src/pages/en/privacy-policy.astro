@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { alternatesFor, staticPath, homePath } from '../../i18n/config.js';
+import { t } from '../../i18n/ui.js';
+
+const locale = 'en';
+const strings = t(locale);
+const pageId = 'privacy';
+const path = staticPath(pageId, locale);
+const alternates = alternatesFor('static', pageId);
+const lastUpdated = 'July 7, 2026';
+
+const title = 'Privacy Policy | Check and Validate';
+const description =
+  'How Check and Validate handles cookies, Google AdSense advertising, and your data, explained in plain language.';
+
+const schema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: strings.breadcrumbHome, item: new URL(homePath(locale), Astro.site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Privacy Policy', item: new URL(path, Astro.site).toString() },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} locale={locale} path={path} alternates={alternates} schema={schema}>
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href={homePath(locale)}>{strings.breadcrumbHome}</a>
+    <span class="sep">&gt;</span>
+    <span aria-current="page">Privacy Policy</span>
+  </nav>
+
+  <h1>Privacy Policy</h1>
+  <p class="disclaimer">Last updated: {lastUpdated}</p>
+
+  <p>
+    This page explains what data Check and Validate collects, why, and how you can control it. We
+    have kept it in plain language rather than dense legal text.
+  </p>
+
+  <h2>What this site does not do</h2>
+  <p>
+    Every validator on this site runs entirely in your browser. The numbers you type into a tool,
+    such as a CNP, a DNI, a NIE, or an IBAN, are never sent to a server, stored in a database, or
+    seen by anyone else. There is no account system and nothing to sign up for.
+  </p>
+
+  <h2>Cookies</h2>
+  <p>
+    This site uses cookies for two purposes: to remember whether you have accepted or declined the
+    cookie notice, and to support the advertising described below. Your browser lets you block or
+    delete cookies at any time through its settings, though doing so may cause the cookie banner to
+    reappear on your next visit.
+  </p>
+
+  <h2>Google AdSense and third-party advertising</h2>
+  <p>
+    Check and Validate uses Google AdSense to show ads, which is how the site stays free. Google
+    and other third-party advertising vendors use cookies to serve ads based on a visitor's prior
+    visits to this site and to other sites across the web. This is sometimes called interest-based
+    or personalized advertising. It works by tracking browsing patterns at the browser or device
+    level, not by identifying who you are, and it does not include personal identifiers such as
+    your name, home address, or email address.
+  </p>
+  <p>
+    Google's own explanation of how it and its partners handle data collected on sites that use its
+    services is available at
+    <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>.
+  </p>
+
+  <h2>Your advertising choices</h2>
+  <p>
+    If you would prefer not to see personalized ads, you can adjust your settings directly with
+    Google at
+    <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a>,
+    or use the industry-wide opt-out tools at
+    <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a>.
+    Both let you opt out of interest-based advertising across many participating sites and
+    advertisers, not just this one.
+  </p>
+  <p>
+    You can also disable cookies entirely through your browser's settings, which applies to the
+    cookies used for advertising as well as the one this site uses to remember your cookie banner
+    choice. Doing so may cause some conveniences, such as remembering that choice between visits, to
+    stop working as expected.
+  </p>
+
+  <h2>Visitors in the European Economic Area and the United Kingdom</h2>
+  <p>
+    Because this site serves visitors in the European Union, including Romania and Spain, and in
+    the United Kingdom, visitors in those regions are shown a consent message that lets them choose
+    whether to allow personalized advertising, in line with Google's certified consent
+    requirements. Your choice is remembered so you are not asked on every visit.
+  </p>
+
+  <h2>Analytics</h2>
+  <p>
+    This site may use a privacy-conscious analytics tool to understand overall traffic, such as
+    which pages are visited and roughly how many people visit, so the site can be improved. Any
+    analytics used here does not identify you personally and is separate from the advertising
+    cookies described above.
+  </p>
+
+  <h2>Children's privacy</h2>
+  <p>
+    This site is not directed at children under 13 and does not knowingly collect personal
+    information from them.
+  </p>
+
+  <h2>Changes to this policy</h2>
+  <p>
+    If this policy changes, the updated version will be posted on this page with a new "last
+    updated" date at the top.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about this policy can be sent to
+    <a href="mailto:contact@checkandvalidate.com">contact@checkandvalidate.com</a>.
+  </p>
+</BaseLayout>

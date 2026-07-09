@@ -112,19 +112,35 @@ const faq = [
       gives the mistake away.
     </p>
     <p>
-      For a DNI, take the eight digits as a whole number and divide by 23. The remainder, a value
-      from 0 to 22, is a position in the fixed list of letters T, R, W, A, G, M, Y, F, P, D, X, B,
-      N, J, Z, S, Q, V, H, L, C, K, E. The letter at that position is the check letter. A NIE
-      works the same way, except its leading letter is first turned into a digit: X into 0, Y into
-      1, and Z into 2.
+      The method is a modulo 23 operation, which is just a fancy way of saying "the remainder left
+      after dividing by 23". Step by step, it works like this:
+    </p>
+    <ol class="prose">
+      <li>Start with the number. For a DNI, that is simply the eight digits as they are.</li>
+      <li>
+        If it is a NIE, first swap the leading letter for a digit: X becomes 0, Y becomes 1, and Z
+        becomes 2. So Y1234567 turns into 11234567. Either way, you now have an eight-digit number
+        to work with.
+      </li>
+      <li>Divide that number by 23 and throw away the whole part, keeping only the remainder, which is a value from 0 to 22.</li>
+      <li>
+        Line the remainder up against the fixed list of 23 letters, counting from zero:
+        T, R, W, A, G, M, Y, F, P, D, X, B, N, J, Z, S, Q, V, H, L, C, K, E.
+      </li>
+      <li>The letter sitting at that position is the check letter.</li>
+    </ol>
+    <p>
+      There are exactly 23 letters because the list deliberately leaves out I, O, U, and the letter
+      N with a tilde, so that a letter is never mistaken for a digit or for another letter. That is
+      also why the divisor is 23 rather than some rounder number.
     </p>
     <h3>Worked Example</h3>
     <p>
       Take the sample number 12345678, which is an example and not a real document. Dividing
-      12345678 by 23 leaves a remainder of 14. Counting from zero, position 14 in the list above
-      is the letter Z, so the full DNI would be 12345678Z. For a NIE such as X1234567, the X
-      becomes 0, giving 01234567, which divided by 23 leaves a remainder of 19, and position 19 is
-      the letter L, giving X1234567L.
+      12345678 by 23 gives 536768 with 14 left over, so the remainder is 14. Counting from zero,
+      position 14 in the list above is the letter Z, so the full DNI would be 12345678Z. For a NIE
+      such as X1234567, the X first becomes 0, giving 01234567, which divided by 23 leaves a
+      remainder of 19, and position 19 is the letter L, giving X1234567L.
     </p>
 
     <h2>When You Would Use This</h2>

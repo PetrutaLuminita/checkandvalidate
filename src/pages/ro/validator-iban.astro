@@ -83,8 +83,35 @@ const faq = [
     <h2>Cum funcționează</h2>
     <p>
       Un IBAN, adică International Bank Account Number, cuprinde țara, banca și contul într-un
-      singur șir, cu o verificare de siguranță inclusă. Validarea are doi pași, iar acest
-      instrument îi rulează pe amândoi.
+      singur șir, cu o verificare de siguranță inclusă.
+    </p>
+    <h3>Părțile unui IBAN</h3>
+    <p>
+      Orice IBAN, oricât de lung ar fi, este format din aceleași trei părți, citite de la stânga la
+      dreapta:
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Lungime</th><th>Ce este</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cod de țară</td><td>2 litere</td><td>Țara unde este deschis contul, precum RO, ES sau DE</td></tr>
+          <tr><td>Cifre de control</td><td>2 cifre</td><td>Suma de control mod-97 care apără întregul număr de greșeli</td></tr>
+          <tr><td>BBAN</td><td>până la 30 de caractere</td><td>Numărul de cont național, cu lungime și structură fixate de fiecare țară</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      BBAN-ul, adică Basic Bank Account Number, este partea pe care chiar banca ta o recunoaște
+      singură. În interiorul lui se află un cod de bancă (uneori cu un cod separat de sucursală)
+      care identifică instituția, urmat de numărul tău de cont propriu-zis. Un BBAN german, de
+      pildă, este un cod de bancă de 8 cifre și apoi un număr de cont de 10 cifre. Fiindcă fiecare
+      țară își stabilește propria structură a BBAN-ului, lungimea totală a IBAN-ului se schimbă de
+      la o țară la alta, și tocmai de aceea contează verificarea lungimii de mai jos.
+    </p>
+    <p>
+      Validarea are doi pași, iar acest instrument îi rulează pe amândoi.
     </p>
     <p>
       Primul pas este verificarea lungimii. Fiecare țară înregistrează o lungime fixă a IBAN-ului

@@ -1,14 +1,20 @@
 ---
-// Short consent banner, translated per language. It deliberately does not name
-// "Google AdSense"; it links to this language's own Privacy Policy using a
-// relative path, where the advertising and cookies details live.
+// Consent banner with a REAL choice, not just a notice. Nothing ad-related
+// runs until the visitor clicks Accept. If they click Reject, no advertising
+// scripts or cookies load and the site keeps working fully, because every
+// validator runs locally in the browser and needs no ads to function.
 //
-// AdSense requires a certified consent management platform (CMP) for EEA/UK
-// visitors, and both Romania and Spain are in the EU. Do not hand-roll an IAB
-// TCF signal here. Instead, once approved, insert Google's Funding Choices
-// script tag in BaseLayout.astro's <head> (see the commented integration point
-// there) and it will present the certified consent UI itself. This banner is a
-// lightweight fallback / placeholder until that script is wired in.
+// The banner is translated per language and links to this language's own
+// Privacy Policy with a relative path. It deliberately does not name a specific
+// ad vendor.
+//
+// EEA / UK note: Romania and Spain are in the EU, so Google requires a
+// certified consent management platform (Funding Choices) before serving
+// personalized ads. Do not hand-roll an IAB TCF signal. Once approved, add
+// Google's Funding Choices script at the integration point in BaseLayout.astro
+// <head>, and forward the choice below to it in `loadAdScripts()`. This banner
+// and its localStorage gate are the fallback until that certified CMP is wired
+// in.
 import { staticPath } from '../i18n/config.js';
 import { t } from '../i18n/ui.js';
 
@@ -31,24 +37,48 @@ const privacyHref = staticPath('privacy', locale);
 </div>
 
 <script>
-  // Consent choice is stored once and remembered across the whole site,
-  // regardless of which language version the visitor first landed on.
+  // One consent choice, remembered across the whole site and every language.
+  // Values: 'accepted' | 'rejected'. Absence means "not asked yet".
   const STORAGE_KEY = 'cav-cookie-consent';
   const banner = document.getElementById('cookie-banner');
   const acceptBtn = document.getElementById('cookie-accept');
   const declineBtn = document.getElementById('cookie-decline');
 
-  if (banner && !localStorage.getItem(STORAGE_KEY)) {
-    banner.hidden = false;
+  // The ONLY place advertising is allowed to start. It is called after Accept,
+  // or on load for a returning visitor who already accepted. It never runs on
+  // Reject or before a choice is made, so no ad script or ad cookie can load
+  // without consent.
+  function loadAdScripts() {
+    if ((window as any).__cavAdsLoaded) return; // load at most once
+    (window as any).__cavAdsLoaded = true;
+
+    // INTEGRATION POINT (leave until AdSense is approved):
+    // Inject the ad loader here so it is gated behind consent, e.g.
+    //   const s = document.createElement('script');
+    //   s.async = true;
+    //   s.crossOrigin = 'anonymous';
+    //   s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX';
+    //   document.head.appendChild(s);
+    // If Google Funding Choices / Consent Mode is used, forward the granted
+    // consent signal to it here before the ad loader runs.
   }
 
   function setConsent(value: string) {
-    localStorage.setItem(STORAGE_KEY, value);
+    try { localStorage.setItem(STORAGE_KEY, value); } catch (e) { /* private mode */ }
     if (banner) banner.hidden = true;
-    // Integration point: when Google Funding Choices / Consent Mode is wired
-    // in, forward this choice to the CMP here before the ad scripts load.
   }
 
-  acceptBtn?.addEventListener('click', () => setConsent('accepted'));
-  declineBtn?.addEventListener('click', () => setConsent('declined'));
+  let stored = null;
+  try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) { /* private mode */ }
+
+  if (stored === 'accepted') {
+    // Returning visitor who already consented: start ads without re-asking.
+    loadAdScripts();
+  } else if (stored !== 'rejected') {
+    // No choice yet: ask. (If 'rejected', do nothing and load no ads.)
+    if (banner) banner.hidden = false;
+  }
+
+  acceptBtn?.addEventListener('click', () => { setConsent('accepted'); loadAdScripts(); });
+  declineBtn?.addEventListener('click', () => { setConsent('rejected'); });
 </script>

@@ -468,6 +468,37 @@ code {
   }
 }
 
+/* Privacy callout above each tool */
+.privacy-callout {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--color-border-strong);
+  border-left: 4px solid var(--color-accent);
+  background: #f2f6f8;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin: 20px 0 4px;
+}
+
+.privacy-callout-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--color-accent);
+  margin-top: 1px;
+}
+
+.privacy-callout p {
+  margin: 0;
+  font-size: 0.94rem;
+  color: var(--color-text);
+}
+
+.privacy-callout strong {
+  color: var(--color-accent-dark);
+}
+
 /* Forms / tool UI */
 .calc-box {
   border: 1px solid var(--color-border);

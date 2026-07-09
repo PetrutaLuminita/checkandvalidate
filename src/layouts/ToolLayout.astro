@@ -55,6 +55,10 @@ const faqSchema = faq.length
   : null;
 
 const schema = [breadcrumbSchema, softwareAppSchema, ...(faqSchema ? [faqSchema] : [])];
+
+// Split the localized privacy callout so the first sentence reads as a bold
+// lead-in. Each language's string starts with a short lead sentence.
+const [calloutLead, ...calloutRest] = strings.privacyCallout.split('. ');
 ---
 
 <BaseLayout
@@ -75,6 +79,13 @@ const schema = [breadcrumbSchema, softwareAppSchema, ...(faqSchema ? [faqSchema]
   <p class="tool-summary">{summary}</p>
 
   <AdSlot position="tool-top" label={strings.adLabel} />
+
+  <div class="privacy-callout" role="note">
+    <svg class="privacy-callout-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3H9z" fill="currentColor"/>
+    </svg>
+    <p><strong>{calloutLead}.</strong> {calloutRest.join('. ')}</p>
+  </div>
 
   <slot name="tool" />
 

@@ -83,8 +83,35 @@ const faq = [
     <h2>Cómo funciona</h2>
     <p>
       Un IBAN, o International Bank Account Number, reúne el país, el banco y la cuenta en una
-      sola cadena con una comprobación de seguridad incorporada. La validación tiene dos pasos, y
-      esta herramienta ejecuta los dos.
+      sola cadena con una comprobación de seguridad incorporada.
+    </p>
+    <h3>Las partes de un IBAN</h3>
+    <p>
+      Todo IBAN, sea cual sea su longitud, se compone de las mismas tres partes, leídas de
+      izquierda a derecha:
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Longitud</th><th>Qué es</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Código de país</td><td>2 letras</td><td>El país donde está la cuenta, como RO, ES o DE</td></tr>
+          <tr><td>Dígitos de control</td><td>2 cifras</td><td>La suma de control mod-97 que protege todo el número frente a erratas</td></tr>
+          <tr><td>BBAN</td><td>hasta 30 caracteres</td><td>El número de cuenta nacional, con una longitud y una estructura fijadas por cada país</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      El BBAN, o Basic Bank Account Number, es la parte que tu propio banco reconocería por sí
+      sola. Dentro contiene un código de banco (a veces con un código de sucursal aparte) que
+      identifica la entidad, seguido de tu número de cuenta real. Un BBAN alemán, por ejemplo, es
+      un código de banco de 8 cifras y luego un número de cuenta de 10 cifras. Como cada país
+      define su propia estructura de BBAN, la longitud total del IBAN cambia de un país a otro, y
+      justo por eso importa la comprobación de longitud que viene a continuación.
+    </p>
+    <p>
+      La validación tiene dos pasos, y esta herramienta ejecuta los dos.
     </p>
     <p>
       El primer paso es la comprobación de longitud. Cada país registra una longitud fija de IBAN

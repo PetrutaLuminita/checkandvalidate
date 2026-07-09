@@ -96,18 +96,47 @@ const faq = [
   <Fragment slot="body">
     <h2>Cómo funciona</h2>
     <p>
-      Un CNP no es una cadena de cifras al azar. Sigue el patrón S AA MM DD JJ NNN C, donde cada
-      parte tiene un significado. La primera cifra, S, da el sexo y el siglo de nacimiento. Las
-      seis cifras siguientes son la fecha de nacimiento en forma de año, mes y día. Dos cifras,
-      JJ, son el condado donde se registró el número. Tres cifras, NNN, son un número secuencial,
-      y la última cifra, C, es un dígito de control que enlaza todo el número.
+      Un CNP no es una cadena de cifras al azar. Sigue el patrón fijo S AA MM DD JJ NNN C, y cada
+      parte lleva una información concreta. Leído de izquierda a derecha:
     </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Segmento</th><th>Cifras</th><th>Qué representa</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>S</td><td>1</td><td>Sexo y siglo de nacimiento</td></tr>
+          <tr><td>AA MM DD</td><td>6</td><td>Fecha de nacimiento: año dentro del siglo, mes y día</td></tr>
+          <tr><td>JJ</td><td>2</td><td>Condado (judet) donde se registró el CNP</td></tr>
+          <tr><td>NNN</td><td>3</td><td>Número secuencial para las personas registradas el mismo día en el mismo condado</td></tr>
+          <tr><td>C</td><td>1</td><td>Dígito de control que verifica los otros doce</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>La primera cifra: sexo y siglo</h3>
     <p>
-      El dígito de control es lo que hace que un CNP se compruebe a sí mismo. Cada una de las
-      doce primeras cifras se multiplica por un peso fijo de la secuencia 2, 7, 9, 1, 4, 6, 3, 5,
-      8, 2, 7, 9. Los doce productos se suman y el total se divide entre 11. El resto es el
-      dígito de control, salvo que el resto sea 10, en cuyo caso el dígito pasa a ser 1. Si la
-      última cifra no coincide con este resultado, el número no es un CNP válido.
+      La primera cifra hace dos cosas a la vez. Indica el sexo de la persona y el siglo en que
+      nació, que es lo que permite fijar un año de dos cifras como 63 en un año completo como 1963.
+      El valor 1 es un hombre y el 2 una mujer nacidos entre 1900 y 1999; el 3 y el 4 cubren de
+      1800 a 1899; y el 5 y el 6 corresponden al año 2000 en adelante. Los valores 7 y 8 se usan
+      para residentes extranjeros, y el 9 para otros casos, y en esos supuestos esta cifra no fija
+      el siglo.
+    </p>
+    <h3>El código de condado</h3>
+    <p>
+      Las dos cifras que siguen a la fecha son el condado de registro. Los códigos del 01 al 40
+      recorren los condados más o menos por orden alfabético y terminan en Bucarest, del 41 al 46
+      son los seis sectores de Bucarest, y el 51 y el 52 son Călărași y Giurgiu, que se añadieron
+      cuando se crearon esos condados. Si estas dos cifras no coinciden con un código de condado
+      real, el número no puede ser auténtico.
+    </p>
+    <h3>El dígito de control</h3>
+    <p>
+      La última cifra es lo que hace que un CNP se compruebe a sí mismo. Cada una de las doce
+      primeras cifras se multiplica por un peso fijo de la secuencia 2, 7, 9, 1, 4, 6, 3, 5, 8, 2,
+      7, 9. Los doce productos se suman y el total se divide entre 11. El resto es el dígito de
+      control, salvo que el resto sea 10, en cuyo caso el dígito pasa a ser 1. Si la última cifra
+      no coincide con este resultado, el número no es un CNP válido.
     </p>
     <h3>Ejemplo resuelto</h3>
     <p>

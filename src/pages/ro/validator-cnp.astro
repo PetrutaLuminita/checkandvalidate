@@ -96,12 +96,41 @@ const faq = [
   <Fragment slot="body">
     <h2>Cum funcționează</h2>
     <p>
-      Un CNP nu este un șir de cifre la întâmplare. Respectă modelul S AA LL ZZ JJ NNN C, unde
-      fiecare parte are un rost. Prima cifră, S, dă sexul și secolul nașterii. Următoarele șase
-      cifre sunt data nașterii ca an, lună și zi. Două cifre, JJ, arată județul în care a fost
-      înregistrat numărul. Trei cifre, NNN, sunt un număr secvențial, iar ultima cifră, C, este
-      o cifră de control care leagă tot numărul.
+      Un CNP nu este un șir de cifre la întâmplare. Respectă modelul fix S AA LL ZZ JJ NNN C, iar
+      fiecare parte poartă o informație anume. Citit de la stânga la dreapta:
     </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Segment</th><th>Cifre</th><th>Ce reprezintă</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>S</td><td>1</td><td>Sex și secolul nașterii</td></tr>
+          <tr><td>YY MM DD</td><td>6</td><td>Data nașterii: anul din secol, luna, apoi ziua</td></tr>
+          <tr><td>JJ</td><td>2</td><td>Județul în care a fost înregistrat CNP-ul</td></tr>
+          <tr><td>NNN</td><td>3</td><td>Număr secvențial pentru persoanele înregistrate în aceeași zi în același județ</td></tr>
+          <tr><td>C</td><td>1</td><td>Cifra de control care verifică celelalte douăsprezece</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Prima cifră: sexul și secolul</h3>
+    <p>
+      Prima cifră face două lucruri deodată. Arată sexul persoanei și secolul în care s-a născut,
+      și tocmai așa un an de două cifre precum 63 este fixat la un an întreg ca 1963. Valoarea 1
+      înseamnă bărbat, iar 2 femeie, ambele născute între 1900 și 1999; 3 și 4 acoperă perioada
+      1800 până la 1899; iar 5 și 6 acoperă anul 2000 încoace. Valorile 7 și 8 sunt folosite pentru
+      rezidenții străini, iar 9 pentru alte cazuri, și pentru acestea secolul nu este fixat de
+      această cifră.
+    </p>
+    <h3>Codul de județ</h3>
+    <p>
+      Cele două cifre de după dată sunt județul de înregistrare. Codurile 01 până la 40 parcurg
+      județele aproximativ în ordine alfabetică și se termină cu Bucureștiul, 41 până la 46 sunt
+      cele șase sectoare ale Bucureștiului, iar 51 și 52 sunt Călărași și Giurgiu, adăugate când au
+      fost create acele județe. Dacă aceste două cifre nu corespund unui cod de județ real, numărul
+      nu poate fi autentic.
+    </p>
+    <h3>Cifra de control</h3>
     <p>
       Cifra de control este cea care face CNP-ul să se verifice singur. Fiecare dintre primele
       douăsprezece cifre este înmulțită cu o pondere fixă din secvența 2, 7, 9, 1, 4, 6, 3, 5, 8,

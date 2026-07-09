@@ -112,19 +112,35 @@ const faq = [
       diferită și scoate greșeala la iveală.
     </p>
     <p>
-      Pentru un DNI, cele opt cifre se iau ca un singur număr și se împart la 23. Restul, o
-      valoare de la 0 la 22, este o poziție în lista fixă de litere T, R, W, A, G, M, Y, F, P, D,
-      X, B, N, J, Z, S, Q, V, H, L, C, K, E. Litera de pe acea poziție este litera de control. NIE
-      funcționează la fel, doar că litera lui inițială se transformă mai întâi într-o cifră: X în
-      0, Y în 1 și Z în 2.
+      Metoda este o operație modulo 23, adică pur și simplu "restul rămas după împărțirea la 23".
+      Pas cu pas, funcționează așa:
+    </p>
+    <ol class="prose">
+      <li>Pornești de la număr. Pentru un DNI, sunt chiar cele opt cifre așa cum sunt.</li>
+      <li>
+        Dacă este un NIE, mai întâi înlocuiești litera de la început cu o cifră: X devine 0, Y
+        devine 1 și Z devine 2. Așa că Y1234567 se transformă în 11234567. În orice caz, ajungi
+        acum la un număr de opt cifre cu care lucrezi.
+      </li>
+      <li>Împarți acel număr la 23 și arunci partea întreagă, păstrând doar restul, care este o valoare de la 0 la 22.</li>
+      <li>
+        Așezi restul în dreptul listei fixe de 23 de litere, numărând de la zero:
+        T, R, W, A, G, M, Y, F, P, D, X, B, N, J, Z, S, Q, V, H, L, C, K, E.
+      </li>
+      <li>Litera aflată pe acea poziție este litera de control.</li>
+    </ol>
+    <p>
+      Sunt exact 23 de litere pentru că lista lasă deoparte, în mod intenționat, literele I, O, U
+      și Ñ, ca o literă să nu fie niciodată confundată cu o cifră sau cu altă literă. Tot de aceea
+      împărțitorul este 23, și nu vreun număr mai rotund.
     </p>
     <h3>Exemplu rezolvat</h3>
     <p>
       Luăm numărul de exemplu 12345678, care este un exemplu și nu un act real. Împărțind
-      12345678 la 23 rămâne restul 14. Numărând de la zero, poziția 14 din lista de mai sus este
-      litera Z, așa că DNI-ul complet ar fi 12345678Z. Pentru un NIE precum X1234567, X devine 0,
-      ceea ce dă 01234567, care împărțit la 23 lasă restul 19, iar poziția 19 este litera L, deci
-      rezultă X1234567L.
+      12345678 la 23 iese 536768 cu restul 14. Numărând de la zero, poziția 14 din lista de mai sus
+      este litera Z, așa că DNI-ul complet ar fi 12345678Z. Pentru un NIE precum X1234567, X devine
+      0, ceea ce dă 01234567, care împărțit la 23 lasă restul 19, iar poziția 19 este litera L,
+      deci rezultă X1234567L.
     </p>
 
     <h2>Când ai nevoie de asta</h2>

@@ -112,19 +112,35 @@ const faq = [
       y delata la equivocación.
     </p>
     <p>
-      Para un DNI, se toman las ocho cifras como un único número y se dividen entre 23. El resto,
-      un valor de 0 a 22, es una posición en la lista fija de letras T, R, W, A, G, M, Y, F, P, D,
-      X, B, N, J, Z, S, Q, V, H, L, C, K, E. La letra que ocupa esa posición es la letra de
-      control. El NIE funciona igual, salvo que su letra inicial se convierte antes en una cifra:
-      la X en 0, la Y en 1 y la Z en 2.
+      El método es una operación de módulo 23, que no es más que una forma técnica de decir "el
+      resto que queda tras dividir entre 23". Paso a paso, funciona así:
+    </p>
+    <ol class="prose">
+      <li>Empieza con el número. Para un DNI son simplemente las ocho cifras tal cual.</li>
+      <li>
+        Si es un NIE, cambia primero la letra inicial por una cifra: la X pasa a 0, la Y a 1 y la
+        Z a 2. Así, Y1234567 se convierte en 11234567. En cualquier caso, ya tienes un número de
+        ocho cifras con el que trabajar.
+      </li>
+      <li>Divide ese número entre 23 y quédate solo con el resto, un valor de 0 a 22, descartando la parte entera.</li>
+      <li>
+        Sitúa el resto en la lista fija de 23 letras, contando desde cero:
+        T, R, W, A, G, M, Y, F, P, D, X, B, N, J, Z, S, Q, V, H, L, C, K, E.
+      </li>
+      <li>La letra que ocupa esa posición es la letra de control.</li>
+    </ol>
+    <p>
+      Son exactamente 23 letras porque la lista deja fuera a propósito la I, la O, la U y la Ñ,
+      para que una letra nunca se confunda con una cifra ni con otra letra. Por eso también el
+      divisor es 23 y no un número más redondo.
     </p>
     <h3>Ejemplo resuelto</h3>
     <p>
       Tomemos el número de ejemplo 12345678, que es un ejemplo y no un documento real. Al dividir
-      12345678 entre 23 queda un resto de 14. Contando desde cero, la posición 14 de la lista
-      anterior es la letra Z, así que el DNI completo sería 12345678Z. Para un NIE como X1234567,
-      la X pasa a 0, lo que da 01234567, que dividido entre 23 deja un resto de 19, y la posición
-      19 es la letra L, así que resulta X1234567L.
+      12345678 entre 23 se obtiene 536768 con un resto de 14, así que el resto es 14. Contando
+      desde cero, la posición 14 de la lista anterior es la letra Z, así que el DNI completo sería
+      12345678Z. Para un NIE como X1234567, la X pasa a 0, lo que da 01234567, que dividido entre
+      23 deja un resto de 19, y la posición 19 es la letra L, así que resulta X1234567L.
     </p>
 
     <h2>Cuándo lo necesitas</h2>

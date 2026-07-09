@@ -24,10 +24,12 @@ export const ui = {
     footerSiteHeading: 'Site',
     footerTagline: 'Free ID and IBAN validators. Everything runs in your browser.',
     copyright: (year) => `© ${year} Check and Validate`,
-    cookieText: 'This site uses cookies to run properly and to keep it free.',
+    cookieText: 'This site uses cookies, including for advertising, to help keep it free. You can accept or reject them.',
     cookiePrivacyLink: 'Privacy Policy',
     cookieAccept: 'Accept',
-    cookieDecline: 'Decline',
+    cookieDecline: 'Reject',
+    privacyCallout:
+      'Processed entirely in your browser. This validator runs on your device using JavaScript. The number you enter is never sent to a server, stored, or logged, and nothing leaves your device.',
   },
   ro: {
     siteName: 'Check and Validate',
@@ -48,10 +50,12 @@ export const ui = {
     footerSiteHeading: 'Site',
     footerTagline: 'Validatoare gratuite de acte și IBAN. Totul rulează în browserul tău.',
     copyright: (year) => `© ${year} Check and Validate`,
-    cookieText: 'Acest site folosește cookie-uri ca să funcționeze corect și să rămână gratuit.',
+    cookieText: 'Acest site folosește cookie-uri, inclusiv pentru publicitate, ca să rămână gratuit. Poți să le accepți sau să le refuzi.',
     cookiePrivacyLink: 'Politica de confidențialitate',
     cookieAccept: 'Accept',
     cookieDecline: 'Refuz',
+    privacyCallout:
+      'Procesat integral în browserul tău. Acest validator rulează pe dispozitivul tău cu ajutorul JavaScript. Numărul pe care îl introduci nu este trimis către niciun server, nu este stocat și nu este înregistrat, iar nimic nu îți părăsește dispozitivul.',
   },
   es: {
     siteName: 'Check and Validate',
@@ -72,10 +76,12 @@ export const ui = {
     footerSiteHeading: 'Sitio',
     footerTagline: 'Validadores gratuitos de documentos e IBAN. Todo funciona en tu navegador.',
     copyright: (year) => `© ${year} Check and Validate`,
-    cookieText: 'Este sitio usa cookies para funcionar correctamente y para seguir siendo gratuito.',
+    cookieText: 'Este sitio usa cookies, incluidas las de publicidad, para seguir siendo gratuito. Puedes aceptarlas o rechazarlas.',
     cookiePrivacyLink: 'Política de privacidad',
     cookieAccept: 'Aceptar',
     cookieDecline: 'Rechazar',
+    privacyCallout:
+      'Se procesa por completo en tu navegador. Este validador funciona en tu dispositivo mediante JavaScript. El número que introduces no se envía a ningún servidor, no se almacena ni se registra, y nada sale de tu dispositivo.',
   },
 };
 

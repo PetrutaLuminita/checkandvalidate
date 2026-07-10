@@ -478,7 +478,7 @@ code {
   background: #f2f6f8;
   border-radius: var(--radius);
   padding: 14px 16px;
-  margin: 20px 0 4px;
+  margin: 24px 0;
 }
 
 .privacy-callout-icon {
@@ -503,7 +503,7 @@ code {
 .calc-box {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 22px 22px 24px;
   background: var(--color-surface);
   margin: 20px 0;
 }
@@ -521,6 +521,16 @@ code {
   gap: 6px;
   flex: 1;
   min-width: 160px;
+}
+
+/* Space a single stacked field from the submit button beneath it. */
+.calc-box > .field {
+  margin-bottom: 22px;
+}
+
+/* The submit button always sits clear of the field above it. */
+.calc-box > .btn {
+  margin-top: 4px;
 }
 
 .field label {
@@ -603,7 +613,7 @@ code {
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius);
   overflow: hidden;
-  margin-bottom: 18px;
+  margin: 4px 0 20px;
 }
 
 .mode-toggle button {
@@ -633,7 +643,7 @@ code {
   border-radius: var(--radius);
   background: var(--color-surface);
   padding: 18px;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 
 .result-box[hidden] {

@@ -2,7 +2,7 @@
 import ToolLayout from '../../layouts/ToolLayout.astro';
 
 const locale = 'es';
-const title = 'Validador de IBAN | Check and Validate';
+const title = 'Validador de IBAN europeo | Check and Validate';
 const description =
   'Validador de IBAN gratuito. Comprueba cualquier código IBAN con el algoritmo mod-97 y la longitud oficial por país, y descubre exactamente qué comprobación ha fallado.';
 const summary =
@@ -96,12 +96,21 @@ const faq = [
           <tr><th>Parte</th><th>Longitud</th><th>Qué es</th></tr>
         </thead>
         <tbody>
-          <tr><td>Código de país</td><td>2 letras</td><td>El país donde está la cuenta, como RO, ES o DE</td></tr>
+          <tr><td>Código de país</td><td>2 letras</td><td>El código de dos letras del país donde está la cuenta, por ejemplo RO, ES, DE, FR, IT o GB</td></tr>
           <tr><td>Dígitos de control</td><td>2 cifras</td><td>La suma de control mod-97 que protege todo el número frente a erratas</td></tr>
           <tr><td>BBAN</td><td>hasta 30 caracteres</td><td>El número de cuenta nacional, con una longitud y una estructura fijadas por cada país</td></tr>
         </tbody>
       </table>
     </div>
+    <p>
+      El IBAN es el estándar de los números de cuenta en toda la Unión Europea y en el Espacio
+      Económico Europeo más amplio, así que lo usan todos los países de la zona SEPA, y en Europa
+      aparece de forma habitual en facturas y transferencias. También lo han adoptado varios países
+      de fuera de Europa, desde el Reino Unido, Turquía e Israel hasta Arabia Saudí y Brasil, y por
+      eso este validador conoce la longitud fija de más de ochenta países. Unos cuantos países
+      grandes, como Estados Unidos y Canadá, no usan el IBAN y se basan en sus propios formatos de
+      cuenta.
+    </p>
     <p>
       El BBAN, o Basic Bank Account Number, es la parte que tu propio banco reconocería por sí
       sola. Dentro contiene un código de banco (a veces con un código de sucursal aparte) que

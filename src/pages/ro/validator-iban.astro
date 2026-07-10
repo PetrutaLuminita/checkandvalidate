@@ -2,7 +2,7 @@
 import ToolLayout from '../../layouts/ToolLayout.astro';
 
 const locale = 'ro';
-const title = 'Validator IBAN | Check and Validate';
+const title = 'Validator IBAN european | Check and Validate';
 const description =
   'Validator IBAN gratuit. Verifică orice cod IBAN cu algoritmul mod-97 și cu lungimea oficială pe țară și află exact ce verificare a eșuat.';
 const summary =
@@ -96,12 +96,20 @@ const faq = [
           <tr><th>Parte</th><th>Lungime</th><th>Ce este</th></tr>
         </thead>
         <tbody>
-          <tr><td>Cod de țară</td><td>2 litere</td><td>Țara unde este deschis contul, precum RO, ES sau DE</td></tr>
+          <tr><td>Cod de țară</td><td>2 litere</td><td>Codul din două litere al țării unde este deschis contul, de exemplu RO, ES, DE, FR, IT sau GB</td></tr>
           <tr><td>Cifre de control</td><td>2 cifre</td><td>Suma de control mod-97 care apără întregul număr de greșeli</td></tr>
           <tr><td>BBAN</td><td>până la 30 de caractere</td><td>Numărul de cont național, cu lungime și structură fixate de fiecare țară</td></tr>
         </tbody>
       </table>
     </div>
+    <p>
+      IBAN-ul este standardul pentru numerele de cont în toată Uniunea Europeană și în Spațiul
+      Economic European mai larg, așa că toate țările din zona SEPA îl folosesc, iar în Europa apare
+      curent pe facturi și pe transferuri. L-au adoptat și mai multe țări din afara Europei, de la
+      Regatul Unit, Turcia și Israel până la Arabia Saudită și Brazilia, motiv pentru care acest
+      validator cunoaște lungimea fixă a peste optzeci de țări. Câteva țări mari, printre care
+      Statele Unite și Canada, nu folosesc deloc IBAN și se bazează pe propriile formate de cont.
+    </p>
     <p>
       BBAN-ul, adică Basic Bank Account Number, este partea pe care chiar banca ta o recunoaște
       singură. În interiorul lui se află un cod de bancă (uneori cu un cod separat de sucursală)

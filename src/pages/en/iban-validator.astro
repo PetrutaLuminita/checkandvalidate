@@ -2,7 +2,7 @@
 import ToolLayout from '../../layouts/ToolLayout.astro';
 
 const locale = 'en';
-const title = 'IBAN Validator | Check and Validate';
+const title = 'European IBAN Validator | Check and Validate';
 const description =
   'Free IBAN validator. Check any International Bank Account Number with the mod-97 checksum and the official per-country length, and see exactly which check failed.';
 const summary =
@@ -95,12 +95,20 @@ const faq = [
           <tr><th>Part</th><th>Length</th><th>What it is</th></tr>
         </thead>
         <tbody>
-          <tr><td>Country code</td><td>2 letters</td><td>The country where the account is held, such as RO, ES, or DE</td></tr>
+          <tr><td>Country code</td><td>2 letters</td><td>The two-letter code for the country the account is held in, such as RO, ES, DE, FR, IT, or GB</td></tr>
           <tr><td>Check digits</td><td>2 digits</td><td>The mod-97 checksum that guards the whole number against typos</td></tr>
           <tr><td>BBAN</td><td>up to 30 characters</td><td>The national account number, with a length and layout fixed by each country</td></tr>
         </tbody>
       </table>
     </div>
+    <p>
+      IBAN is the account-number standard across the whole European Union and the wider European
+      Economic Area, so every SEPA country uses it, and it is common on invoices and transfers
+      throughout Europe. A number of countries outside Europe have adopted it too, from the United
+      Kingdom, Turkey, and Israel to Saudi Arabia and Brazil, which is why this validator knows the
+      fixed length of more than eighty countries. A few major countries, including the United States
+      and Canada, do not use IBAN at all and rely on their own account formats instead.
+    </p>
     <p>
       The BBAN, or Basic Bank Account Number, is the part your own bank would recognise on its
       own. Inside it sits a bank code (sometimes with a separate branch code) that identifies the

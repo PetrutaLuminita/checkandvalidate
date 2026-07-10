@@ -22,9 +22,9 @@ export const tools = [
     id: 'cnp',
     slugs: { en: 'cnp-validator', ro: 'validator-cnp', es: 'validador-cnp' },
     name: {
-      en: 'CNP Validator',
-      ro: 'Validator CNP',
-      es: 'Validador de CNP',
+      en: 'Romanian CNP Validator',
+      ro: 'Validator CNP românesc',
+      es: 'Validador de CNP rumano',
     },
     desc: {
       en: 'Check the structure and control digit of a Romanian CNP, and read back the birth date, sex, and county it encodes.',
@@ -36,9 +36,9 @@ export const tools = [
     id: 'dni-nie',
     slugs: { en: 'dni-nie-calculator', ro: 'calculator-dni-nie', es: 'calculadora-dni-nie' },
     name: {
-      en: 'DNI/NIE Calculator',
-      ro: 'Calculator DNI/NIE',
-      es: 'Calculadora de DNI/NIE',
+      en: 'Spanish DNI/NIE Calculator',
+      ro: 'Calculator DNI/NIE spaniol',
+      es: 'Calculadora de DNI/NIE español',
     },
     desc: {
       en: 'Work out the check letter for a Spanish DNI or NIE, or confirm whether the letter on an existing document is correct.',
@@ -50,9 +50,9 @@ export const tools = [
     id: 'iban',
     slugs: { en: 'iban-validator', ro: 'validator-iban', es: 'validador-iban' },
     name: {
-      en: 'IBAN Validator',
-      ro: 'Validator IBAN',
-      es: 'Validador de IBAN',
+      en: 'European IBAN Validator',
+      ro: 'Validator IBAN european',
+      es: 'Validador de IBAN europeo',
     },
     desc: {
       en: 'Validate an IBAN with the mod-97 checksum and the official per-country length, and see exactly which check failed.',

@@ -7,7 +7,7 @@
 export const ui = {
   en: {
     siteName: 'Check and Validate',
-    tagline: 'Free validators for CNP, DNI/NIE, and IBAN. No sign-up needed.',
+    tagline: 'Free validators for IBAN, DNI/NIE, and CNP. No sign-up needed.',
     skipToContent: 'Skip to content',
     navToolsLabel: 'Validators',
     navSiteLabel: 'Site',
@@ -33,7 +33,7 @@ export const ui = {
   },
   ro: {
     siteName: 'Check and Validate',
-    tagline: 'Verificare gratuită pentru CNP, DNI/NIE și IBAN. Fără cont necesar.',
+    tagline: 'Verificare gratuită pentru IBAN, DNI/NIE și CNP. Fără cont necesar.',
     skipToContent: 'Sari la conținut',
     navToolsLabel: 'Validatoare',
     navSiteLabel: 'Site',
@@ -59,7 +59,7 @@ export const ui = {
   },
   es: {
     siteName: 'Check and Validate',
-    tagline: 'Validadores gratuitos de CNP, DNI/NIE e IBAN. Sin registro necesario.',
+    tagline: 'Validadores gratuitos de IBAN, DNI/NIE y CNP. Sin registro necesario.',
     skipToContent: 'Ir al contenido',
     navToolsLabel: 'Validadores',
     navSiteLabel: 'Sitio',

@@ -6,7 +6,9 @@
 // hreflang tags and a language switcher that jumps to the SAME page in another
 // language rather than dumping the visitor on a foreign homepage.
 
-export const locales = ['en', 'ro', 'es'];
+// Display order of the language switcher (Romanian intentionally last).
+// defaultLocale stays 'en' and drives x-default; order here is cosmetic.
+export const locales = ['en', 'es', 'ro'];
 export const defaultLocale = 'en';
 
 export const localeNames = {
@@ -15,21 +17,23 @@ export const localeNames = {
   es: 'Español',
 };
 
-// The three interactive tools. `name` is the H1 / link text per language,
+// The three interactive tools, in the order they appear across the site
+// (homepage grid, header, footer, related tools). IBAN first, then the Spanish
+// DNI/NIE, then the Romanian CNP. `name` is the H1 / link text per language,
 // `desc` is the short blurb used on the homepage grid and card links.
 export const tools = [
   {
-    id: 'cnp',
-    slugs: { en: 'cnp-validator', ro: 'validator-cnp', es: 'validador-cnp' },
+    id: 'iban',
+    slugs: { en: 'iban-validator', ro: 'validator-iban', es: 'validador-iban' },
     name: {
-      en: 'Romanian CNP Validator',
-      ro: 'Validator CNP românesc',
-      es: 'Validador de CNP rumano',
+      en: 'European IBAN Validator',
+      ro: 'Validator IBAN european',
+      es: 'Validador de IBAN europeo',
     },
     desc: {
-      en: 'Check the structure and control digit of a Romanian CNP, and read back the birth date, sex, and county it encodes.',
-      ro: 'Verifică structura și cifra de control a unui CNP românesc și află data nașterii, sexul și județul codificate în el.',
-      es: 'Comprueba la estructura y el dígito de control de un CNP rumano y muestra la fecha de nacimiento, el sexo y el condado que codifica.',
+      en: 'Validate an IBAN with the mod-97 checksum and the official per-country length, and see exactly which check failed.',
+      ro: 'Validează un IBAN cu algoritmul mod-97 și cu lungimea oficială pe țară și vezi exact ce verificare a eșuat.',
+      es: 'Valida un IBAN con el algoritmo mod-97 y la longitud oficial por país, y descubre exactamente qué comprobación ha fallado.',
     },
   },
   {
@@ -47,17 +51,17 @@ export const tools = [
     },
   },
   {
-    id: 'iban',
-    slugs: { en: 'iban-validator', ro: 'validator-iban', es: 'validador-iban' },
+    id: 'cnp',
+    slugs: { en: 'cnp-validator', ro: 'validator-cnp', es: 'validador-cnp' },
     name: {
-      en: 'European IBAN Validator',
-      ro: 'Validator IBAN european',
-      es: 'Validador de IBAN europeo',
+      en: 'Romanian CNP Validator',
+      ro: 'Validator CNP românesc',
+      es: 'Validador de CNP rumano',
     },
     desc: {
-      en: 'Validate an IBAN with the mod-97 checksum and the official per-country length, and see exactly which check failed.',
-      ro: 'Validează un IBAN cu algoritmul mod-97 și cu lungimea oficială pe țară și vezi exact ce verificare a eșuat.',
-      es: 'Valida un IBAN con el algoritmo mod-97 y la longitud oficial por país, y descubre exactamente qué comprobación ha fallado.',
+      en: 'Check the structure and control digit of a Romanian CNP, and read back the birth date, sex, and county it encodes.',
+      ro: 'Verifică structura și cifra de control a unui CNP românesc și află data nașterii, sexul și județul codificate în el.',
+      es: 'Comprueba la estructura y el dígito de control de un CNP rumano y muestra la fecha de nacimiento, el sexo y el condado que codifica.',
     },
   },
 ];

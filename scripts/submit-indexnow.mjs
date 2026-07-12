@@ -87,6 +87,9 @@ async function submitToIndexNow(key, urlList) {
     case 200:
       console.log('[indexnow] 200: URL list received and validated successfully.');
       break;
+    case 202:
+      console.log('[indexnow] 202: URL list accepted. Key validation is pending on the search engine side.');
+      break;
     case 400:
       console.warn('[indexnow] 400: Bad request. The JSON body is malformed or does not match the expected schema.');
       break;

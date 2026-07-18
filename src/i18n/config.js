@@ -99,7 +99,9 @@ export function getStaticPage(id) {
 }
 
 export function homePath(locale) {
-  return `/${locale}/`;
+  // No trailing slash, matching every other URL on the site (see the
+  // trailingSlash setting in astro.config.mjs and vercel.json).
+  return `/${locale}`;
 }
 
 export function toolPath(id, locale) {

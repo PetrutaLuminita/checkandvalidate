@@ -1,8 +1,8 @@
 ---
 // Root redirect. With prefixDefaultLocale enabled every real page lives under
-// a locale prefix (/en/, /ro/, /es/), so the bare domain root sends visitors to
+// a locale prefix (/en, /ro, /es), so the bare domain root sends visitors to
 // the English homepage. Static hosts serve this as /index.html.
-const target = '/en/';
+const target = '/en';
 ---
 
 <!doctype html>
@@ -10,7 +10,7 @@ const target = '/en/';
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="refresh" content={`0; url=${target}`} />
-    <link rel="canonical" href="https://checkandvalidate.com/en/" />
+    <link rel="canonical" href="https://checkandvalidate.com/en" />
     <meta name="robots" content="noindex" />
     <title>Check and Validate</title>
     <script is:inline set:html={`location.replace(${JSON.stringify(target)});`} />

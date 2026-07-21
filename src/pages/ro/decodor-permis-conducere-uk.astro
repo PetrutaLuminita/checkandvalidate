@@ -1,0 +1,130 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Decodor permis de conducere britanic | Check and Validate';
+const description =
+  'Decodor gratuit de număr de permis de conducere britanic. Verifică structura unui număr DVLA de 16 caractere și citește data nașterii și sexul pe care le codifică, direct în browser.';
+const summary =
+  'Introdu un număr de permis de conducere britanic de 16 caractere ca să îi verifici structura și să citești data nașterii și sexul codificate în el. Rulează în browserul tău și nu dezvăluie nimic despre numele titularului.';
+
+const strings = {
+  locale: locale,
+  validHeadline: 'Structură de număr de permis validă',
+  invalidHeadline: 'Nu este un număr de permis valid',
+  validNote: 'Structura este corectă. Iată data nașterii și sexul codificate în el.',
+  err: {
+    empty: 'Introdu un număr de permis de conducere britanic pentru decodare.',
+    length: 'Un număr de permis de conducere britanic are exact 16 caractere, dar acesta are {length}.',
+    format:
+      'Acesta nu corespunde formei unui număr de permis de conducere britanic. Verifică dacă literele și cifrele stau pe pozițiile așteptate.',
+    month:
+      'Luna codificată aici nu este validă. Ar trebui să fie 01 până la 12, sau 51 până la 62 pentru o titulară.',
+    day: 'Ziua codificată aici nu este o zi validă a lunii.',
+  },
+  labelDob: 'Data nașterii',
+  labelYear: 'Anul nașterii',
+  yearValue: 'se termină în {year} (secolul nu este codificat)',
+  labelSex: 'Sex',
+  sexMale: 'Masculin',
+  sexFemale: 'Feminin',
+  disclaimer:
+    'Aceasta verifică structura și decodează doar data nașterii și sexul. Nu confirmă că permisul este real, valabil în prezent sau că se potrivește cu o înregistrare DVLA și nu poate verifica ultimele caractere de securitate, al căror algoritm DVLA nu îl publică.',
+};
+
+const faq = [
+  {
+    question: 'Ce îmi poate spune de fapt acest instrument?',
+    answer:
+      'Confirmă că numărul are forma unui număr DVLA real de conducător auto și citește cele două informații codificate în mod fiabil: data nașterii și sexul titularului. În mod deliberat, nu încearcă să dezvăluie numele.',
+  },
+  {
+    question: 'De ce nu afișează numele sau numele de familie?',
+    answer:
+      'Primele cinci caractere provin din numele de familie, dar sunt doar un fragment completat cu 9, iar inițialele sunt simple litere. Nu există nicio cale de a le transforma înapoi într-un nume real cu vreo certitudine, așa că afișarea unuia ar fi o ghiceală. Instrumentul rămâne la ce se poate decoda cu adevărat.',
+  },
+  {
+    question: 'Cum este codificat sexul în număr?',
+    answer:
+      'Este ascuns în luna nașterii. Pentru bărbați, luna este stocată normal, de la 01 la 12. Pentru femei se adaugă 50, așa că aceleași luni devin 51 până la 62. Citirea acestui decalaj înapoi este modul în care instrumentul raportează sexul.',
+  },
+  {
+    question: 'Poate să deducă anul meu complet de naștere?',
+    answer:
+      'Nu cu certitudine. Numărul stochează doar două cifre ale anului, deceniul și cifra finală, dar nu și secolul. Așa că un număr care termină anul în 87 ar putea însemna 1987, iar instrumentul spune asta în loc să ghicească între secole.',
+  },
+  {
+    question: 'O structură validă înseamnă că permisul este autentic?',
+    answer:
+      'Nu. Un număr poate fi perfect format și totuși inventat. Doar DVLA poate confirma că un permis este real, valabil în prezent și că aparține unei anumite persoane. Acesta este un instrument de format și decodare, nu de căutare într-un registru.',
+  },
+  {
+    question: 'Funcționează pentru permisele din Irlanda de Nord?',
+    answer:
+      'Nu. Permisele din Irlanda de Nord sunt emise de DVA, nu de DVLA, și folosesc un alt număr de conducător auto, de opt cifre, care nu poartă numele de familie și data nașterii în acest fel.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="uk-licence" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="dvla-form" novalidate>
+      <div class="field" id="dvla-field">
+        <label for="dvla-input">Număr de permis de conducere britanic (16 caractere)</label>
+        <span class="hint">Numărul de conducător auto este codul lung din câmpul 5 al permisului.</span>
+        <input type="text" id="dvla-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MORGA855157NJ9XY" />
+        <span class="error-msg" id="dvla-error"></span>
+      </div>
+      <button type="submit" class="btn">Decodează numărul de permis</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/dvla-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un număr de permis de conducere britanic, codul lung afișat în câmpul 5 al cardului foto, are
+      16 caractere și este construit din datele proprii ale titularului, nu atribuit la întâmplare.
+      Citit de la stânga la dreapta, primele cinci caractere provin din numele de familie, completat
+      cu 9 dacă numele este scurt. Blocul din mijloc este data nașterii, iar ultimele câteva caractere
+      sunt inițialele și un cod de control generat de calculator.
+    </p>
+    <p>
+      Data nașterii este partea care merită decodată. Al șaselea caracter este deceniul anului de
+      naștere, următoarele două sunt luna, apoi ziua, iar apoi o singură cifră pentru ultima cifră a
+      anului. Sexul este strecurat în lună: luna unui bărbat este stocată ca 01 până la 12, în timp
+      ce a unei femei are 50 adăugat, așa că se citește ca 51 până la 62. Fiindcă se stochează doar
+      două cifre ale anului, secolul nu este înregistrat, deci anul exact nu poate fi stabilit numai
+      din număr. Pozițiile 14 până la 16 sunt un cod de control generat de calculator, pe care DVLA
+      nu îl publică, așa că acesta nu poate fi validat.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu MORGA855157NJ9XY, care este inventat și nu aparține nimănui. Blocul din
+      mijloc se citește 8, apoi 55, apoi 15, apoi 7. 55 este o lună cu 50 adăugat, așa că titulara
+      este de sex feminin, iar luna este mai. Ziua este 15. Cifra deceniului 8 și cifra finală a
+      anului 7 dau un an care se termină în 87. Așadar, acest număr decodează o femeie născută pe 15
+      mai într-un an care se termină în 87, cel mai probabil 1987, în timp ce numele rămâne privat.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Este util când verifici un număr de permis pe un formular și vrei să confirmi că are cel puțin
+      forma corectă și că data nașterii codificată se potrivește cu ce te aștepți, de pildă un
+      angajator care face o verificare de rutină sau cineva care se asigură că a copiat corect
+      numărul. Este totodată un mod simplu de a înțelege ce înseamnă de fapt numărul lung de pe
+      propriul tău permis, fără să fie nevoie să îl împărtășești vreunui site.
+    </p>
+  </Fragment>
+</ToolLayout>

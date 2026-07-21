@@ -1,0 +1,129 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'UK Driving Licence Decoder | Check and Validate';
+const description =
+  'Free UK driving licence number decoder. Check the structure of a 16-character DVLA driver number and read back the date of birth and sex it encodes, in your browser.';
+const summary =
+  'Enter a 16-character UK driving licence number to check its structure and read back the date of birth and sex encoded in it. It runs in your browser and reveals nothing about the holder\'s name.';
+
+const strings = {
+  locale,
+  validHeadline: 'Valid licence number structure',
+  invalidHeadline: 'Not a valid licence number',
+  validNote: 'The structure is correct. Here is the birth date and sex encoded in it.',
+  err: {
+    empty: 'Enter a UK driving licence number to decode.',
+    length: 'A UK driving licence number has exactly 16 characters, but this one has {length}.',
+    format:
+      'This does not match the shape of a UK driving licence number. Check that the letters and digits sit in the expected positions.',
+    month:
+      'The month encoded here is not valid. It should be 01 to 12, or 51 to 62 for a female holder.',
+    day: 'The day encoded here is not a valid day of the month.',
+  },
+  labelDob: 'Date of birth',
+  labelYear: 'Birth year',
+  yearValue: 'ends in {year} (the century is not encoded)',
+  labelSex: 'Sex',
+  sexMale: 'Male',
+  sexFemale: 'Female',
+  disclaimer:
+    'This checks the structure and decodes the birth date and sex only. It does not confirm the licence is real, currently valid, or matches a DVLA record, and it cannot verify the final security characters, whose algorithm DVLA does not publish.',
+};
+
+const faq = [
+  {
+    question: 'What can this tool actually tell me?',
+    answer:
+      'It confirms the number is shaped like a real DVLA driver number and reads back the two pieces that are reliably encoded: the date of birth and the sex of the holder. It deliberately does not try to reveal the name.',
+  },
+  {
+    question: 'Why does it not show the surname or name?',
+    answer:
+      'The first five characters come from the surname, but they are only a fragment padded with 9s, and the initials are just single letters. There is no way to turn them back into a real name with any certainty, so showing one would be a guess. The tool sticks to what can genuinely be decoded.',
+  },
+  {
+    question: 'How is the sex encoded in the number?',
+    answer:
+      'It is hidden in the month of birth. For men the month is stored normally, 01 to 12. For women 50 is added, so the same months become 51 to 62. Reading that offset back is how the tool reports the sex.',
+  },
+  {
+    question: 'Can it work out my full year of birth?',
+    answer:
+      'Not with certainty. The number stores only two digits of the year, the decade and the final digit, and not the century. So a number ending the year in 87 could mean 1987, and the tool says so rather than guessing between centuries.',
+  },
+  {
+    question: 'Does a valid structure mean the licence is genuine?',
+    answer:
+      'No. A number can be perfectly well formed and still be invented. Only the DVLA can confirm that a licence is real, current, and belongs to a particular person. This is a format and decode tool, not a lookup.',
+  },
+  {
+    question: 'Does it work for Northern Ireland licences?',
+    answer:
+      'No. Northern Ireland licences are issued by the DVA, not the DVLA, and use a different eight-digit driver number that does not carry the surname and date of birth in this way.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="uk-licence" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="dvla-form" novalidate>
+      <div class="field" id="dvla-field">
+        <label for="dvla-input">UK driving licence number (16 characters)</label>
+        <span class="hint">The driver number is the long code in field 5 of the licence.</span>
+        <input type="text" id="dvla-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MORGA855157NJ9XY" />
+        <span class="error-msg" id="dvla-error"></span>
+      </div>
+      <button type="submit" class="btn">Decode licence number</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/dvla-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      A UK driving licence number, the long code shown in field 5 of the photocard, is 16
+      characters and is built from the holder's own details rather than assigned at random. Reading
+      it left to right, the first five characters come from the surname, padded with 9s if the
+      surname is short. The block in the middle is the date of birth, and the last few characters
+      are initials and a computer-generated check.
+    </p>
+    <p>
+      The date of birth is the part worth decoding. The sixth character is the decade of the birth
+      year, the next two are the month, then the day, and then a single digit for the last figure
+      of the year. Sex is folded into the month: a man's month is stored as 01 to 12, while a
+      woman's has 50 added to it, so it reads as 51 to 62. Because only two digits of the year are
+      stored, the century is not recorded, so the exact year cannot be pinned down from the number
+      alone.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number MORGA855157NJ9XY, which is fabricated and belongs to no one. The
+      middle block reads 8, then 55, then 15, then 7. The 55 is a month with 50 added, so the
+      holder is female and the month is May. The day is 15. The decade digit 8 and the final year
+      digit 7 give a year ending in 87. So this number decodes to a woman born on 15 May in a year
+      ending 87, most likely 1987, while the name stays private.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      This is handy when you are checking a licence number on a form and want to confirm it is at
+      least the right shape and that the encoded birth date matches what you expect, for example an
+      employer running a routine check, or someone confirming they have copied the number down
+      correctly. It is also a simple way to understand what the long number on your own licence
+      actually means, without needing to share it with any website.
+    </p>
+  </Fragment>
+</ToolLayout>

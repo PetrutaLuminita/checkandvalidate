@@ -17,9 +17,10 @@ export const localeNames = {
   es: 'Español',
 };
 
-// The three interactive tools, in the order they appear across the site
-// (homepage grid, header, footer, related tools). IBAN first, then the Spanish
-// DNI/NIE, then the Romanian CNP. `name` is the H1 / link text per language,
+// The five interactive tools, in the order they appear across the site
+// (homepage grid, header, footer, related tools). Grouped loosely: bank/tax
+// numbers first (IBAN, UK VAT), then personal ID documents (Spanish DNI/NIE,
+// UK driving licence, Romanian CNP). `name` is the H1 / link text per language,
 // `desc` is the short blurb used on the homepage grid and card links.
 export const tools = [
   {
@@ -37,6 +38,20 @@ export const tools = [
     },
   },
   {
+    id: 'uk-vat',
+    slugs: { en: 'uk-vat-validator', ro: 'validator-tva-uk', es: 'validador-iva-uk' },
+    name: {
+      en: 'UK VAT Number Validator',
+      ro: 'Validator TVA britanic',
+      es: 'Validador de IVA británico',
+    },
+    desc: {
+      en: 'Check a UK VAT number with the HMRC modulus-97 check digit algorithm, including the newer 9755 variant.',
+      ro: 'Verifică un număr de TVA britanic cu algoritmul modulo 97 al HMRC, inclusiv varianta mai nouă 9755.',
+      es: 'Comprueba un número de IVA británico con el algoritmo módulo 97 de HMRC, incluida la variante más nueva 9755.',
+    },
+  },
+  {
     id: 'dni-nie',
     slugs: { en: 'dni-nie-calculator', ro: 'calculator-dni-nie', es: 'calculadora-dni-nie' },
     name: {
@@ -48,6 +63,24 @@ export const tools = [
       en: 'Work out the check letter for a Spanish DNI or NIE, or confirm whether the letter on an existing document is correct.',
       ro: 'Calculează litera de control pentru un DNI sau NIE spaniol sau verifică dacă litera de pe un document existent este corectă.',
       es: 'Calcula la letra de un DNI o NIE español, o comprueba si la letra de un documento ya emitido es correcta.',
+    },
+  },
+  {
+    id: 'uk-licence',
+    slugs: {
+      en: 'uk-driving-licence-decoder',
+      ro: 'decodor-permis-conducere-uk',
+      es: 'decodificador-carnet-conducir-uk',
+    },
+    name: {
+      en: 'UK Driving Licence Decoder',
+      ro: 'Decodor permis de conducere britanic',
+      es: 'Decodificador de carnet de conducir británico',
+    },
+    desc: {
+      en: 'Decode the date of birth and sex embedded in a 16-character UK driving licence number, and check its structure.',
+      ro: 'Decodează data nașterii și sexul din numărul de permis de conducere britanic de 16 caractere și verifică-i structura.',
+      es: 'Descifra la fecha de nacimiento y el sexo del número de carnet de conducir británico de 16 caracteres y comprueba su estructura.',
     },
   },
   {

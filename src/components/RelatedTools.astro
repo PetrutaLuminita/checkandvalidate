@@ -4,7 +4,8 @@ import { t } from '../i18n/ui.js';
 
 const { current, locale } = Astro.props;
 const strings = t(locale);
-const related = relatedTools(current, locale, 2);
+// Link to every other tool in this language (currently four).
+const related = relatedTools(current, locale, 4);
 ---
 
 <section class="related-tools" aria-label={strings.relatedHeading}>

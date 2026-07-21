@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Decodificador de carnet de conducir británico | Check and Validate';
+const description =
+  'Decodificador gratuito del número de carnet de conducir británico. Comprueba la estructura de un número de conductor DVLA de 16 caracteres y lee la fecha de nacimiento y el sexo que codifica, en tu navegador.';
+const summary =
+  'Introduce un número de carnet de conducir británico de 16 caracteres para comprobar su estructura y leer la fecha de nacimiento y el sexo que lleva codificados. Funciona en tu navegador y no revela nada sobre el nombre del titular.';
+
+const strings = {
+  locale,
+  validHeadline: 'Estructura de número de carnet válida',
+  invalidHeadline: 'No es un número de carnet válido',
+  validNote: 'La estructura es correcta. Esta es la fecha de nacimiento y el sexo que codifica.',
+  err: {
+    empty: 'Introduce un número de carnet de conducir británico para decodificarlo.',
+    length: 'Un número de carnet de conducir británico tiene exactamente 16 caracteres, pero este tiene {length}.',
+    format:
+      'Esto no coincide con la forma de un número de carnet de conducir británico. Comprueba que las letras y las cifras estén en las posiciones esperadas.',
+    month:
+      'El mes que aquí se codifica no es válido. Debería ser 01 a 12, o 51 a 62 en el caso de una titular mujer.',
+    day: 'El día que aquí se codifica no es un día válido del mes.',
+  },
+  labelDob: 'Fecha de nacimiento',
+  labelYear: 'Año de nacimiento',
+  yearValue: 'termina en {year} (el siglo no se codifica)',
+  labelSex: 'Sexo',
+  sexMale: 'Hombre',
+  sexFemale: 'Mujer',
+  disclaimer:
+    'Esto comprueba la estructura y decodifica solo la fecha de nacimiento y el sexo. No confirma que el carnet sea real, que esté vigente ni que coincida con un registro de la DVLA, y no puede verificar los caracteres de seguridad finales, cuyo algoritmo la DVLA no publica.',
+};
+
+const faq = [
+  {
+    question: '¿Qué me puede decir realmente esta herramienta?',
+    answer:
+      'Confirma que el número tiene la forma de un número de conductor real de la DVLA y lee las dos partes que se codifican de forma fiable: la fecha de nacimiento y el sexo del titular. A propósito no intenta revelar el nombre.',
+  },
+  {
+    question: '¿Por qué no muestra el apellido ni el nombre?',
+    answer:
+      'Los cinco primeros caracteres vienen del apellido, pero son solo un fragmento rellenado con 9, y las iniciales son solo letras sueltas. No hay forma de reconstruir a partir de ahí un nombre real con ninguna certeza, así que mostrar uno sería adivinar. La herramienta se limita a lo que de verdad se puede decodificar.',
+  },
+  {
+    question: '¿Cómo se codifica el sexo en el número?',
+    answer:
+      'Va escondido en el mes de nacimiento. En el caso de los hombres el mes se guarda con normalidad, 01 a 12. En el de las mujeres se le suma 50, así que esos mismos meses pasan a ser 51 a 62. Leer ese desplazamiento al revés es como la herramienta deduce el sexo.',
+  },
+  {
+    question: '¿Puede averiguar mi año de nacimiento completo?',
+    answer:
+      'No con certeza. El número guarda solo dos cifras del año, la de la década y la última, pero no el siglo. Así que un número que termina el año en 87 podría significar 1987, y la herramienta lo dice así en lugar de adivinar entre siglos.',
+  },
+  {
+    question: '¿Una estructura válida significa que el carnet es auténtico?',
+    answer:
+      'No. Un número puede estar perfectamente bien formado y aun así ser inventado. Solo la DVLA puede confirmar que un carnet es real, que está vigente y que pertenece a una persona concreta. Esta es una herramienta de formato y decodificación, no de consulta.',
+  },
+  {
+    question: '¿Funciona con los carnets de Irlanda del Norte?',
+    answer:
+      'No. Los carnets de Irlanda del Norte los emite la DVA, no la DVLA, y usan un número de conductor de ocho cifras distinto que no lleva el apellido ni la fecha de nacimiento de esta forma.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="uk-licence" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="dvla-form" novalidate>
+      <div class="field" id="dvla-field">
+        <label for="dvla-input">Número de carnet de conducir británico (16 caracteres)</label>
+        <span class="hint">El número de conductor es el código largo del campo 5 del carnet.</span>
+        <input type="text" id="dvla-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="MORGA855157NJ9XY" />
+        <span class="error-msg" id="dvla-error"></span>
+      </div>
+      <button type="submit" class="btn">Decodificar número de carnet</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/dvla-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un número de carnet de conducir británico, el código largo que aparece en el campo 5 de la
+      tarjeta, tiene 16 caracteres y se construye a partir de los datos del propio titular en lugar
+      de asignarse al azar. Leído de izquierda a derecha, los cinco primeros caracteres vienen del
+      apellido, rellenados con 9 si el apellido es corto. El bloque del centro es la fecha de
+      nacimiento, y los últimos caracteres son las iniciales y una comprobación generada por
+      ordenador.
+    </p>
+    <p>
+      La fecha de nacimiento es la parte que merece la pena decodificar. El sexto carácter es la
+      década del año de nacimiento, los dos siguientes son el mes, luego el día, y después una sola
+      cifra para la última del año. El sexo va plegado en el mes: el mes de un hombre se guarda como
+      01 a 12, mientras que al de una mujer se le suma 50, así que se lee como 51 a 62. Como solo se
+      guardan dos cifras del año, el siglo no queda registrado, de modo que el año exacto no se
+      puede fijar solo a partir del número.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de muestra MORGA855157NJ9XY, que es ficticio y no pertenece a nadie. El
+      bloque del centro se lee 8, luego 55, luego 15, luego 7. El 55 es un mes con 50 sumado, así
+      que la titular es mujer y el mes es mayo. El día es 15. La cifra de la década 8 y la última
+      cifra del año 7 dan un año que termina en 87. Así que este número se decodifica como una mujer
+      nacida el 15 de mayo en un año que termina en 87, lo más probable 1987, mientras que el nombre
+      queda en privado.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Esto viene bien cuando revisas un número de carnet en un formulario y quieres confirmar que al
+      menos tiene la forma correcta y que la fecha de nacimiento codificada coincide con lo que
+      esperas, por ejemplo una empresa que hace una comprobación rutinaria, o alguien que confirma
+      que ha copiado bien el número. También es una manera sencilla de entender qué significa en
+      realidad el número largo de tu propio carnet, sin necesidad de compartirlo con ninguna web.
+    </p>
+  </Fragment>
+</ToolLayout>

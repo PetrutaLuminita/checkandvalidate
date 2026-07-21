@@ -1,0 +1,129 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator TVA britanic | Check and Validate';
+const description =
+  'Validator gratuit de cod TVA britanic. Verifică un cod TVA GB cu algoritmul oficial modulo-97 al HMRC, inclusiv varianta mai nouă 9755, direct în browserul tău.';
+const summary =
+  'Introdu un cod TVA britanic, cu sau fără prefixul GB și spații, ca să îi verifici cifrele de control cu algoritmul oficial modulo-97 al HMRC. Instrumentul tratează atât metoda standard, cât și metoda mai nouă 9755.';
+
+const strings = {
+  validHeadline: 'Cod TVA britanic valid',
+  invalidHeadline: 'Nu este un cod TVA britanic valid',
+  validNoteStandard: 'Cifrele de control trec testul standard modulo-97 al HMRC.',
+  validNoteNew: 'Cifrele de control trec varianta mai nouă 9755 a testului HMRC.',
+  govHealthHeadline: 'Cod al unei instituții guvernamentale sau de sănătate',
+  govNote:
+    'Acesta este un cod TVA al unui minister din Regatul Unit (intervalul GD). Folosește o schemă diferită, așa că testul cifrelor de control modulo-97 nu i se aplică.',
+  healthNote:
+    'Acesta este un cod TVA al unei autorități de sănătate din Regatul Unit (intervalul HA). Folosește o schemă diferită, așa că testul cifrelor de control modulo-97 nu i se aplică.',
+  err: {
+    empty: 'Introdu un cod TVA britanic pentru verificare.',
+    format:
+      'Un cod TVA britanic are 9 cifre, sau 12 pentru comercianții cu sucursale. Introdu doar cifre, cu sau fără prefixul GB și spații.',
+    checksum:
+      'Cifrele de control nu se potrivesc cu restul numărului nici prin metoda standard, nici prin metoda 9755, deci acesta nu este un cod TVA britanic valid.',
+  },
+  labelFormatted: 'Formatat',
+  labelMethod: 'Metodă de verificare',
+  labelBranch: 'Cod de sucursală',
+  methodStandard: 'Standard (modulo 97)',
+  methodNew: 'Mai nouă (9755)',
+};
+
+const faq = [
+  {
+    question: 'Ce verifică de fapt acest instrument?',
+    answer:
+      'Rulează calculul cifrelor de control pe care HMRC l-a inclus în fiecare cod TVA britanic. Dacă trece, numărul este coerent în sine și corect format, ceea ce prinde aproape orice greșeală de tastare. Nu îți spune însă dacă numărul este înregistrat pe o firmă care chiar funcționează.',
+  },
+  {
+    question: 'Un cod valid înseamnă că firma este înregistrată la TVA?',
+    answer:
+      'Nu. Verificarea dovedește doar că cifrele sunt coerente matematic. Ca să confirmi că un număr aparține unei firme reale, înregistrată în prezent, folosește serviciul oficial „Check a UK VAT number” al HMRC, care caută numărul în registrul viu.',
+  },
+  {
+    question: 'Îl pot lipi cu GB și cu spații?',
+    answer:
+      'Da. Instrumentul elimină spațiile și eventualul prefix GB de la început înainte de verificare, așa că GB 123 4567 89 și 123456789 sunt tratate la fel. Codurile TVA britanice sunt adesea scrise în grupuri de 3, 4 și 2 cifre, ca să fie mai ușor de citit.',
+  },
+  {
+    question: 'Care este diferența dintre metoda standard și metoda 9755?',
+    answer:
+      'Sunt două versiuni ale aceleiași verificări modulo-97. Înregistrările mai vechi trec prin regula originală, iar cele din a doua parte a lui 2009 încoace trec prin varianta 9755. Acest instrument le încearcă pe amândouă și acceptă numărul dacă oricare dintre ele reușește.',
+  },
+  {
+    question: 'Cum rămâne cu codurile TVA de 12 cifre?',
+    answer:
+      'Acestea aparțin comercianților cu sucursale. Primele 9 cifre sunt codul TVA propriu-zis și poartă cifrele de control, iar ultimele 3 sunt un identificator de sucursală. Instrumentul verifică nucleul de 9 cifre și afișează separat codul de sucursală.',
+  },
+  {
+    question: 'De ce pică numărul meu, deși este tipărit pe o factură?',
+    answer:
+      'Cel mai des, fie o cifră a fost scrisă greșit, fie numărul nu este de fapt un cod TVA GB, ci, de pildă, un cod TVA dintr-o altă țară din UE, care folosește un alt format și o altă verificare. Compară cifrele cu documentul original.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="uk-vat" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="vat-form" novalidate>
+      <div class="field" id="vat-field">
+        <label for="vat-input">Cod TVA britanic</label>
+        <span class="hint">Cu sau fără prefixul GB și spații.</span>
+        <input type="text" id="vat-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GB 123 4567 89" />
+        <span class="error-msg" id="vat-error"></span>
+      </div>
+      <button type="submit" class="btn">Verifică codul TVA</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/vat-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un cod TVA britanic are nouă cifre, iar ultimele două dintre ele sunt cifre de control
+      calculate din primele șapte. Această legătură inclusă în număr este cea care permite unui
+      verificator să prindă o cifră greșită sau inversată fără să contacteze HMRC. Unele organizații,
+      cum sunt comercianții cu sucursale, au o versiune de 12 cifre, unde cele trei cifre în plus
+      sunt un identificator de sucursală.
+    </p>
+    <p>
+      Verificarea este o sumă ponderată modulo-97. Fiecare dintre primele șapte cifre este înmulțită
+      cu o pondere fixă, de la 8 până la 2. Aceste produse se adună, iar cele două cifre de control
+      se adaugă la total ca un număr de două cifre. Totalul se împarte apoi la 97. Prin regula
+      originală, numărul este valid dacă restul este 0. O a doua regulă, cunoscută drept metoda 9755
+      și folosită pentru înregistrările mai noi, acceptă în schimb un rest de 55. Acest instrument le
+      aplică pe amândouă și tratează numărul ca valid dacă oricare dintre ele este îndeplinită.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu GB 980 7806 84, care este o ilustrație, nu o înregistrare reală.
+      Înmulțind primele șapte cifre 9, 8, 0, 7, 8, 0, 6 cu ponderile 8, 7, 6, 5, 4, 3, 2 obținem
+      72, 56, 0, 35, 32, 0, 12, care se adună până la 207. Adăugând cifrele de control ca numărul
+      84 ajungem la 291. Fiindcă 291 este exact 3 ori 97, împărțirea la 97 lasă un rest de 0, deci
+      numărul trece verificarea standard.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Firmele au nevoie ca numărul de TVA al unui furnizor să fie corect înainte să recupereze TVA-ul
+      de pe o achiziție, iar un număr greșit pe o factură poate bloca o plată către furnizori sau un
+      decont de TVA. Lipirea numărului aici este o primă verificare rapidă a faptului că cifrele sunt
+      coerente în sine, așa că o greșeală evidentă de tastare este prinsă înainte ca documentele să
+      meargă mai departe. Pentru confirmarea finală că numărul aparține unui comerciant înregistrat,
+      autoritatea rămâne serviciul de căutare al HMRC.
+    </p>
+  </Fragment>
+</ToolLayout>

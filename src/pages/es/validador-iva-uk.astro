@@ -1,0 +1,129 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de IVA británico | Check and Validate';
+const description =
+  'Comprobador gratuito de números de IVA del Reino Unido. Valida un número de IVA GB con el algoritmo de dígito de control módulo 97 de HMRC, incluida la variante 9755 más reciente, directamente en tu navegador.';
+const summary =
+  'Introduce un número de IVA británico, con o sin el prefijo GB y espacios, para comprobar sus dígitos de control con el algoritmo oficial módulo 97 de HMRC. Se admiten tanto el método estándar como el más reciente 9755.';
+
+const strings = {
+  validHeadline: 'Número de IVA británico válido',
+  invalidHeadline: 'No es un número de IVA británico válido',
+  validNoteStandard: 'Los dígitos de control superan la prueba estándar módulo 97 de HMRC.',
+  validNoteNew: 'Los dígitos de control superan la variante 9755, más reciente, de la prueba de HMRC.',
+  govHealthHeadline: 'Número de organismo público o sanitario',
+  govNote:
+    'Es un número de IVA de un departamento del Gobierno británico (el rango GD). Utiliza un esquema distinto, así que la prueba del dígito de control módulo 97 no se le aplica.',
+  healthNote:
+    'Es un número de IVA de una autoridad sanitaria británica (el rango HA). Utiliza un esquema distinto, así que la prueba del dígito de control módulo 97 no se le aplica.',
+  err: {
+    empty: 'Introduce un número de IVA británico para comprobarlo.',
+    format:
+      'Un número de IVA británico tiene 9 cifras, o 12 en el caso de las sucursales. Escribe solo cifras, con o sin el prefijo GB y espacios.',
+    checksum:
+      'Los dígitos de control no cuadran con el resto del número ni por el método estándar ni por el 9755, así que este no es un número de IVA británico válido.',
+  },
+  labelFormatted: 'Formateado',
+  labelMethod: 'Método de comprobación',
+  labelBranch: 'Código de sucursal',
+  methodStandard: 'Estándar (módulo 97)',
+  methodNew: 'Más reciente (9755)',
+};
+
+const faq = [
+  {
+    question: '¿Qué comprueba realmente este validador?',
+    answer:
+      'Ejecuta el cálculo del dígito de control que HMRC incorpora en todos los números de IVA británicos. Si lo supera, el número es coherente consigo mismo y está bien formado, lo que detecta casi cualquier errata. No te dice si el número está registrado a nombre de una empresa en activo.',
+  },
+  {
+    question: '¿Un número válido significa que la empresa está dada de alta en el IVA?',
+    answer:
+      'No. La comprobación solo demuestra que las cifras son coherentes desde el punto de vista matemático. Para confirmar que un número pertenece a una empresa real y registrada en la actualidad, usa el servicio oficial de HMRC "Check a UK VAT number", que consulta el número en el registro en vivo.',
+  },
+  {
+    question: '¿Puedo pegarlo con GB y espacios?',
+    answer:
+      'Sí. La herramienta quita los espacios y el prefijo GB opcional antes de comprobar, así que GB 123 4567 89 y 123456789 se tratan igual. Los números de IVA británicos suelen imprimirse en grupos de 3, 4 y 2 cifras para que se lean mejor.',
+  },
+  {
+    question: '¿Qué diferencia hay entre el método estándar y el 9755?',
+    answer:
+      'Son dos versiones de la misma comprobación módulo 97. Los registros más antiguos pasan con la regla original, mientras que los registros desde finales de 2009 en adelante pasan con la variante 9755. Esta herramienta prueba las dos y acepta el número si supera cualquiera de ellas.',
+  },
+  {
+    question: '¿Y los números de IVA de 12 cifras?',
+    answer:
+      'Esos pertenecen a empresas con sucursales. Las primeras 9 cifras son el número de IVA y llevan los dígitos de control, y las 3 últimas son el identificador de la sucursal. Esta herramienta comprueba el núcleo de 9 cifras y muestra aparte el código de sucursal.',
+  },
+  {
+    question: '¿Por qué falla mi número si viene impreso en una factura?',
+    answer:
+      'Lo más habitual es que haya una cifra mal escrita o que el número no sea en realidad un número de IVA GB, por ejemplo un número de IVA de otro país de la UE, que usa un formato y una comprobación distintos. Vuelve a cotejar las cifras con el documento original.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="uk-vat" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="vat-form" novalidate>
+      <div class="field" id="vat-field">
+        <label for="vat-input">Número de IVA británico</label>
+        <span class="hint">Con o sin el prefijo GB y espacios.</span>
+        <input type="text" id="vat-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GB 123 4567 89" />
+        <span class="error-msg" id="vat-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar número de IVA</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/vat-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un número de IVA británico tiene nueve cifras, y las dos últimas son dígitos de control
+      calculados a partir de las siete primeras. Esa relación incorporada es lo que permite a un
+      comprobador detectar una cifra equivocada o cambiada de sitio sin llamar a HMRC. Algunas
+      organizaciones, como las empresas con sucursales, tienen una versión de 12 cifras en la que
+      las tres cifras extra son un identificador de sucursal.
+    </p>
+    <p>
+      La comprobación es una suma ponderada módulo 97. Cada una de las siete primeras cifras se
+      multiplica por un peso fijo, de 8 hasta 2. Esos productos se suman, y los dos dígitos de
+      control se añaden como un número de dos cifras. El total se divide luego entre 97. Con la
+      regla original el número es válido si el resto es 0. Una segunda regla, conocida como método
+      9755 y usada para los registros más recientes, acepta en su lugar un resto de 55. Esta
+      herramienta aplica las dos y da el número por válido si se cumple cualquiera de ellas.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de muestra GB 980 7806 84, que sirve de ejemplo y no es un registro real.
+      Al multiplicar las siete primeras cifras 9, 8, 0, 7, 8, 0, 6 por los pesos 8, 7, 6, 5, 4, 3,
+      2 se obtiene 72, 56, 0, 35, 32, 0, 12, que suman 207. Al añadir los dígitos de control como
+      el número 84 se llega a 291. Como 291 es exactamente 3 por 97, al dividir entre 97 el resto
+      es 0, así que el número supera la comprobación estándar.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Las empresas necesitan que el número de IVA de un proveedor sea correcto antes de recuperar
+      el IVA de una compra, y un número equivocado en una factura puede frenar un pago a
+      proveedores o una declaración de IVA. Pegar aquí el número es una primera comprobación rápida
+      de que las cifras son coherentes entre sí, de modo que una errata evidente se detecta antes de
+      que el papeleo siga adelante. Para la confirmación final de que el número pertenece a una
+      empresa registrada, el servicio de consulta de HMRC es la autoridad.
+    </p>
+  </Fragment>
+</ToolLayout>

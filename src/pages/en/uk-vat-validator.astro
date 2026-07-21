@@ -1,0 +1,128 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'UK VAT Number Validator | Check and Validate';
+const description =
+  'Free UK VAT number checker. Validate a GB VAT number against the HMRC modulus-97 check digit algorithm, including the newer 9755 variant, right in your browser.';
+const summary =
+  'Enter a UK VAT number, with or without the GB prefix and spaces, to check its check digits against the official HMRC modulus-97 algorithm. Both the standard and the newer 9755 method are handled.';
+
+const strings = {
+  validHeadline: 'Valid UK VAT number',
+  invalidHeadline: 'Not a valid UK VAT number',
+  validNoteStandard: 'The check digits pass the standard HMRC modulus-97 test.',
+  validNoteNew: 'The check digits pass the newer 9755 variant of the HMRC test.',
+  govHealthHeadline: 'Government or health authority number',
+  govNote:
+    'This is a UK government department VAT number (the GD range). It uses a different scheme, so the modulus-97 check digit test does not apply to it.',
+  healthNote:
+    'This is a UK health authority VAT number (the HA range). It uses a different scheme, so the modulus-97 check digit test does not apply to it.',
+  err: {
+    empty: 'Enter a UK VAT number to check.',
+    format:
+      'A UK VAT number is 9 digits, or 12 for branch traders. Enter digits only, with or without the GB prefix and spaces.',
+    checksum:
+      'The check digits do not match the rest of the number under either the standard or the 9755 method, so this is not a valid UK VAT number.',
+  },
+  labelFormatted: 'Formatted',
+  labelMethod: 'Check method',
+  labelBranch: 'Branch code',
+  methodStandard: 'Standard (modulus 97)',
+  methodNew: 'Newer (9755)',
+};
+
+const faq = [
+  {
+    question: 'What does this checker actually verify?',
+    answer:
+      'It runs the check digit maths that HMRC built into every UK VAT number. Passing means the number is internally consistent and correctly formed, which catches almost every typo. It does not tell you whether the number is registered to a trading business.',
+  },
+  {
+    question: 'Does a valid number mean the business is VAT registered?',
+    answer:
+      'No. The check only proves the digits are mathematically consistent. To confirm a number belongs to a real, currently registered business, use HMRC\'s official "Check a UK VAT number" service, which looks the number up against the live register.',
+  },
+  {
+    question: 'Can I paste it with GB and spaces?',
+    answer:
+      'Yes. The tool removes spaces and an optional leading GB before checking, so GB 123 4567 89 and 123456789 are treated the same. UK VAT numbers are often printed in a 3, 4, 2 grouping for readability.',
+  },
+  {
+    question: 'What is the difference between the standard and 9755 methods?',
+    answer:
+      'They are two versions of the same modulus-97 check. Older registrations pass with the original rule, while registrations from late 2009 onward pass with the 9755 variant. This tool tries both and accepts the number if either one passes.',
+  },
+  {
+    question: 'What about 12-digit VAT numbers?',
+    answer:
+      'Those belong to branch traders. The first 9 digits are the VAT number and carry the check digits, and the final 3 are a branch identifier. This tool checks the 9-digit core and shows the branch code separately.',
+  },
+  {
+    question: 'Why does my number fail when it is printed on an invoice?',
+    answer:
+      'The most common reasons are a mistyped digit or that the number is not actually a GB VAT number, for example an EU VAT number from another country, which uses a different format and check. Double check the digits against the source document.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="uk-vat" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="vat-form" novalidate>
+      <div class="field" id="vat-field">
+        <label for="vat-input">UK VAT number</label>
+        <span class="hint">With or without the GB prefix and spaces.</span>
+        <input type="text" id="vat-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GB 123 4567 89" />
+        <span class="error-msg" id="vat-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate VAT number</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/vat-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      A UK VAT number is nine digits, and the last two of those are check digits calculated from
+      the first seven. That built-in relationship is what lets a checker spot a wrong or swapped
+      digit without contacting HMRC. Some organisations, such as branch traders, have a 12-digit
+      version where the extra three digits are a branch identifier.
+    </p>
+    <p>
+      The check is a weighted modulus-97 sum. Each of the first seven digits is multiplied by a
+      fixed weight, from 8 down to 2. Those products are added together, and the two check digits
+      are added on as a two-digit number. The total is then divided by 97. Under the original
+      rule the number is valid if the remainder is 0. A second rule, known as the 9755 method and
+      used for newer registrations, accepts a remainder of 55 instead. This tool applies both and
+      treats the number as valid if either one is satisfied.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number GB 980 7806 84, which is an example rather than a real registration.
+      Multiplying the first seven digits 9, 8, 0, 7, 8, 0, 6 by the weights 8, 7, 6, 5, 4, 3, 2
+      gives 72, 56, 0, 35, 32, 0, 12, which add up to 207. Adding the check digits as the number
+      84 gives 291. Since 291 is exactly 3 times 97, dividing by 97 leaves a remainder of 0, so
+      the number passes the standard check.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      Businesses need a supplier's VAT number to be correct before they reclaim the VAT on a
+      purchase, and a wrong number on an invoice can hold up an accounts payable run or a VAT
+      return. Pasting the number here is a fast first check that the digits are internally
+      consistent, so an obvious typo is caught before the paperwork goes any further. For the final
+      confirmation that the number belongs to a registered trader, the HMRC lookup service is the
+      authority.
+    </p>
+  </Fragment>
+</ToolLayout>

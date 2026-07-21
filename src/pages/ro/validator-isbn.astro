@@ -1,0 +1,120 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator ISBN | Check and Validate';
+const description =
+  'Validator ISBN gratuit pentru ISBN-10 și ISBN-13. Verifică cifra de control a unui număr de carte și convertește un ISBN-10 valid în forma sa ISBN-13, direct în browserul tău.';
+const summary =
+  'Introdu un ISBN-10 sau un ISBN-13 pentru a-i verifica cifra de control. Dacă este un ISBN-10 valid, instrumentul afișează și echivalentul său ISBN-13. Cratimele și spațiile sunt ignorate.';
+
+const strings = {
+  validHeadline: '{type} valid',
+  invalidHeadline: 'ISBN nevalid',
+  validNote10: 'Cifra de control a ISBN-10 este corectă. Echivalentul său ISBN-13 este afișat mai jos.',
+  validNote13: 'Cifra de control a ISBN-13 este corectă.',
+  err: {
+    empty: 'Introdu un ISBN pentru verificare.',
+    format: 'Un ISBN conține doar cifre, cu excepția faptului că un ISBN-10 se poate termina cu litera X.',
+    length: 'Un ISBN are 10 sau 13 caractere, dar acesta are {length}.',
+    check10: 'Cifra de control nu se potrivește cu celelalte nouă, deci acesta nu este un ISBN-10 valid.',
+    check13: 'Cifra de control nu se potrivește cu celelalte douăsprezece, deci acesta nu este un ISBN-13 valid.',
+  },
+  labelType: 'Format',
+  labelIsbn13: 'Echivalent ISBN-13',
+};
+
+const faq = [
+  {
+    question: 'Care este diferența dintre ISBN-10 și ISBN-13?',
+    answer:
+      'ISBN-10 este formatul mai vechi de zece caractere, folosit până la sfârșitul anului 2006. ISBN-13 este formatul actual de treisprezece cifre, care este totodată un cod de bare EAN-13 valid. Fiecare ISBN-10 are un echivalent ISBN-13 direct, care începe cu 978.',
+  },
+  {
+    question: 'Ce înseamnă litera X de la sfârșitul unui ISBN-10?',
+    answer:
+      'Cifra de control a unui ISBN-10 poate avea orice valoare de la 0 la 10. Fiindcă 10 nu încape într-o singură cifră, este scrisă ca litera X. Poate apărea doar pe ultima poziție, niciodată în altă parte a numărului.',
+  },
+  {
+    question: 'Cum se calculează cifra de control?',
+    answer:
+      'Pentru ISBN-10, fiecare cifră este înmulțită cu o pondere de la 10 până la 1, rezultatele sunt adunate, iar un număr valid se împarte exact la 11. Pentru ISBN-13, cifrele sunt înmulțite alternativ cu 1 și 3, iar un total valid se împarte exact la 10.',
+  },
+  {
+    question: 'Pot converti un ISBN-10 vechi în ISBN-13?',
+    answer:
+      'Da. Când introduci un ISBN-10 valid, instrumentul afișează forma sa ISBN-13. Păstrează primele nouă cifre, pune 978 în față și recalculează cifra de control finală pentru noul număr de treisprezece cifre. Aceasta este o nevoie frecventă la actualizarea datelor de catalog mai vechi.',
+  },
+  {
+    question: 'Un ISBN valid înseamnă că acea carte există?',
+    answer:
+      'Nu. Verificarea demonstrează doar că numărul este consistent intern. Un număr poate trece testul cifrei de control și totuși să nu fi fost atribuit niciunei cărți publicate. Pentru a confirma un titlu, caută ISBN-ul într-un catalog de bibliotecă sau de librărie.',
+  },
+  {
+    question: 'Contează cratimele și spațiile?',
+    answer:
+      'Nu. Grupurile dintr-un ISBN, precum părțile de limbă și de editură, sunt separate prin cratime doar pentru lizibilitate. Instrumentul elimină cratimele și spațiile înainte de verificare, așa că 978-0-306-40615-7 și 9780306406157 sunt tratate la fel.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="isbn" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="isbn-form" novalidate>
+      <div class="field" id="isbn-field">
+        <label for="isbn-input">ISBN (10 sau 13)</label>
+        <span class="hint">Cratimele și spațiile sunt ignorate. Un ISBN-10 se poate termina cu X.</span>
+        <input type="text" id="isbn-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="978-0-306-40615-7" />
+        <span class="error-msg" id="isbn-error"></span>
+      </div>
+      <button type="submit" class="btn">Validează ISBN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/isbn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un ISBN poartă o cifră de control pe ultima poziție, calculată din cifrele dinaintea ei, astfel
+      că o singură cifră greșită sau inversată aproape întotdeauna strică rezultatul calculului și
+      dă greșeala de gol. Există două formate. ISBN-10 a fost folosit până în 2006, iar ISBN-13 este
+      standard din 2007 și servește și drept cod de bare al cărții.
+    </p>
+    <p>
+      Pentru un ISBN-10, fiecare dintre cele zece caractere este înmulțit cu o pondere care coboară
+      de la 10 la 1, iar rezultatele sunt adunate. Un caracter de control final X reprezintă valoarea
+      10. Numărul este valid atunci când acea sumă se împarte exact la 11. Pentru un ISBN-13, cele
+      treisprezece cifre sunt înmulțite alternativ cu 1 și 3, începând cu 1, iar numărul este valid
+      atunci când acea sumă se împarte exact la 10. Convertirea unui ISBN-10 în ISBN-13 păstrează
+      primele nouă cifre, adaugă 978 în față și recalculează cifra de control conform regulii
+      ISBN-13.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Ia numărul de exemplu 978-1-23456-789-7, care este inventat și nu o carte reală. Citind cele
+      treisprezece cifre și înmulțind alternativ cu 1 și 3 se obține 9, 21, 8, 3, 2, 9, 4, 15, 6, 21,
+      8, 27 și 7. Acestea se adună la 140, care se împarte exact la 10, deci cifra de control este
+      corectă și numărul este un ISBN-13 valid.
+    </p>
+
+    <h2>Când ai folosi acest lucru</h2>
+    <p>
+      Oricine lucrează cu date despre cărți întâlnește ISBN-uri care trebuie verificate: un librar
+      care încarcă un catalog, un bibliotecar care curăță niște înregistrări sau un autor care se
+      publică singur și confirmă numărul de pe o probă de copertă. Un test rapid al cifrei de control
+      prinde o eroare de transcriere înainte ca aceasta să ajungă într-o bază de date, iar
+      conversia din ISBN-10 în ISBN-13 scutește de o recalculare manuală anevoioasă atunci când
+      înregistrările mai vechi păstrează doar forma de zece cifre.
+    </p>
+  </Fragment>
+</ToolLayout>

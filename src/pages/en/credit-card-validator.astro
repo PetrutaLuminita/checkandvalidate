@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'Credit Card Number Validator | Check and Validate';
+const description =
+  'Free credit card number checker using the Luhn algorithm. Confirm a card number is well formed and see its likely network, entirely in your browser. Nothing is ever sent anywhere.';
+const summary =
+  'Enter a card number to check whether it is mathematically well formed with the Luhn algorithm and to see its likely network. This does not check whether the card is real, active, or has funds, and the number never leaves your browser.';
+
+const calloutText =
+  'Your card number never leaves this page. There is no server here to send it to, so the number you type is not transmitted, saved, logged, or seen by anyone, not even to check whether it is valid. The Luhn check runs entirely in your browser.';
+
+const strings = {
+  validHeadline: 'Valid card number',
+  invalidHeadline: 'Not a valid card number',
+  validNote:
+    'The number passes the Luhn check, so it is well formed. This does not mean the card is real, active, or has any funds behind it.',
+  err: {
+    empty: 'Enter a card number to check.',
+    format: 'A card number contains digits only. Remove any letters or other symbols.',
+    length: 'A card number is 12 to 19 digits, but this one has {length}.',
+    luhn: 'The number fails the Luhn check, so at least one digit is wrong or two of them are swapped.',
+  },
+  labelNetwork: 'Likely network',
+  labelLength: 'Length',
+  networkUnknown: 'Not recognised',
+  lengthValue: '{n} digits',
+};
+
+const faq = [
+  {
+    question: 'Does a valid result mean the card actually works?',
+    answer:
+      'No. A pass means only that the digits are mathematically consistent under the Luhn formula, which is how forms catch a mistyped number. It says nothing about whether the card was ever issued, is active, or has any money on it. Only the bank can tell you that.',
+  },
+  {
+    question: 'Is my card number sent anywhere when I check it?',
+    answer:
+      'No. Nothing is transmitted, stored, or logged. The check is done by JavaScript running on your own device, and there is no server behind this page for the number to be sent to, not even to work out whether it is valid. You can close the tab and no trace of the number remains anywhere online.',
+  },
+  {
+    question: 'What is the Luhn check?',
+    answer:
+      'It is a simple formula built into almost every card number. Doubling every second digit and adding everything up always lands on a multiple of 10 for a valid number. It is designed to catch single wrong digits and most swapped pairs, not to prove a card is genuine.',
+  },
+  {
+    question: 'How does it know the card network?',
+    answer:
+      'Card numbers start with an issuer range that identifies the network. Numbers beginning with 4 are Visa, 51 to 55 and 2221 to 2720 are Mastercard, 34 and 37 are American Express, and there are set ranges for Discover, Diners Club, JCB, UnionPay, and Maestro. The tool reads that prefix and reports the likely network.',
+  },
+  {
+    question: 'Why would a real card fail the check?',
+    answer:
+      'Almost always a typo, a dropped digit, or two digits entered in the wrong order. Re-enter the number carefully from the card. If it still fails, the digits as written are not a valid card number.',
+  },
+  {
+    question: 'Should I use my real card number here?',
+    answer:
+      'You can, because nothing is sent anywhere, but you do not need to. Any of the standard publicly known test numbers used by payment developers will demonstrate the tool just as well.',
+  },
+];
+---
+
+<ToolLayout
+  title={title}
+  description={description}
+  locale={locale}
+  toolId="credit-card"
+  summary={summary}
+  faq={faq}
+  calloutText={calloutText}
+  calloutEmphasis={true}
+>
+  <Fragment slot="tool">
+    <form class="calc-box" id="cc-form" novalidate>
+      <div class="field" id="cc-field">
+        <label for="cc-input">Card number</label>
+        <span class="hint">Digits only, with or without spaces. Nothing you type is sent anywhere.</span>
+        <input type="text" inputmode="numeric" id="cc-input" class="mono" autocomplete="off" spellcheck="false" placeholder="4111 1111 1111 1111" />
+        <span class="error-msg" id="cc-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate card number</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/luhn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      The last digit of a card number is a check digit, chosen so that the whole number satisfies
+      the Luhn formula. That built-in relationship is what lets a checkout page reject an obviously
+      mistyped number without asking the bank. It is a test of form, not of whether the card is
+      genuine, and this tool is careful to make that distinction.
+    </p>
+    <p>
+      The Luhn check works from the rightmost digit moving left. Every second digit is doubled, and
+      if doubling gives a number above 9, you subtract 9 from it, which is the same as adding its
+      two digits together. All the digits are then added up, the doubled ones and the untouched
+      ones alike. If that total is a multiple of 10, the number passes. As an extra, the tool also
+      reads the leading digits to report the likely card network.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number 4111 1111 1111 1111, one of the standard test numbers rather than a
+      real card. Doubling every second digit from the right turns seven of the 1s into 2s and the
+      leading 4 into 8, while the remaining digits are left alone. Adding all of them together
+      comes to 30, which is a multiple of 10, so the number passes the Luhn check. Because it
+      starts with a 4, the tool reports the likely network as Visa.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      Developers building or testing a payment form use Luhn checks to reject bad input before it
+      ever reaches a payment provider, and this tool is a quick way to confirm a test number is
+      well formed. It is also handy for catching a slip when copying a long number down. Whatever
+      the reason, remember that a pass only means the number is correctly formed, and that nothing
+      you enter here is sent anywhere at all.
+    </p>
+  </Fragment>
+</ToolLayout>

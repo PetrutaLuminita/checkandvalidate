@@ -52,6 +52,20 @@ export const tools = [
     },
   },
   {
+    id: 'credit-card',
+    slugs: { en: 'credit-card-validator', ro: 'validator-card-credit', es: 'validador-tarjeta-credito' },
+    name: {
+      en: 'Credit Card Number Validator',
+      ro: 'Validator număr card de credit',
+      es: 'Validador de número de tarjeta de crédito',
+    },
+    desc: {
+      en: 'Check whether a card number is mathematically valid with the Luhn algorithm and see its likely network. Nothing is ever sent anywhere.',
+      ro: 'Verifică dacă un număr de card este valid matematic cu algoritmul Luhn și vezi rețeaua lui probabilă. Nimic nu este trimis vreodată nicăieri.',
+      es: 'Comprueba si un número de tarjeta es matemáticamente válido con el algoritmo de Luhn y descubre su red probable. Nada se envía nunca a ningún sitio.',
+    },
+  },
+  {
     id: 'dni-nie',
     slugs: { en: 'dni-nie-calculator', ro: 'calculator-dni-nie', es: 'calculadora-dni-nie' },
     name: {
@@ -95,6 +109,20 @@ export const tools = [
       en: 'Check the structure and control digit of a Romanian CNP, and read back the birth date, sex, and county it encodes.',
       ro: 'Verifică structura și cifra de control a unui CNP românesc și află data nașterii, sexul și județul codificate în el.',
       es: 'Comprueba la estructura y el dígito de control de un CNP rumano y muestra la fecha de nacimiento, el sexo y el condado que codifica.',
+    },
+  },
+  {
+    id: 'isbn',
+    slugs: { en: 'isbn-validator', ro: 'validator-isbn', es: 'validador-isbn' },
+    name: {
+      en: 'ISBN Validator',
+      ro: 'Validator ISBN',
+      es: 'Validador de ISBN',
+    },
+    desc: {
+      en: 'Validate an ISBN-10 or ISBN-13 check digit, and convert a valid ISBN-10 into its ISBN-13 form.',
+      ro: 'Validează cifra de control a unui ISBN-10 sau ISBN-13 și convertește un ISBN-10 valid în forma ISBN-13.',
+      es: 'Valida el dígito de control de un ISBN-10 o ISBN-13 y convierte un ISBN-10 válido a su forma ISBN-13.',
     },
   },
 ];

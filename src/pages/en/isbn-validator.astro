@@ -1,0 +1,118 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'ISBN Validator | Check and Validate';
+const description =
+  'Free ISBN validator for ISBN-10 and ISBN-13. Check the check digit of a book number and convert a valid ISBN-10 into its ISBN-13 form, right in your browser.';
+const summary =
+  'Enter an ISBN-10 or ISBN-13 to check its check digit. If it is a valid ISBN-10, the tool also shows its ISBN-13 equivalent. Hyphens and spaces are ignored.';
+
+const strings = {
+  validHeadline: 'Valid {type}',
+  invalidHeadline: 'Not a valid ISBN',
+  validNote10: 'The ISBN-10 check digit is correct. Its ISBN-13 equivalent is shown below.',
+  validNote13: 'The ISBN-13 check digit is correct.',
+  err: {
+    empty: 'Enter an ISBN to check.',
+    format: 'An ISBN is digits only, except that an ISBN-10 may end in the letter X.',
+    length: 'An ISBN has 10 or 13 characters, but this one has {length}.',
+    check10: 'The check digit does not match the other nine, so this is not a valid ISBN-10.',
+    check13: 'The check digit does not match the other twelve, so this is not a valid ISBN-13.',
+  },
+  labelType: 'Format',
+  labelIsbn13: 'ISBN-13 equivalent',
+};
+
+const faq = [
+  {
+    question: 'What is the difference between ISBN-10 and ISBN-13?',
+    answer:
+      'ISBN-10 is the older ten-character format used until the end of 2006. ISBN-13 is the current thirteen-digit format, which is also a valid EAN-13 barcode. Every ISBN-10 has a direct ISBN-13 equivalent that starts with 978.',
+  },
+  {
+    question: 'What does the X at the end of an ISBN-10 mean?',
+    answer:
+      'The ISBN-10 check digit can be any value from 0 to 10. Since 10 will not fit in a single digit, it is written as the letter X. It can only ever appear in the last position, never anywhere else in the number.',
+  },
+  {
+    question: 'How is the check digit worked out?',
+    answer:
+      'For ISBN-10, each digit is multiplied by a weight from 10 down to 1, the results are added, and a valid number is divisible by 11. For ISBN-13, the digits are multiplied alternately by 1 and 3, and a valid total is divisible by 10.',
+  },
+  {
+    question: 'Can I convert an old ISBN-10 to ISBN-13?',
+    answer:
+      'Yes. When you enter a valid ISBN-10, the tool shows its ISBN-13 form. It keeps the first nine digits, puts 978 in front, and recalculates the final check digit for the new thirteen-digit number. This is a common need when updating older catalogue data.',
+  },
+  {
+    question: 'Does a valid ISBN mean the book exists?',
+    answer:
+      'No. The check only proves the number is internally consistent. A number can pass the check digit test and still not have been assigned to any published book. To confirm a title, look the ISBN up in a library or bookseller catalogue.',
+  },
+  {
+    question: 'Do the hyphens and spaces matter?',
+    answer:
+      'No. The groups in an ISBN, such as the language and publisher parts, are separated by hyphens purely for readability. The tool removes hyphens and spaces before checking, so 978-0-306-40615-7 and 9780306406157 are treated the same.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="isbn" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="isbn-form" novalidate>
+      <div class="field" id="isbn-field">
+        <label for="isbn-input">ISBN (10 or 13)</label>
+        <span class="hint">Hyphens and spaces are ignored. An ISBN-10 may end in X.</span>
+        <input type="text" id="isbn-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="978-0-306-40615-7" />
+        <span class="error-msg" id="isbn-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate ISBN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/isbn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      An ISBN carries a check digit in its last position, calculated from the digits before it, so
+      a single wrong or swapped digit almost always breaks the maths and gives the mistake away.
+      There are two formats. ISBN-10 was used until 2006, and ISBN-13 has been standard since 2007
+      and doubles as the book's barcode.
+    </p>
+    <p>
+      For an ISBN-10, each of the ten characters is multiplied by a weight that counts down from 10
+      to 1, and the results are added together. A final check character of X stands for the value
+      10. The number is valid when that sum divides evenly by 11. For an ISBN-13, the thirteen
+      digits are multiplied alternately by 1 and 3, starting with 1, and the number is valid when
+      that sum divides evenly by 10. Converting an ISBN-10 to ISBN-13 keeps the first nine digits,
+      adds 978 at the front, and recomputes the check digit under the ISBN-13 rule.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number 978-1-23456-789-7, which is made up rather than a real book. Reading
+      the thirteen digits and multiplying alternately by 1 and 3 gives 9, 21, 8, 3, 2, 9, 4, 15, 6,
+      21, 8, 27, and 7. Those add up to 140, which divides evenly by 10, so the check digit is
+      correct and the number is a valid ISBN-13.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      Anyone working with book data runs into ISBNs that need checking: a bookseller loading a
+      catalogue, a librarian cleaning up records, or a self-publisher confirming the number on a
+      cover proof. A quick check digit test catches a transcription error before it ends up in a
+      database, and the ISBN-10 to ISBN-13 conversion saves a fiddly manual recalculation when
+      older records only hold the ten-digit form.
+    </p>
+  </Fragment>
+</ToolLayout>

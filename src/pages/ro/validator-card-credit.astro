@@ -1,0 +1,134 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator număr card de credit | Check and Validate';
+const description =
+  'Verificator gratuit de numere de card care folosește algoritmul Luhn. Confirmă dacă un număr de card este corect format și vezi rețeaua sa probabilă, complet în browserul tău. Nimic nu este trimis vreodată nicăieri.';
+const summary =
+  'Introdu un număr de card pentru a verifica dacă este format corect din punct de vedere matematic cu algoritmul Luhn și pentru a vedea rețeaua sa probabilă. Aceasta nu verifică dacă acel card este real, activ sau are fonduri, iar numărul nu părăsește niciodată browserul tău.';
+
+const calloutText =
+  'Numărul cardului tău nu părăsește niciodată această pagină. Nu există niciun server către care să fie trimis, așa că numărul pe care îl scrii nu este transmis, salvat, înregistrat sau văzut de nimeni, nici măcar pentru a verifica dacă este valid. Verificarea Luhn rulează integral în browserul tău.';
+
+const strings = {
+  validHeadline: 'Număr de card valid',
+  invalidHeadline: 'Număr de card nevalid',
+  validNote:
+    'Numărul trece verificarea Luhn, deci este format corect. Acest lucru nu înseamnă că acel card este real, activ sau că are fonduri în spatele lui.',
+  err: {
+    empty: 'Introdu un număr de card pentru verificare.',
+    format: 'Un număr de card conține doar cifre. Elimină orice literă sau alt simbol.',
+    length: 'Un număr de card are între 12 și 19 cifre, dar acesta are {length}.',
+    luhn: 'Numărul nu trece verificarea Luhn, deci cel puțin o cifră este greșită sau două dintre ele sunt inversate.',
+  },
+  labelNetwork: 'Rețea probabilă',
+  labelLength: 'Lungime',
+  networkUnknown: 'Nerecunoscută',
+  lengthValue: '{n} cifre',
+};
+
+const faq = [
+  {
+    question: 'Un rezultat valid înseamnă că acel card chiar funcționează?',
+    answer:
+      'Nu. O trecere înseamnă doar că cifrele sunt consistente matematic conform formulei Luhn, ceea ce le permite formularelor să prindă un număr scris greșit. Nu spune nimic despre faptul că acel card a fost vreodată emis, este activ sau are bani pe el. Doar banca îți poate spune asta.',
+  },
+  {
+    question: 'Numărul cardului meu este trimis undeva când îl verific?',
+    answer:
+      'Nu. Nimic nu este transmis, stocat sau înregistrat. Verificarea este făcută de cod JavaScript care rulează pe propriul tău dispozitiv, iar în spatele acestei pagini nu există niciun server către care numărul să fie trimis, nici măcar pentru a stabili dacă este valid. Poți închide fila și nicio urmă a numărului nu rămâne nicăieri online.',
+  },
+  {
+    question: 'Ce este verificarea Luhn?',
+    answer:
+      'Este o formulă simplă integrată în aproape orice număr de card. Dublarea fiecărei a doua cifre și adunarea totului ajung mereu la un multiplu al lui 10 pentru un număr valid. Este concepută pentru a prinde o singură cifră greșită și majoritatea perechilor inversate, nu pentru a demonstra că un card este autentic.',
+  },
+  {
+    question: 'Cum recunoaște rețeaua cardului?',
+    answer:
+      'Numerele de card încep cu un interval al emitentului care identifică rețeaua. Numerele care încep cu 4 sunt Visa, 51 până la 55 și 2221 până la 2720 sunt Mastercard, 34 și 37 sunt American Express, iar există intervale fixe pentru Discover, Diners Club, JCB, UnionPay și Maestro. Instrumentul citește acel prefix și raportează rețeaua probabilă.',
+  },
+  {
+    question: 'De ce ar putea un card real să nu treacă verificarea?',
+    answer:
+      'Aproape întotdeauna din cauza unei greșeli de tastare, a unei cifre omise sau a două cifre introduse în ordine greșită. Reintrodu numărul cu atenție de pe card. Dacă tot nu trece, cifrele așa cum sunt scrise nu formează un număr de card valid.',
+  },
+  {
+    question: 'Ar trebui să folosesc aici numărul real al cardului meu?',
+    answer:
+      'Poți, pentru că nimic nu este trimis nicăieri, dar nu este nevoie. Oricare dintre numerele de test standard, cunoscute public și folosite de dezvoltatorii de plăți, va demonstra instrumentul la fel de bine.',
+  },
+];
+---
+
+<ToolLayout
+  title={title}
+  description={description}
+  locale={locale}
+  toolId="credit-card"
+  summary={summary}
+  faq={faq}
+  calloutText={calloutText}
+  calloutEmphasis={true}
+>
+  <Fragment slot="tool">
+    <form class="calc-box" id="cc-form" novalidate>
+      <div class="field" id="cc-field">
+        <label for="cc-input">Număr card</label>
+        <span class="hint">Doar cifre, cu sau fără spații. Nimic din ce scrii nu este trimis nicăieri.</span>
+        <input type="text" inputmode="numeric" id="cc-input" class="mono" autocomplete="off" spellcheck="false" placeholder="4111 1111 1111 1111" />
+        <span class="error-msg" id="cc-error"></span>
+      </div>
+      <button type="submit" class="btn">Validează numărul cardului</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/luhn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Ultima cifră a unui număr de card este o cifră de control, aleasă astfel încât întregul număr
+      să satisfacă formula Luhn. Această relație integrată este ceea ce îi permite unei pagini de
+      plată să respingă un număr scris evident greșit fără să întrebe banca. Este un test de formă,
+      nu al faptului că acel card este autentic, iar acest instrument are grijă să facă această
+      distincție.
+    </p>
+    <p>
+      Verificarea Luhn lucrează de la cifra cea mai din dreapta către stânga. Fiecare a doua cifră
+      este dublată, iar dacă dublarea dă un număr mai mare decât 9, scazi 9 din el, ceea ce este
+      același lucru cu a aduna cele două cifre ale sale. Toate cifrele sunt apoi adunate, atât cele
+      dublate cât și cele neatinse. Dacă acel total este un multiplu al lui 10, numărul trece. În
+      plus, instrumentul citește și cifrele de la început pentru a raporta rețeaua probabilă a
+      cardului.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Ia numărul de exemplu 4111 1111 1111 1111, unul dintre numerele de test standard și nu un card
+      real. Dublarea fiecărei a doua cifre din dreapta transformă șapte dintre cifrele 1 în 2 și
+      cifra 4 de la început în 8, în timp ce cifrele rămase sunt lăsate neatinse. Adunându-le pe
+      toate se ajunge la 30, care este un multiplu al lui 10, deci numărul trece verificarea Luhn.
+      Fiindcă începe cu 4, instrumentul raportează rețeaua probabilă ca fiind Visa.
+    </p>
+
+    <h2>Când ai folosi acest lucru</h2>
+    <p>
+      Dezvoltatorii care construiesc sau testează un formular de plată folosesc verificări Luhn
+      pentru a respinge datele greșite înainte ca acestea să ajungă vreodată la un procesator de
+      plăți, iar acest instrument este o modalitate rapidă de a confirma că un număr de test este
+      format corect. Este util și pentru a prinde o scăpare când copiezi un număr lung. Indiferent
+      de motiv, ține minte că o trecere înseamnă doar că numărul este format corect și că nimic din
+      ce introduci aici nu este trimis nicăieri.
+    </p>
+  </Fragment>
+</ToolLayout>

@@ -1,0 +1,133 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de número de tarjeta de crédito | Check and Validate';
+const description =
+  'Comprobador gratuito de números de tarjeta de crédito con el algoritmo de Luhn. Confirma si un número de tarjeta está bien formado y descubre su red probable, todo dentro de tu navegador. Nada se envía nunca a ningún sitio.';
+const summary =
+  'Introduce un número de tarjeta para comprobar si está matemáticamente bien formado con el algoritmo de Luhn y ver su red probable. Esto no comprueba si la tarjeta es real, está activa o tiene fondos, y el número nunca sale de tu navegador.';
+
+const calloutText =
+  'El número de tu tarjeta nunca sale de esta página. Aquí no hay ningún servidor al que enviarlo, así que el número que escribes no se transmite, no se guarda, no se registra y nadie lo ve, ni siquiera para comprobar si es válido. La comprobación de Luhn se ejecuta por completo en tu navegador.';
+
+const strings = {
+  validHeadline: 'Número de tarjeta válido',
+  invalidHeadline: 'Número de tarjeta no válido',
+  validNote:
+    'El número pasa la comprobación de Luhn, así que está bien formado. Esto no significa que la tarjeta sea real, esté activa ni que tenga fondos detrás.',
+  err: {
+    empty: 'Introduce un número de tarjeta para comprobarlo.',
+    format: 'Un número de tarjeta solo contiene dígitos. Elimina cualquier letra u otro símbolo.',
+    length: 'Un número de tarjeta tiene de 12 a 19 dígitos, pero este tiene {length}.',
+    luhn: 'El número no pasa la comprobación de Luhn, así que al menos un dígito es incorrecto o hay dos intercambiados.',
+  },
+  labelNetwork: 'Red probable',
+  labelLength: 'Longitud',
+  networkUnknown: 'No reconocida',
+  lengthValue: '{n} cifras',
+};
+
+const faq = [
+  {
+    question: '¿Un resultado válido significa que la tarjeta funciona de verdad?',
+    answer:
+      'No. Que pase la comprobación solo indica que los dígitos son matemáticamente coherentes según la fórmula de Luhn, que es como los formularios detectan un número mal tecleado. No dice nada sobre si la tarjeta llegó a emitirse, si está activa o si tiene dinero. Eso solo te lo puede confirmar el banco.',
+  },
+  {
+    question: '¿Se envía mi número de tarjeta a algún sitio cuando lo compruebo?',
+    answer:
+      'No. Nada se transmite, se almacena ni se registra. La comprobación la hace JavaScript ejecutándose en tu propio dispositivo, y detrás de esta página no hay ningún servidor al que enviar el número, ni siquiera para averiguar si es válido. Puedes cerrar la pestaña y no quedará ningún rastro del número en ninguna parte de internet.',
+  },
+  {
+    question: '¿Qué es la comprobación de Luhn?',
+    answer:
+      'Es una fórmula sencilla incorporada en casi todos los números de tarjeta. Al duplicar cada segundo dígito y sumarlo todo, el total siempre cae en un múltiplo de 10 cuando el número es válido. Está pensada para detectar un dígito equivocado y la mayoría de los pares intercambiados, no para demostrar que una tarjeta es auténtica.',
+  },
+  {
+    question: '¿Cómo sabe cuál es la red de la tarjeta?',
+    answer:
+      'Los números de tarjeta empiezan por un rango del emisor que identifica la red. Los que empiezan por 4 son Visa, del 51 al 55 y del 2221 al 2720 son Mastercard, el 34 y el 37 son American Express, y hay rangos fijos para Discover, Diners Club, JCB, UnionPay y Maestro. La herramienta lee ese prefijo e informa de la red probable.',
+  },
+  {
+    question: '¿Por qué fallaría la comprobación con una tarjeta real?',
+    answer:
+      'Casi siempre por una errata, un dígito que falta o dos dígitos escritos en el orden equivocado. Vuelve a introducir el número con cuidado, copiándolo de la tarjeta. Si sigue fallando, los dígitos tal como están escritos no forman un número de tarjeta válido.',
+  },
+  {
+    question: '¿Debería usar aquí el número de mi tarjeta real?',
+    answer:
+      'Puedes hacerlo, porque nada se envía a ningún sitio, pero no hace falta. Cualquiera de los números de prueba públicos y habituales que usan los desarrolladores de pagos demuestra la herramienta igual de bien.',
+  },
+];
+---
+
+<ToolLayout
+  title={title}
+  description={description}
+  locale={locale}
+  toolId="credit-card"
+  summary={summary}
+  faq={faq}
+  calloutText={calloutText}
+  calloutEmphasis={true}
+>
+  <Fragment slot="tool">
+    <form class="calc-box" id="cc-form" novalidate>
+      <div class="field" id="cc-field">
+        <label for="cc-input">Número de tarjeta</label>
+        <span class="hint">Solo dígitos, con o sin espacios. Nada de lo que escribas se envía a ningún sitio.</span>
+        <input type="text" inputmode="numeric" id="cc-input" class="mono" autocomplete="off" spellcheck="false" placeholder="4111 1111 1111 1111" />
+        <span class="error-msg" id="cc-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar número de tarjeta</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/luhn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      El último dígito de un número de tarjeta es un dígito de control, elegido para que el número
+      entero cumpla la fórmula de Luhn. Esa relación incorporada es lo que permite a una página de
+      pago rechazar un número obviamente mal tecleado sin tener que preguntar al banco. Es una prueba
+      de forma, no de si la tarjeta es auténtica, y esta herramienta cuida mucho de dejar clara esa
+      diferencia.
+    </p>
+    <p>
+      La comprobación de Luhn avanza desde el dígito más a la derecha hacia la izquierda. Cada segundo
+      dígito se duplica y, si al duplicarlo se pasa de 9, se le resta 9, que es lo mismo que sumar
+      sus dos cifras. Después se suman todos los dígitos, tanto los duplicados como los que quedaron
+      intactos. Si ese total es múltiplo de 10, el número pasa. Como extra, la herramienta también
+      lee las cifras iniciales para informar de la red probable de la tarjeta.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de muestra 4111 1111 1111 1111, uno de los números de prueba estándar y no
+      una tarjeta real. Al duplicar cada segundo dígito desde la derecha, siete de los unos se
+      convierten en doses y el 4 inicial en 8, mientras que el resto de los dígitos se dejan tal
+      cual. Al sumarlos todos se llega a 30, que es múltiplo de 10, así que el número pasa la
+      comprobación de Luhn. Como empieza por 4, la herramienta indica que la red probable es Visa.
+    </p>
+
+    <h2>Cuándo usarías esto</h2>
+    <p>
+      Quien desarrolla o prueba un formulario de pago usa las comprobaciones de Luhn para rechazar
+      entradas incorrectas antes de que lleguen a un proveedor de pagos, y esta herramienta es una
+      forma rápida de confirmar que un número de prueba está bien formado. También es útil para
+      pillar un desliz al copiar un número largo. Sea cual sea el motivo, recuerda que pasar la
+      comprobación solo significa que el número está correctamente formado, y que nada de lo que
+      introduces aquí se envía absolutamente a ningún sitio.
+    </p>
+  </Fragment>
+</ToolLayout>

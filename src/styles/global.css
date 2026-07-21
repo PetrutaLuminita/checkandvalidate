@@ -499,6 +499,23 @@ code {
   color: var(--color-accent-dark);
 }
 
+/* Stronger, more prominent variant (used on the credit card page). */
+.privacy-callout.is-emphasized {
+  border-width: 2px;
+  border-left-width: 6px;
+  background: #e9f2f6;
+  padding: 18px 20px;
+}
+
+.privacy-callout.is-emphasized .privacy-callout-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.privacy-callout.is-emphasized p {
+  font-size: 1rem;
+}
+
 /* Forms / tool UI */
 .calc-box {
   border: 1px solid var(--color-border);

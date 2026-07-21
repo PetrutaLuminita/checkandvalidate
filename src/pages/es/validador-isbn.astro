@@ -1,0 +1,120 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de ISBN | Check and Validate';
+const description =
+  'Validador gratuito de ISBN para ISBN-10 e ISBN-13. Comprueba el dígito de control de un número de libro y convierte un ISBN-10 válido a su forma ISBN-13, directamente en tu navegador.';
+const summary =
+  'Introduce un ISBN-10 o un ISBN-13 para comprobar su dígito de control. Si es un ISBN-10 válido, la herramienta también muestra su equivalente en ISBN-13. Los guiones y los espacios se ignoran.';
+
+const strings = {
+  validHeadline: '{type} válido',
+  invalidHeadline: 'ISBN no válido',
+  validNote10: 'El dígito de control del ISBN-10 es correcto. Su equivalente en ISBN-13 se muestra debajo.',
+  validNote13: 'El dígito de control del ISBN-13 es correcto.',
+  err: {
+    empty: 'Introduce un ISBN para comprobarlo.',
+    format: 'Un ISBN contiene solo dígitos, salvo que un ISBN-10 puede terminar en la letra X.',
+    length: 'Un ISBN tiene 10 o 13 caracteres, pero este tiene {length}.',
+    check10: 'El dígito de control no coincide con los otros nueve, así que no es un ISBN-10 válido.',
+    check13: 'El dígito de control no coincide con los otros doce, así que no es un ISBN-13 válido.',
+  },
+  labelType: 'Formato',
+  labelIsbn13: 'Equivalente en ISBN-13',
+};
+
+const faq = [
+  {
+    question: '¿Cuál es la diferencia entre ISBN-10 e ISBN-13?',
+    answer:
+      'El ISBN-10 es el formato antiguo de diez caracteres que se usó hasta finales de 2006. El ISBN-13 es el formato actual de trece dígitos, que además es un código de barras EAN-13 válido. Todo ISBN-10 tiene un equivalente directo en ISBN-13 que empieza por 978.',
+  },
+  {
+    question: '¿Qué significa la X al final de un ISBN-10?',
+    answer:
+      'El dígito de control del ISBN-10 puede tomar cualquier valor de 0 a 10. Como el 10 no cabe en un solo dígito, se escribe con la letra X. Solo puede aparecer en la última posición, nunca en ningún otro lugar del número.',
+  },
+  {
+    question: '¿Cómo se calcula el dígito de control?',
+    answer:
+      'En el ISBN-10, cada dígito se multiplica por un peso que va de 10 a 1, se suman los resultados y un número válido es divisible entre 11. En el ISBN-13, los dígitos se multiplican alternativamente por 1 y por 3, y un total válido es divisible entre 10.',
+  },
+  {
+    question: '¿Puedo convertir un ISBN-10 antiguo a ISBN-13?',
+    answer:
+      'Sí. Cuando introduces un ISBN-10 válido, la herramienta muestra su forma en ISBN-13. Conserva los primeros nueve dígitos, coloca 978 delante y recalcula el dígito de control final para el nuevo número de trece dígitos. Es una necesidad habitual al actualizar datos de catálogo antiguos.',
+  },
+  {
+    question: '¿Un ISBN válido significa que el libro existe?',
+    answer:
+      'No. La comprobación solo demuestra que el número es coherente internamente. Un número puede pasar la prueba del dígito de control y aun así no haberse asignado a ningún libro publicado. Para confirmar un título, busca el ISBN en el catálogo de una biblioteca o de una librería.',
+  },
+  {
+    question: '¿Importan los guiones y los espacios?',
+    answer:
+      'No. Los grupos de un ISBN, como las partes del idioma y de la editorial, se separan con guiones únicamente para facilitar la lectura. La herramienta elimina los guiones y los espacios antes de comprobar, así que 978-0-306-40615-7 y 9780306406157 se tratan igual.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="isbn" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="isbn-form" novalidate>
+      <div class="field" id="isbn-field">
+        <label for="isbn-input">ISBN (10 o 13)</label>
+        <span class="hint">Los guiones y los espacios se ignoran. Un ISBN-10 puede terminar en X.</span>
+        <input type="text" id="isbn-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="978-0-306-40615-7" />
+        <span class="error-msg" id="isbn-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar ISBN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/isbn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un ISBN lleva un dígito de control en su última posición, calculado a partir de los dígitos
+      anteriores, de modo que un solo dígito equivocado o intercambiado casi siempre rompe las
+      cuentas y delata el error. Hay dos formatos. El ISBN-10 se usó hasta 2006, y el ISBN-13 es el
+      estándar desde 2007 y hace también de código de barras del libro.
+    </p>
+    <p>
+      En un ISBN-10, cada uno de los diez caracteres se multiplica por un peso que cuenta desde 10
+      hasta 1, y los resultados se suman. Un carácter de control final X representa el valor 10. El
+      número es válido cuando esa suma se divide exactamente entre 11. En un ISBN-13, los trece
+      dígitos se multiplican alternativamente por 1 y por 3, empezando por 1, y el número es válido
+      cuando esa suma se divide exactamente entre 10. Convertir un ISBN-10 en ISBN-13 conserva los
+      primeros nueve dígitos, añade 978 al principio y recalcula el dígito de control según la regla
+      del ISBN-13.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de muestra 978-1-23456-789-7, que es inventado y no un libro real. Al leer
+      los trece dígitos y multiplicarlos alternativamente por 1 y por 3 se obtiene 9, 21, 8, 3, 2,
+      9, 4, 15, 6, 21, 8, 27 y 7. Estos suman 140, que se divide exactamente entre 10, así que el
+      dígito de control es correcto y el número es un ISBN-13 válido.
+    </p>
+
+    <h2>Cuándo usarías esto</h2>
+    <p>
+      Cualquiera que trabaje con datos de libros se topa con ISBN que hay que comprobar: una
+      librería cargando un catálogo, quien organiza registros en una biblioteca o quien autopublica
+      y confirma el número en una prueba de portada. Una comprobación rápida del dígito de control
+      detecta un error de transcripción antes de que acabe en una base de datos, y la conversión de
+      ISBN-10 a ISBN-13 ahorra un recálculo manual engorroso cuando los registros antiguos solo
+      guardan la forma de diez dígitos.
+    </p>
+  </Fragment>
+</ToolLayout>

@@ -11,7 +11,7 @@ const alternates = alternatesFor('static', pageId);
 
 const title = 'About | Check and Validate';
 const description =
-  'What Check and Validate is, who it is for, and how its free CNP, DNI/NIE, and IBAN validators work without collecting your data.';
+  'What Check and Validate is, who it is for, and how its free number validators work without collecting your data.';
 
 const schema = {
   '@type': 'BreadcrumbList',
@@ -32,11 +32,11 @@ const schema = {
   <h1>About Check and Validate</h1>
 
   <p>
-    Check and Validate is a small, free set of tools for checking identity and bank numbers.
-    Right now it covers three: the Romanian personal numeric code (CNP), the Spanish national ID
-    for citizens and residents (DNI and NIE), and the International Bank Account Number (IBAN).
-    Each tool runs the official algorithm for that number and explains, in plain language, whether
-    it is well formed and why.
+    Check and Validate is a small, free set of tools for checking bank, tax, card, and identity
+    numbers. It covers a growing range of them: the IBAN, UK VAT numbers, credit card numbers
+    (using the Luhn check), the Spanish DNI and NIE, UK driving licences, the Romanian CNP, and
+    the ISBN. Each tool runs the official algorithm for that number and explains, in plain
+    language, whether it is well formed and why.
   </p>
 
   <h2>Why this site exists</h2>
@@ -50,8 +50,8 @@ const schema = {
 
   <h2>How the tools work</h2>
   <p>
-    Every calculation happens in your browser. When you check a CNP, a DNI, a NIE, or an IBAN,
-    the digits never leave your device. Nothing is uploaded, stored, or logged, so it is safe to
+    Every calculation happens in your browser. When you check any of these numbers, whether a card
+    number, an IBAN, or an ID document, the digits never leave your device. Nothing is uploaded, stored, or logged, so it is safe to
     check a real number. Because the logic runs locally, the tools also work if your connection
     drops after the page has loaded.
   </p>

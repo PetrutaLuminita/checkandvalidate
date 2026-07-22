@@ -7,7 +7,7 @@
 export const ui = {
   en: {
     siteName: 'Check and Validate',
-    tagline: 'Free validators for IBAN, DNI/NIE, and CNP. No sign-up needed.',
+    tagline: 'Free validators for IBAN, VAT, card, ID, and ISBN numbers. No sign-up needed.',
     skipToContent: 'Skip to content',
     navToolsLabel: 'Validators',
     navSiteLabel: 'Site',
@@ -22,7 +22,7 @@ export const ui = {
     relatedHeading: 'Other Validators',
     footerToolsHeading: 'Validators',
     footerSiteHeading: 'Site',
-    footerTagline: 'Free ID and IBAN validators. Everything runs in your browser.',
+    footerTagline: 'Free, private number validators. Everything runs in your browser.',
     copyright: (year) => `© ${year} Check and Validate`,
     cookieText: 'This site uses cookies, including for advertising, to help keep it free. You can accept or reject them.',
     cookiePrivacyLink: 'Privacy Policy',
@@ -33,7 +33,7 @@ export const ui = {
   },
   ro: {
     siteName: 'Check and Validate',
-    tagline: 'Verificare gratuită pentru IBAN, DNI/NIE și CNP. Fără cont necesar.',
+    tagline: 'Verificare gratuită pentru numere IBAN, TVA, card, acte de identitate și ISBN. Fără cont necesar.',
     skipToContent: 'Sari la conținut',
     navToolsLabel: 'Validatoare',
     navSiteLabel: 'Site',
@@ -48,7 +48,7 @@ export const ui = {
     relatedHeading: 'Alte validatoare',
     footerToolsHeading: 'Validatoare',
     footerSiteHeading: 'Site',
-    footerTagline: 'Validatoare gratuite de acte și IBAN. Totul rulează în browserul tău.',
+    footerTagline: 'Validatoare de numere gratuite și private. Totul rulează în browserul tău.',
     copyright: (year) => `© ${year} Check and Validate`,
     cookieText: 'Acest site folosește cookie-uri, inclusiv pentru publicitate, ca să rămână gratuit. Poți să le accepți sau să le refuzi.',
     cookiePrivacyLink: 'Politica de confidențialitate',
@@ -59,7 +59,7 @@ export const ui = {
   },
   es: {
     siteName: 'Check and Validate',
-    tagline: 'Validadores gratuitos de IBAN, DNI/NIE y CNP. Sin registro necesario.',
+    tagline: 'Validadores gratuitos de números IBAN, IVA, tarjeta, identidad e ISBN. Sin registro necesario.',
     skipToContent: 'Ir al contenido',
     navToolsLabel: 'Validadores',
     navSiteLabel: 'Sitio',
@@ -74,7 +74,7 @@ export const ui = {
     relatedHeading: 'Otros validadores',
     footerToolsHeading: 'Validadores',
     footerSiteHeading: 'Sitio',
-    footerTagline: 'Validadores gratuitos de documentos e IBAN. Todo funciona en tu navegador.',
+    footerTagline: 'Validadores de números gratuitos y privados. Todo funciona en tu navegador.',
     copyright: (year) => `© ${year} Check and Validate`,
     cookieText: 'Este sitio usa cookies, incluidas las de publicidad, para seguir siendo gratuito. Puedes aceptarlas o rechazarlas.',
     cookiePrivacyLink: 'Política de privacidad',

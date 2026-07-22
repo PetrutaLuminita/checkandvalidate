@@ -6,6 +6,6 @@
     <path d="M28 -12l24 24 44 -50" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <text x="240" y="270" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" fill="#1a1a1a">Check and Validate</text>
-  <text x="240" y="340" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#55554f">Free validators for IBAN, DNI/NIE, and CNP</text>
+  <text x="240" y="340" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#55554f">Free validators for IBAN, VAT, card, ID, and ISBN</text>
   <text x="90" y="560" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#55554f">checkandvalidate.com</text>
 </svg>

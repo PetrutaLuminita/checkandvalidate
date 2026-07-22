@@ -8,9 +8,9 @@ const locale = 'es';
 const strings = t(locale);
 const alternates = alternatesFor('home');
 
-const title = 'Check and Validate | Validador de IBAN europeo, DNI/NIE español y CNP rumano';
+const title = 'Check and Validate | Validadores gratuitos: IBAN, IVA, tarjeta, documentos e ISBN';
 const description =
-  'Validadores gratuitos del IBAN, del DNI y NIE español y del CNP rumano. Sin registro necesario. Cada comprobación se realiza en tu navegador y te explica el resultado.';
+  'Validadores gratuitos de números IBAN, IVA británico, tarjeta de crédito, documentos de identidad e ISBN. Sin registro necesario. Cada comprobación se realiza en tu navegador y te explica el resultado.';
 
 const schema = {
   '@type': 'WebSite',
@@ -25,11 +25,12 @@ const schema = {
   <p class="tagline">{strings.tagline}</p>
 
   <p class="section-intro">
-    Tres herramientas claras para comprobar números bancarios y de identidad: el número
-    internacional de cuenta bancaria (IBAN), el documento de identidad español (DNI y NIE) y el
-    código numérico personal rumano (CNP). Cada una funciona por completo en esta página, usa el
-    algoritmo oficial y te explica lo que ha encontrado. No hay nada que instalar ni ninguna
-    cuenta que crear.
+    Un conjunto de herramientas claras para comprobar los números que hay detrás de las cuentas
+    bancarias, las tarjetas, los registros fiscales, los documentos de identidad y los libros.
+    Abarcan el IBAN, los números de IVA británico, los números de tarjeta de crédito, el DNI y el
+    NIE español, los carnets de conducir británicos, el CNP rumano y el ISBN. Cada una funciona
+    por completo en esta página, usa el algoritmo oficial y te explica lo que ha encontrado. No
+    hay nada que instalar ni ninguna cuenta que crear.
   </p>
 
   <AdSlot position="home-top" label={strings.adLabel} />

@@ -11,7 +11,7 @@ const alternates = alternatesFor('static', pageId);
 
 const title = 'Acerca de | Check and Validate';
 const description =
-  'Qué es Check and Validate, para quién está pensado y cómo funcionan sus validadores gratuitos de CNP, DNI/NIE e IBAN sin recopilar tus datos.';
+  'Qué es Check and Validate, para quién está pensado y cómo funcionan sus validadores de números gratuitos sin recopilar tus datos.';
 
 const schema = {
   '@type': 'BreadcrumbList',
@@ -32,11 +32,12 @@ const schema = {
   <h1>Acerca de Check and Validate</h1>
 
   <p>
-    Check and Validate es un conjunto de herramientas pequeño y gratuito para comprobar números de
-    identidad y de cuentas bancarias. De momento cubre tres: el código numérico personal rumano
-    (CNP), el documento nacional de identidad español para ciudadanos y residentes (DNI y NIE) y el
-    número de cuenta bancaria internacional (IBAN). Cada herramienta aplica el algoritmo oficial de
-    ese número y explica, con palabras sencillas, si está bien formado y por qué.
+    Check and Validate es un conjunto de herramientas pequeño y gratuito para comprobar números
+    bancarios, fiscales, de tarjeta y de identidad. Cubre una gama cada vez más amplia: el IBAN,
+    los números de IVA británico, los números de tarjeta de crédito (con la comprobación de Luhn),
+    el DNI y el NIE español, los carnets de conducir británicos, el CNP rumano y el ISBN. Cada
+    herramienta aplica el algoritmo oficial de ese número y explica, con palabras sencillas, si
+    está bien formado y por qué.
   </p>
 
   <h2>Por qué existe este sitio</h2>
@@ -51,8 +52,9 @@ const schema = {
 
   <h2>Cómo funcionan las herramientas</h2>
   <p>
-    Todos los cálculos ocurren en tu navegador. Cuando compruebas un CNP, un DNI, un NIE o un IBAN,
-    los dígitos nunca salen de tu dispositivo. No se sube, guarda ni registra nada, así que puedes
+    Todos los cálculos ocurren en tu navegador. Cuando compruebas cualquiera de estos números, ya
+    sea un número de tarjeta, un IBAN o un documento de identidad, los dígitos nunca salen de tu
+    dispositivo. No se sube, guarda ni registra nada, así que puedes
     comprobar un número real con total tranquilidad. Como la lógica se ejecuta de forma local, las
     herramientas siguen funcionando aunque se corte tu conexión después de haber cargado la página.
   </p>

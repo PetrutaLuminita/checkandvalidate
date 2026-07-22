@@ -8,9 +8,9 @@ const locale = 'en';
 const strings = t(locale);
 const alternates = alternatesFor('home');
 
-const title = 'Check and Validate | European IBAN, Spanish DNI/NIE, and Romanian CNP Validators';
+const title = 'Check and Validate | Free IBAN, VAT, Card, ID, and ISBN Validators';
 const description =
-  'Free validators for the IBAN, the Spanish DNI and NIE, and the Romanian CNP. No sign-up needed. Every check runs in your browser and explains the result.';
+  'Free validators for IBAN, UK VAT, credit card, ID document, and ISBN numbers. No sign-up needed. Every check runs in your browser and explains the result.';
 
 const schema = {
   '@type': 'WebSite',
@@ -25,10 +25,11 @@ const schema = {
   <p class="tagline">{strings.tagline}</p>
 
   <p class="section-intro">
-    Three focused tools for checking bank and identity numbers: the International Bank Account
-    Number (IBAN), the Spanish national ID (DNI and NIE), and the Romanian personal numeric code
-    (CNP). Each one runs entirely on this page, uses the official algorithm, and explains what
-    it found. There is nothing to install and no account to create.
+    A set of focused tools for checking the numbers behind bank accounts, cards, tax records,
+    identity documents, and books. They cover the IBAN, UK VAT numbers, credit card numbers, the
+    Spanish DNI and NIE, UK driving licences, the Romanian CNP, and the ISBN. Each one runs
+    entirely on this page, uses the official algorithm, and explains what it found. There is
+    nothing to install and no account to create.
   </p>
 
   <AdSlot position="home-top" label={strings.adLabel} />

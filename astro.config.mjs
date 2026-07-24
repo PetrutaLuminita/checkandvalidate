@@ -25,6 +25,10 @@ export default defineConfig({
     defaultLocale: 'en',
     routing: {
       prefixDefaultLocale: true,
+      // Let our own src/pages/index.astro serve "/" (it redirects to /en and
+      // carries the same <head> scripts) instead of Astro's auto-generated
+      // redirect, so every URL including the bare root gets the AdSense tag.
+      redirectToDefaultLocale: false,
     },
   },
   integrations: [sitemap()],

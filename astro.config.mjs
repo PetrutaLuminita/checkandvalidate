@@ -25,9 +25,11 @@ export default defineConfig({
     defaultLocale: 'en',
     routing: {
       prefixDefaultLocale: true,
-      // Let our own src/pages/index.astro serve "/" (it redirects to /en and
-      // carries the same <head> scripts) instead of Astro's auto-generated
-      // redirect, so every URL including the bare root gets the AdSense tag.
+      // Do NOT let Astro emit its own "/" handler. Astro's auto redirect (and a
+      // hand-written index.astro) both produce a 200 HTML stub with a noindex
+      // meta tag, which Google excludes from indexing. Instead the bare root is
+      // handled by a real server-side 301 redirect to /en in vercel.json, so
+      // link equity for checkandvalidate.com passes straight to the homepage.
       redirectToDefaultLocale: false,
     },
   },

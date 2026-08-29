@@ -3,9 +3,9 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/((?!ads\\.txt$).*)",
       "has": [{ "type": "host", "value": "www.checkandvalidate.com" }],
-      "destination": "https://checkandvalidate.com/:path*",
+      "destination": "https://checkandvalidate.com/$1",
       "statusCode": 301
     },
     {

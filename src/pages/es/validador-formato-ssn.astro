@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de formato de SSN (EE. UU.) | Check and Validate';
+const description =
+  'Validador de formato de SSN de EE. UU. gratuito. Comprueba si un número de la seguridad social tiene una estructura válida. Solo el formato, privado, sin buscar a ninguna persona. Se ejecuta en tu navegador.';
+const summary =
+  'Comprueba si un número de la seguridad social de EE. UU. sigue las reglas de estructura de sus partes de área, grupo y serie. Esto comprueba solo el formato. No hace ninguna búsqueda, no envía nada a ningún sitio y no puede confirmar que un SSN se emitiera alguna vez ni que pertenezca a ninguna persona.';
+
+const calloutText =
+  'Tu SSN nunca sale de esta página. Aquí no hay ningún servidor al que enviarlo, así que las cifras que escribes no se transmiten, no se guardan, no se registran y nadie las ve. Esta herramienta solo comprueba la forma del número, no hace ninguna búsqueda y no puede saber si un SSN se emitió alguna vez ni a quién pertenece.';
+
+const strings = {
+  validHeadline: 'Estructura de SSN válida',
+  invalidHeadline: 'No es una estructura de SSN válida',
+  validNote: 'El número sigue las reglas de estructura. Esto no significa que el SSN se emitiera alguna vez ni que pertenezca a nadie. Es solo una comprobación de formato.',
+  err: {
+    empty: 'Introduce un número para comprobarlo.',
+    format: 'Un SSN tiene exactamente nueve cifras, escritas AAA-GG-SSSS. Introduce solo cifras.',
+    area: 'El área (las tres primeras cifras) es {area}, que nunca se emite. El área no puede ser 000, 666 ni de 900 a 999.',
+    group: 'El grupo (las dos cifras centrales) no puede ser 00.',
+    serial: 'La serie (las cuatro últimas cifras) no puede ser 0000.',
+  },
+  labelFormatted: 'Formateado',
+  disclaimer:
+    'Esto comprueba solo la estructura del número. No confirma que el SSN se emitiera alguna vez, no identifica a ninguna persona y nunca envía el número a ningún sitio.',
+};
+
+const faq = [
+  {
+    question: '¿Esto busca o verifica a una persona real?',
+    answer:
+      'No, y no puede hacerlo. No hay ninguna búsqueda de ningún tipo. La herramienta solo comprueba si las nueve cifras siguen las reglas de estructura que usa la Administración de la Seguridad Social. Nunca contacta con un servidor y no puede saber si un número se emitió ni quién lo tiene.',
+  },
+  {
+    question: '¿Es seguro escribir un SSN aquí?',
+    answer:
+      'El número nunca sale de tu navegador. Nada se transmite, se guarda ni se registra, y no hay ningún servidor detrás de esta página que lo reciba. Dicho esto, para una comprobación solo del formato puedes cambiar un par de cifras y la herramienta funciona exactamente igual.',
+  },
+  {
+    question: '¿Qué hace que un SSN no sea válido estructuralmente?',
+    answer:
+      'Tres reglas. El área, las tres primeras cifras, no puede ser 000, 666 ni nada entre 900 y 999. El grupo, las dos cifras centrales, no puede ser 00. La serie, las cuatro últimas cifras, no puede ser 0000. Un número que incumpla cualquiera de estas nunca fue un SSN válido.',
+  },
+  {
+    question: '¿Por qué no son válidos los números que empiezan por 900 o más?',
+    answer:
+      'Esos rangos están reservados y nunca se asignaron como SSN. El rango de 900 a 999, en concreto, coincide con los números de identificación personal del contribuyente (ITIN), que son otra cosa, así que nunca puede ser un área de SSN auténtica.',
+  },
+  {
+    question: '¿Una estructura válida significa que el SSN es real?',
+    answer:
+      'No. Un número puede seguir todas las reglas de estructura y aun así no haberse emitido nunca a nadie. Esto es una comprobación de formato, no una verificación. Solo la Administración de la Seguridad Social puede confirmar un SSN real.',
+  },
+];
+---
+
+<ToolLayout
+  title={title}
+  description={description}
+  locale={locale}
+  toolId="ssn"
+  summary={summary}
+  faq={faq}
+  calloutText={calloutText}
+  calloutEmphasis={true}
+>
+  <Fragment slot="tool">
+    <form class="calc-box" id="ssn-form" novalidate>
+      <div class="field" id="ssn-field">
+        <label for="ssn-input">Número para comprobar</label>
+        <span class="hint">Nueve cifras. Nada de lo que escribes se envía a ningún sitio.</span>
+        <input type="text" inputmode="numeric" id="ssn-input" class="mono" autocomplete="off" spellcheck="false" placeholder="123-45-6789" />
+        <span class="error-msg" id="ssn-error"></span>
+      </div>
+      <button type="submit" class="btn">Comprobar formato</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/ssn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un número de la seguridad social tiene nueve cifras, escritas en tres grupos como AAA-GG-SSSS.
+      Desde 2011 los números se asignan de forma aleatoria, pero un conjunto de reglas de estructura
+      sigue indicando qué combinaciones nunca fueron válidas. Esta herramienta aplica esas reglas y
+      nada más. Lee la forma del número; no busca a nadie, ni puede hacerlo.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Cifras</th><th>Regla</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Área</td><td>Primeras 3</td><td>No 000, no 666, no de 900 a 999</td></tr>
+          <tr><td>Grupo</td><td>2 centrales</td><td>No 00</td></tr>
+          <tr><td>Serie</td><td>Últimas 4</td><td>No 0000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de ejemplo 123-45-6789, que es el marcador de posición habitual y no un SSN
+      real. El área es 123, que no es 000, 666 ni de los 900. El grupo es 45, que no es 00. La serie
+      es 6789, que no es 0000. Todas las reglas se cumplen, así que el número es estructuralmente
+      válido. Un número como 666-45-6789 fallaría por la regla del área, y 123-00-6789 fallaría por
+      la regla del grupo.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Esto sirve para comprobar la forma de un número, no a una persona. Un desarrollador que crea
+      un formulario, un profesor que explica la estructura o alguien que confirma que un número se
+      escribió con la cantidad correcta de cifras pueden usarlo para detectar un error de formato.
+      Como es una comprobación de estructura y nada se envía a ningún sitio, no hay ninguna razón
+      para introducir un SSN real, y la herramienta funciona exactamente igual con uno inventado.
+    </p>
+  </Fragment>
+</ToolLayout>

@@ -1,0 +1,126 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'en';
+const title = 'SWIFT / BIC Code Checker | Check and Validate';
+const description =
+  'Free SWIFT/BIC code checker. Verify the format of a SWIFT code, confirm its country, and break it into its bank, location, and branch parts, all in your browser.';
+const summary =
+  'Enter a SWIFT/BIC code to check that it is well formed (8 or 11 characters) and that its country code is a real country. The tool breaks the code into its bank, country, location, and branch parts. It checks the structure, not whether the bank exists.';
+
+const strings = {
+  validHeadline: 'Valid SWIFT/BIC structure',
+  invalidHeadline: 'Not a valid SWIFT/BIC code',
+  validNotePrimary: 'The structure is correct. This is an 8-character code, so it points to the bank\'s head office.',
+  validNoteBranch: 'The structure is correct. The 11th to 9th characters are a specific branch.',
+  err: {
+    empty: 'Enter a SWIFT/BIC code to check.',
+    length: 'A SWIFT/BIC code has 8 or 11 characters, but this one has {length}.',
+    format: 'This does not match the SWIFT/BIC shape: 4 letters, then 2 letters, then 2 letters or digits, then an optional 3.',
+    country: 'The country code {cc} is not a real ISO country code, so this cannot be a valid SWIFT/BIC.',
+  },
+  labelBank: 'Bank code',
+  labelCountry: 'Country',
+  labelLocation: 'Location code',
+  labelBranch: 'Branch code',
+};
+
+const faq = [
+  {
+    question: 'Does a valid result mean the bank actually exists?',
+    answer:
+      'No. This checks that the code is shaped correctly and that its country code is real. It does not confirm the code is registered to an operating bank. Only the official SWIFT directory can do that, because it holds the live list of assigned codes.',
+  },
+  {
+    question: 'What is the difference between a SWIFT code and a BIC?',
+    answer:
+      'They are two names for the same thing. BIC stands for Business Identifier Code, the ISO 9362 standard, and SWIFT is the network that uses it. A bank will call it a SWIFT code or a BIC interchangeably.',
+  },
+  {
+    question: 'Why are some codes 8 characters and others 11?',
+    answer:
+      'The last three characters are an optional branch code. An 8-character code refers to the bank\'s primary office, which is the same as adding XXX on the end. An 11-character code points to a specific branch.',
+  },
+  {
+    question: 'Do I need both a SWIFT code and an IBAN?',
+    answer:
+      'For many international transfers, yes. The SWIFT/BIC identifies the bank, and the IBAN identifies the exact account at that bank. It is worth checking both before you send money.',
+  },
+  {
+    question: 'Is my SWIFT code sent anywhere when I check it?',
+    answer:
+      'No. The check runs entirely in your browser with JavaScript. Nothing you type is transmitted, stored, or logged.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="swift" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="swift-form" novalidate>
+      <div class="field" id="swift-field">
+        <label for="swift-input">SWIFT / BIC code</label>
+        <span class="hint">8 or 11 characters, letters and digits. Spaces are ignored.</span>
+        <input type="text" id="swift-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BANKUS33XYZ" />
+        <span class="error-msg" id="swift-error"></span>
+      </div>
+      <button type="submit" class="btn">Check SWIFT/BIC</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/swift-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      A SWIFT code, also called a BIC, identifies a bank in international transfers. It is defined
+      by the ISO 9362 standard and is either 8 or 11 characters, built from four fixed parts read
+      left to right.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Part</th><th>Length</th><th>What it is</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Bank code</td><td>4 letters</td><td>The institution, for example BANK or NWBK</td></tr>
+          <tr><td>Country code</td><td>2 letters</td><td>The ISO country the bank is in, such as US or GB</td></tr>
+          <tr><td>Location code</td><td>2 letters or digits</td><td>The city or office within that country</td></tr>
+          <tr><td>Branch code</td><td>3 letters or digits</td><td>Optional. A specific branch. Left off, it means the head office (XXX)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      This tool checks two things: that the code has one of the two valid lengths and the right
+      pattern of letters and digits, and that the two-letter country code is a real ISO 3166-1
+      country. What it cannot check is whether the code belongs to a bank that is actually
+      operating, because that lives only in the official SWIFT directory.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample code BANKUS33XYZ, which is made up rather than a real bank. Splitting it into
+      its parts gives BANK as the bank code, US as the country (United States), 33 as the location
+      code, and XYZ as the branch code. It has 11 characters and the right shape, and US is a real
+      country code, so it passes the structure check.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      Anyone sending or receiving an international bank transfer runs into a SWIFT/BIC. A quick
+      structure check catches a mistyped or mis-copied code before it delays a payment, and
+      breaking the code into its parts is a fast way to confirm it is at least pointing at the
+      right country. If you are setting up a payment, it is worth validating the
+      <a href={toolPath('iban', locale)}>IBAN</a> too, since the SWIFT code identifies the bank and
+      the IBAN identifies the account.
+    </p>
+  </Fragment>
+</ToolLayout>

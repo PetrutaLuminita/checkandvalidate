@@ -1,0 +1,126 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'ro';
+const title = 'Verificator cod SWIFT/BIC | Check and Validate';
+const description =
+  'Verificator gratuit de cod SWIFT/BIC. Verifică forma unui cod SWIFT, confirmă țara și descompune codul în părțile de bancă, locație și sucursală, totul în browserul tău.';
+const summary =
+  'Introdu un cod SWIFT/BIC ca să verifici că este bine format (8 sau 11 caractere) și că are un cod de țară real. Instrumentul descompune codul în părțile de bancă, țară, locație și sucursală. Verifică structura, nu dacă banca există.';
+
+const strings = {
+  validHeadline: 'Structură SWIFT/BIC validă',
+  invalidHeadline: 'Cod SWIFT/BIC invalid',
+  validNotePrimary: 'Structura este corectă. Acesta este un cod de 8 caractere, deci indică sediul central al băncii.',
+  validNoteBranch: 'Structura este corectă. Caracterele de la 9 la 11 reprezintă o sucursală anume.',
+  err: {
+    empty: 'Introdu un cod SWIFT/BIC pentru verificare.',
+    length: 'Un cod SWIFT/BIC are 8 sau 11 caractere, dar acesta are {length}.',
+    format: 'Acesta nu corespunde formei SWIFT/BIC: 4 litere, apoi 2 litere, apoi 2 litere sau cifre, apoi opțional încă 3.',
+    country: 'Codul de țară {cc} nu este un cod de țară ISO real, așa că acesta nu poate fi un cod SWIFT/BIC valid.',
+  },
+  labelBank: 'Cod de bancă',
+  labelCountry: 'Țară',
+  labelLocation: 'Cod de locație',
+  labelBranch: 'Cod de sucursală',
+};
+
+const faq = [
+  {
+    question: 'Un rezultat valid înseamnă că banca chiar există?',
+    answer:
+      'Nu. Această verificare confirmă doar că codul este format corect și că are un cod de țară real. Nu confirmă că este înregistrat pentru o bancă activă. Doar directorul oficial SWIFT poate face asta, fiindcă el ține lista în timp real a codurilor atribuite.',
+  },
+  {
+    question: 'Care este diferența dintre un cod SWIFT și un BIC?',
+    answer:
+      'Sunt două nume pentru același lucru. BIC vine de la Business Identifier Code, standardul ISO 9362, iar SWIFT este rețeaua care îl folosește. O bancă îl va numi cod SWIFT sau BIC fără nicio deosebire.',
+  },
+  {
+    question: 'De ce unele coduri au 8 caractere, iar altele 11?',
+    answer:
+      'Ultimele trei caractere sunt un cod de sucursală opțional. Un cod de 8 caractere se referă la sediul principal al băncii, ceea ce este totuna cu a adăuga XXX la final. Un cod de 11 caractere indică o sucursală anume.',
+  },
+  {
+    question: 'Am nevoie și de un cod SWIFT, și de un IBAN?',
+    answer:
+      'Pentru multe transferuri internaționale, da. Codul SWIFT/BIC identifică banca, iar IBAN-ul identifică exact contul din acea bancă. Merită să le verifici pe amândouă înainte să trimiți bani.',
+  },
+  {
+    question: 'Codul meu SWIFT este trimis undeva când îl verific?',
+    answer:
+      'Nu. Verificarea rulează în întregime în browserul tău, cu JavaScript. Nimic din ce introduci nu este transmis, salvat sau înregistrat.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="swift" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="swift-form" novalidate>
+      <div class="field" id="swift-field">
+        <label for="swift-input">Cod SWIFT / BIC</label>
+        <span class="hint">8 sau 11 caractere, litere și cifre. Spațiile sunt ignorate.</span>
+        <input type="text" id="swift-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BANKUS33XYZ" />
+        <span class="error-msg" id="swift-error"></span>
+      </div>
+      <button type="submit" class="btn">Verifică SWIFT/BIC</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/swift-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un cod SWIFT, numit și BIC, identifică o bancă în transferurile internaționale. Este definit
+      de standardul ISO 9362 și are fie 8, fie 11 caractere, alcătuit din patru părți fixe, citite
+      de la stânga la dreapta.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Lungime</th><th>Ce este</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cod de bancă</td><td>4 litere</td><td>Instituția, de exemplu BANK sau NWBK</td></tr>
+          <tr><td>Cod de țară</td><td>2 litere</td><td>Țara ISO în care se află banca, precum US sau GB</td></tr>
+          <tr><td>Cod de locație</td><td>2 litere sau cifre</td><td>Orașul sau biroul din acea țară</td></tr>
+          <tr><td>Cod de sucursală</td><td>3 litere sau cifre</td><td>Opțional. O sucursală anume. Dacă lipsește, înseamnă sediul central (XXX)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Acest instrument verifică două lucruri: că are una dintre cele două lungimi valide și tiparul
+      corect de litere și cifre, și că cele două litere ale codului de țară formează un cod ISO
+      3166-1 real. Ce nu poate verifica este dacă codul aparține unei bănci care chiar
+      funcționează, fiindcă acest lucru se află doar în directorul oficial SWIFT.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm codul de exemplu BANKUS33XYZ, care este inventat, nu al unei bănci reale. Descompunerea
+      lui în părți dă BANK ca și cod de bancă, US ca țară (Statele Unite), 33 ca și cod de locație
+      și XYZ ca și cod de sucursală. Are 11 caractere și forma corectă, iar US este un cod de țară
+      real, deci trece verificarea de structură.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Oricine trimite sau primește un transfer bancar internațional dă peste un cod SWIFT/BIC. O
+      verificare rapidă a structurii prinde un cod scris sau copiat greșit înainte să întârzie o
+      plată, iar descompunerea codului în părți este un mod rapid de a confirma că indică cel puțin
+      țara potrivită. Dacă pregătești o plată, merită să validezi și
+      <a href={toolPath('iban', locale)}>IBAN-ul</a>, fiindcă codul SWIFT identifică banca, iar
+      IBAN-ul identifică contul.
+    </p>
+  </Fragment>
+</ToolLayout>

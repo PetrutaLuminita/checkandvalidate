@@ -1,0 +1,126 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'es';
+const title = 'Verificador de código SWIFT/BIC | Check and Validate';
+const description =
+  'Verificador de código SWIFT/BIC gratuito. Comprueba el formato de un código SWIFT, confirma su país y desglósalo en sus partes de banco, localidad y sucursal, todo en tu navegador.';
+const summary =
+  'Introduce un código SWIFT/BIC para comprobar que está bien formado (8 u 11 caracteres) y que su código de país es un país real. La herramienta desglosa el código en sus partes de banco, país, localidad y sucursal. Comprueba la estructura, no si el banco existe.';
+
+const strings = {
+  validHeadline: 'Estructura SWIFT/BIC válida',
+  invalidHeadline: 'No es un código SWIFT/BIC válido',
+  validNotePrimary: 'La estructura es correcta. Es un código de 8 caracteres, así que apunta a la oficina central del banco.',
+  validNoteBranch: 'La estructura es correcta. Los caracteres 9 a 11 corresponden a una sucursal concreta.',
+  err: {
+    empty: 'Introduce un código SWIFT/BIC para comprobarlo.',
+    length: 'Un código SWIFT/BIC tiene 8 u 11 caracteres, pero este tiene {length}.',
+    format: 'Esto no coincide con la forma SWIFT/BIC: 4 letras, luego 2 letras, luego 2 letras o cifras y, de forma opcional, 3 más.',
+    country: 'El código de país {cc} no es un código de país ISO real, así que no puede ser un SWIFT/BIC válido.',
+  },
+  labelBank: 'Código de banco',
+  labelCountry: 'País',
+  labelLocation: 'Código de localidad',
+  labelBranch: 'Código de sucursal',
+};
+
+const faq = [
+  {
+    question: '¿Un resultado válido significa que el banco existe de verdad?',
+    answer:
+      'No. Esto comprueba que el código tiene la forma correcta y que su código de país es real. No confirma que el código esté registrado a nombre de un banco en funcionamiento. Solo el directorio oficial de SWIFT puede hacerlo, porque contiene la lista actualizada de los códigos asignados.',
+  },
+  {
+    question: '¿Cuál es la diferencia entre un código SWIFT y un BIC?',
+    answer:
+      'Son dos nombres para lo mismo. BIC son las siglas de Business Identifier Code, la norma ISO 9362, y SWIFT es la red que lo utiliza. Un banco lo llamará código SWIFT o BIC indistintamente.',
+  },
+  {
+    question: '¿Por qué unos códigos tienen 8 caracteres y otros 11?',
+    answer:
+      'Los tres últimos caracteres son un código de sucursal opcional. Un código de 8 caracteres se refiere a la oficina principal del banco, que es lo mismo que añadir XXX al final. Un código de 11 caracteres apunta a una sucursal concreta.',
+  },
+  {
+    question: '¿Necesito a la vez un código SWIFT y un IBAN?',
+    answer:
+      'Para muchas transferencias internacionales, sí. El SWIFT/BIC identifica el banco y el IBAN identifica la cuenta exacta dentro de ese banco. Conviene comprobar los dos antes de enviar dinero.',
+  },
+  {
+    question: '¿Se envía mi código SWIFT a algún sitio cuando lo compruebo?',
+    answer:
+      'No. La comprobación se realiza por completo en tu navegador con JavaScript. Nada de lo que escribes se transmite, se guarda ni se registra.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="swift" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="swift-form" novalidate>
+      <div class="field" id="swift-field">
+        <label for="swift-input">Código SWIFT / BIC</label>
+        <span class="hint">8 u 11 caracteres, letras y cifras. Los espacios se ignoran.</span>
+        <input type="text" id="swift-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BANKUS33XYZ" />
+        <span class="error-msg" id="swift-error"></span>
+      </div>
+      <button type="submit" class="btn">Comprobar SWIFT/BIC</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/swift-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un código SWIFT, también llamado BIC, identifica un banco en las transferencias
+      internacionales. Lo define la norma ISO 9362 y tiene 8 u 11 caracteres, formados por cuatro
+      partes fijas que se leen de izquierda a derecha.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Longitud</th><th>Qué es</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Código de banco</td><td>4 letras</td><td>La entidad, por ejemplo BANK o NWBK</td></tr>
+          <tr><td>Código de país</td><td>2 letras</td><td>El país ISO donde está el banco, como US o GB</td></tr>
+          <tr><td>Código de localidad</td><td>2 letras o cifras</td><td>La ciudad o la oficina dentro de ese país</td></tr>
+          <tr><td>Código de sucursal</td><td>3 letras o cifras</td><td>Opcional. Una sucursal concreta. Si se omite, indica la oficina central (XXX)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Esta herramienta comprueba dos cosas: que el código tenga una de las dos longitudes válidas y
+      el patrón correcto de letras y cifras, y que el código de país de dos letras sea un país ISO
+      3166-1 real. Lo que no puede comprobar es si el código pertenece a un banco que esté de verdad
+      en funcionamiento, porque eso solo existe en el directorio oficial de SWIFT.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el código de ejemplo BANKUS33XYZ, que es inventado y no corresponde a un banco real.
+      Al separarlo en sus partes se obtiene BANK como código de banco, US como país (Estados
+      Unidos), 33 como código de localidad y XYZ como código de sucursal. Tiene 11 caracteres y la
+      forma correcta, y US es un código de país real, así que supera la comprobación de estructura.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Cualquiera que envíe o reciba una transferencia bancaria internacional se topa con un
+      SWIFT/BIC. Una comprobación rápida de la estructura detecta un código mal escrito o mal
+      copiado antes de que retrase un pago, y desglosar el código en sus partes es una forma rápida
+      de confirmar que al menos apunta al país correcto. Si estás preparando un pago, conviene
+      validar también el <a href={toolPath('iban', locale)}>IBAN</a>, ya que el código SWIFT
+      identifica el banco y el IBAN identifica la cuenta.
+    </p>
+  </Fragment>
+</ToolLayout>

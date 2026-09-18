@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator format SSN (SUA) | Check and Validate';
+const description =
+  'Validator gratuit de format SSN (SUA). Verifică dacă un Social Security Number are o structură validă. Doar formatul, privat, fără căutarea vreunei persoane. Rulează în browserul tău.';
+const summary =
+  'Verifică dacă un Social Security Number din SUA respectă regulile de structură pentru părțile de zonă, grup și serie. Verifică doar formatul. Nu face nicio căutare, nu trimite nimic nicăieri și nu poate confirma că un SSN a fost vreodată emis sau că aparține vreunei persoane.';
+
+const calloutText =
+  'SSN-ul tău nu părăsește niciodată această pagină. Nu există niciun server către care să fie trimis, așa că cifrele pe care le scrii nu sunt transmise, salvate, înregistrate sau văzute de nimeni. Acest instrument verifică doar forma numărului, nu face nicio căutare și nu poate spune dacă un SSN a fost vreodată emis sau cui aparține.';
+
+const strings = {
+  validHeadline: 'Structură SSN validă',
+  invalidHeadline: 'Structură SSN invalidă',
+  validNote: 'Numărul respectă regulile de structură. Aceasta nu înseamnă că SSN-ul a fost vreodată emis sau că aparține cuiva. Este doar o verificare de format.',
+  err: {
+    empty: 'Introdu un număr pentru verificare.',
+    format: 'Un SSN are exact nouă cifre, scrise AAA-GG-SSSS. Introdu doar cifre.',
+    area: 'Zona (primele trei cifre) este {area}, care nu este niciodată emisă. Zona nu poate fi 000, 666 sau între 900 și 999.',
+    group: 'Grupul (cele două cifre din mijloc) nu poate fi 00.',
+    serial: 'Seria (ultimele patru cifre) nu poate fi 0000.',
+  },
+  labelFormatted: 'Formatat',
+  disclaimer:
+    'Aceasta verifică doar structura numărului. Nu confirmă că SSN-ul a fost vreodată emis, nu identifică nicio persoană și nu trimite niciodată numărul nicăieri.',
+};
+
+const faq = [
+  {
+    question: 'Caută sau verifică acest instrument o persoană reală?',
+    answer:
+      'Nu, și nici nu poate. Nu există niciun fel de căutare. Instrumentul verifică doar dacă cele nouă cifre respectă regulile de structură folosite de Social Security Administration. Nu contactează niciodată un server și nu poate spune dacă un număr a fost emis sau cine îl deține.',
+  },
+  {
+    question: 'Este sigur să scriu un SSN aici?',
+    answer:
+      'Numărul nu părăsește niciodată browserul tău. Nimic nu este transmis, salvat sau înregistrat, iar în spatele acestei pagini nu există niciun server care să îl primească. Cu toate acestea, pentru o simplă verificare de format poți schimba câteva cifre, iar instrumentul funcționează exact la fel.',
+  },
+  {
+    question: 'Ce face ca un SSN să fie invalid ca structură?',
+    answer:
+      'Trei reguli. Zona, primele trei cifre, nu poate fi 000, 666 sau ceva între 900 și 999. Grupul, cele două cifre din mijloc, nu poate fi 00. Seria, ultimele patru cifre, nu poate fi 0000. Un număr care încalcă oricare dintre acestea nu a fost niciodată un SSN valid.',
+  },
+  {
+    question: 'De ce sunt invalide numerele care încep cu 900 sau mai mult?',
+    answer:
+      'Acele intervale sunt rezervate și nu au fost niciodată atribuite ca SSN-uri. Intervalul 900 până la 999, în special, se suprapune cu numerele individuale de identificare fiscală (ITIN), care sunt altceva, așa că nu poate fi niciodată o zonă autentică de SSN.',
+  },
+  {
+    question: 'O structură validă înseamnă că SSN-ul este real?',
+    answer:
+      'Nu. Un număr poate respecta fiecare regulă de structură și totuși să nu fi fost niciodată emis cuiva. Aceasta este o verificare de bun-simț a formatului, nu o confirmare. Doar Social Security Administration poate confirma un SSN real.',
+  },
+];
+---
+
+<ToolLayout
+  title={title}
+  description={description}
+  locale={locale}
+  toolId="ssn"
+  summary={summary}
+  faq={faq}
+  calloutText={calloutText}
+  calloutEmphasis={true}
+>
+  <Fragment slot="tool">
+    <form class="calc-box" id="ssn-form" novalidate>
+      <div class="field" id="ssn-field">
+        <label for="ssn-input">Număr de verificat</label>
+        <span class="hint">Nouă cifre. Nimic din ce introduci nu este trimis undeva.</span>
+        <input type="text" inputmode="numeric" id="ssn-input" class="mono" autocomplete="off" spellcheck="false" placeholder="123-45-6789" />
+        <span class="error-msg" id="ssn-error"></span>
+      </div>
+      <button type="submit" class="btn">Verifică formatul</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/ssn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un Social Security Number are nouă cifre, scrise în trei grupuri ca AAA-GG-SSSS. Din 2011
+      numerele sunt atribuite aleatoriu, dar un set de reguli de structură spune în continuare care
+      combinații nu au fost niciodată valide. Acest instrument aplică acele reguli și nimic altceva.
+      Citește forma numărului; nu caută și nu poate căuta pe nimeni.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Cifre</th><th>Regulă</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Zonă</td><td>Primele 3</td><td>Nu 000, nu 666, nu între 900 și 999</td></tr>
+          <tr><td>Grup</td><td>Mijloc 2</td><td>Nu 00</td></tr>
+          <tr><td>Serie</td><td>Ultimele 4</td><td>Nu 0000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu 123-45-6789, care este substituentul standard, nu un SSN real. Zona
+      este 123, care nu este 000, 666 sau în intervalul 900. Grupul este 45, care nu este 00. Seria
+      este 6789, care nu este 0000. Fiecare regulă trece, deci numărul este valid ca structură. Un
+      număr precum 666-45-6789 ar pica la regula zonei, iar 123-00-6789 ar pica la regula grupului.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Aceasta este pentru verificarea formei unui număr, nu a unei persoane. Un dezvoltator care
+      construiește un formular, un profesor care explică structura sau cineva care confirmă că un
+      număr a fost scris cu numărul corect de cifre îl poate folosi ca să prindă o greșeală de
+      format. Fiindcă este o verificare de structură și nimic nu este trimis undeva, nu există
+      niciodată vreun motiv să introduci un SSN real, iar instrumentul funcționează exact la fel pe
+      unul inventat.
+    </p>
+  </Fragment>
+</ToolLayout>

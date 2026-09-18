@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'ro';
+const title = 'Validator format EIN (SUA) | Check and Validate';
+const description =
+  'Validator gratuit de format EIN (SUA). Verifică dacă un Employer Identification Number are formatul NN-NNNNNNN și un prefix IRS valid și află cum îți găsești EIN-ul.';
+const summary =
+  'Introdu un Employer Identification Number (EIN) din SUA ca să verifici că are nouă cifre în formatul NN-NNNNNNN și un prefix IRS valid. Verifică doar formatul. Nu confirmă că EIN-ul este înregistrat pentru o firmă.';
+
+const strings = {
+  validHeadline: 'Format EIN valid',
+  invalidHeadline: 'Format EIN invalid',
+  validNote: 'Numărul are nouă cifre și un prefix folosit de IRS. Aceasta confirmă formatul, nu că EIN-ul este înregistrat.',
+  err: {
+    empty: 'Introdu un EIN pentru verificare.',
+    format: 'Un EIN are exact nouă cifre, scrise NN-NNNNNNN. Introdu doar cifre.',
+    prefix: 'Prefixul {prefix} nu este unul atribuit de IRS, așa că nu este un format EIN valid.',
+  },
+  labelFormatted: 'Formatat',
+  labelPrefix: 'Prefix IRS',
+};
+
+const faq = [
+  {
+    question: 'Care este diferența dintre un EIN, un SSN și un TIN?',
+    answer:
+      'TIN, adică Taxpayer Identification Number, este termenul umbrelă. Un EIN este TIN-ul unei firme. Un SSN este TIN-ul unei persoane. Toate trei au nouă cifre, dar un EIN se scrie NN-NNNNNNN, în timp ce un SSN se scrie NNN-NN-NNNN.',
+  },
+  {
+    question: 'Un EIN este informație publică?',
+    answer:
+      'Deseori, da. Spre deosebire de un SSN, un EIN de firmă nu este tratat ca un secret. Apare pe declarații publice, pe formulare W-9 și pe documente de firmă, iar EIN-urile organizațiilor nonprofit pot fi căutate în evidențele IRS pentru entități scutite de taxe. Cu toate acestea, ar trebui tratat cu grijă.',
+  },
+  {
+    question: 'Pot verifica EIN-ul altei firme cu acest instrument?',
+    answer:
+      'Doar formatul lui. Acest instrument confirmă că un număr are forma unui EIN real și folosește un prefix IRS valid. Nu îți poate spune cărei firme îi aparține un EIN, fiindcă nu există o bază publică de căutare a fiecărui EIN.',
+  },
+  {
+    question: 'Ce face ca un format EIN să fie invalid?',
+    answer:
+      'Două lucruri: numărul greșit de cifre sau primele două cifre pe care IRS nu le folosește. IRS atribuie EIN-uri dintr-un set anume de prefixe, legate de centrul sau metoda care le-a emis, așa că un prefix din afara acelui set nu poate fi un EIN real.',
+  },
+  {
+    question: 'EIN-ul meu este trimis undeva când îl verific?',
+    answer:
+      'Nu. Verificarea rulează în întregime în browserul tău. Nimic din ce introduci nu este transmis, salvat sau înregistrat.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="ein" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="ein-form" novalidate>
+      <div class="field" id="ein-field">
+        <label for="ein-input">EIN</label>
+        <span class="hint">Nouă cifre, cu sau fără cratimă.</span>
+        <input type="text" inputmode="numeric" id="ein-input" class="mono" autocomplete="off" spellcheck="false" placeholder="12-3456789" />
+        <span class="error-msg" id="ein-error"></span>
+      </div>
+      <button type="submit" class="btn">Validează EIN-ul</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/ein-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un Employer Identification Number este codul fiscal pe care IRS îl dă unei firme, așa cum un
+      Social Security Number identifică o persoană. Are nouă cifre, scrise cu o cratimă după primele
+      două, ca NN-NNNNNNN.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Cifre</th><th>Ce este</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Prefix</td><td>2</td><td>Centrul sau metoda IRS (precum cererea online) care a atribuit EIN-ul</td></tr>
+          <tr><td>Serie</td><td>7</td><td>Restul numărului, unic în cadrul acelui prefix</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Instrumentul verifică să existe exact nouă cifre și ca primele două să fie un prefix pe care
+      IRS chiar îl folosește. IRS emite EIN-uri doar dintr-o listă stabilită de prefixe, așa că un
+      număr cu un prefix din afara acelei liste nu poate fi un EIN autentic. Nu confirmă, și nici nu
+      poate confirma, că EIN-ul este înregistrat pentru o firmă reală, fiindcă nu există o bază
+      publică cu fiecare EIN emis.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu 12-3456789, care este inventat, nu EIN-ul unei firme reale. Prefixul
+      este 12, care se află pe lista IRS, iar în total sunt nouă cifre, deci trece verificarea de
+      format. Un număr precum 07-1234567 ar pica, fiindcă 07 nu este un prefix pe care IRS îl
+      atribuie.
+    </p>
+
+    <h2>Cum îți găsești EIN-ul</h2>
+    <p>
+      Dacă ți-ai rătăcit EIN-ul, nu trebuie să ceri unul nou. Este consemnat în mai multe locuri pe
+      care de obicei le poți accesa repede:
+    </p>
+    <ul class="prose">
+      <li>Notificarea de confirmare de la IRS (CP 575) primită când EIN-ul a fost emis prima dată. Aceasta este sursa originală.</li>
+      <li>O declarație fiscală de firmă depusă anterior. EIN-ul este tipărit în partea de sus.</li>
+      <li>Documentele pentru un cont bancar, un credit sau o licență deschise pe firmă, care aproape întotdeauna consemnează EIN-ul.</li>
+      <li>Notificări sau scrisori IRS mai vechi adresate firmei.</li>
+      <li>Dacă niciuna dintre acestea nu merge, sună la linia IRS pentru firme (Business and Specialty Tax Line) și, după ce confirmă că ești autorizat, ți-l pot spune la telefon.</li>
+    </ul>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Proprietarii de firme, contabilii și oricine completează un formular W-9 sau o declarație
+      fiscală folosesc asta ca să confirme că un EIN este scris corect înainte să ajungă pe acte,
+      fiindcă o cifră inversată poate bloca o depunere. Este și o verificare rapidă de bun-simț
+      atunci când copiezi un EIN dintr-un document în altul și vrei să fii sigur că formatul și
+      prefixul sunt corecte.
+    </p>
+  </Fragment>
+</ToolLayout>

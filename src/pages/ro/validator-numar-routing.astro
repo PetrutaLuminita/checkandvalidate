@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'ro';
+const title = 'Validator număr de routing (ABA, SUA) | Check and Validate';
+const description =
+  'Verificator gratuit de număr de routing bancar din SUA. Validează un număr de routing ABA de 9 cifre cu suma de control oficială și vezi regiunea Rezervei Federale, totul în browserul tău.';
+const summary =
+  'Introdu un număr de routing al unei bănci din SUA ca să verifici că are nouă cifre și că trece suma de control ABA. Dacă este valid, instrumentul arată regiunea Rezervei Federale către care indică primele cifre. Verifică forma numărului, nu dacă banca este reală.';
+
+const strings = {
+  validHeadline: 'Număr de routing valid',
+  invalidHeadline: 'Număr de routing invalid',
+  validNote: 'Numărul are nouă cifre și trece suma de control ABA. Aceasta confirmă forma, nu că aparține unei bănci active.',
+  err: {
+    empty: 'Introdu un număr de routing pentru verificare.',
+    format: 'Un număr de routing are exact nouă cifre. Introdu doar cifre.',
+    range: 'Primele două cifre nu se află într-un interval folosit de ABA, așa că acesta nu poate fi un număr de routing valid.',
+    checksum: 'Numărul nu trece suma de control ABA, deci cel puțin o cifră este greșită sau două sunt inversate.',
+  },
+  labelType: 'Regiune',
+  regions: {
+    regionPrimary: 'Banca Rezervei Federale (principală)',
+    regionThrift: 'Instituție de economii',
+    regionAch: 'Tranzacție electronică (ACH)',
+    regionTraveler: 'Cec de călătorie',
+  },
+};
+
+const faq = [
+  {
+    question: 'Un rezultat valid înseamnă că banca este reală?',
+    answer:
+      'Nu. O trecere înseamnă că cele nouă cifre sunt coerente între ele sub suma de control ABA, așa cum un formular prinde un număr scris greșit. Nu confirmă că numărul aparține unei bănci deschise și active. Banca ta sau registrul ABA pot confirma asta.',
+  },
+  {
+    question: 'Ce este un număr de routing?',
+    answer:
+      'Este un cod de nouă cifre care identifică o bancă sau o uniune de credit din SUA în plăți precum depunerile directe, transferurile bancare și cecurile. Uneori este numit număr ABA, după American Bankers Association, care a introdus sistemul.',
+  },
+  {
+    question: 'Care este diferența dintre un număr de routing și un număr de cont?',
+    answer:
+      'Numărul de routing identifică banca; numărul de cont identifică contul tău anume din acea bancă. Pe un cec de hârtie, numărul de routing este primul grup de nouă cifre de pe margine, iar numărul de cont vine după el.',
+  },
+  {
+    question: 'De ce au numerele de routing o cifră de control?',
+    answer:
+      'Ultima cifră este calculată din celelalte opt, astfel încât suma ponderată să cadă pe un multiplu de zece. Ea există ca să prindă cifre greșite izolate și cele mai multe perechi inversate înainte de trimiterea unei plăți, nu ca să dovedească faptul că banca există.',
+  },
+  {
+    question: 'Numărul meu de routing este trimis undeva?',
+    answer:
+      'Nu. Verificarea rulează în întregime în browserul tău. Nimic din ce introduci nu este transmis, salvat sau înregistrat.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="routing" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="routing-form" novalidate>
+      <div class="field" id="routing-field">
+        <label for="routing-input">Număr de routing</label>
+        <span class="hint">Nouă cifre. Spațiile și cratimele sunt ignorate.</span>
+        <input type="text" inputmode="numeric" id="routing-input" class="mono" autocomplete="off" spellcheck="false" placeholder="123456780" />
+        <span class="error-msg" id="routing-error"></span>
+      </div>
+      <button type="submit" class="btn">Validează numărul de routing</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/routing-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Un număr de routing al unei bănci din SUA are nouă cifre, iar ultima cifră este o cifră de
+      control calculată din celelalte opt. Această relație internă este ceea ce permite unui
+      formular de plată să respingă un număr scris greșit fără să contacteze banca. Primele două
+      cifre se încadrează, de asemenea, în intervale stabilite, legate de Rezerva Federală, pe care
+      instrumentul le citește ca să raporteze o regiune.
+    </p>
+    <p>
+      Suma de control ponderează cifrele într-un tipar care se repetă, 3, 7 și 1, apoi verifică dacă
+      totalul este un multiplu de zece. Scriind cele nouă cifre ca d1 până la d9, regula este:
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Grup</th><th>Cifre</th><th>Pondere</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>d1, d4, d7</td><td>ori 3</td></tr>
+          <tr><td>2</td><td>d2, d5, d8</td><td>ori 7</td></tr>
+          <tr><td>3</td><td>d3, d6, d9</td><td>ori 1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Aduni cele trei grupuri ponderate laolaltă, iar numărul este valid când acel total se împarte
+      exact la zece.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu 123456780, care este inventat, nu al unei bănci reale. Primul grup
+      este 3 ori (1 plus 4 plus 7), adică 36. Al doilea este 7 ori (2 plus 5 plus 8), adică 105. Al
+      treilea este (3 plus 6 plus 0), adică 9. Adunându-le, obținem 150, un multiplu de zece, deci
+      numărul trece suma de control ABA.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Configurarea unei depuneri directe, a unei plăți de factură sau a unui transfer bancar
+      înseamnă introducerea unui număr de routing, iar o singură cifră greșită poate direcționa
+      greșit sau întoarce plata. O verificare rapidă a sumei de control prinde asta înainte să
+      producă o problemă. Fiindcă este un număr de plată din SUA, se potrivește firesc cu
+      <a href={toolPath('credit-card', locale)}>validatorul de card de credit</a>, care folosește o
+      idee asemănătoare de cifră de control.
+    </p>
+  </Fragment>
+</ToolLayout>

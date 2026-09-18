@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'en';
+const title = 'EU VAT Number Validator | Check and Validate';
+const description =
+  'Free EU VAT number format checker. Validate the format of a VAT number for any of the 27 EU countries (plus Northern Ireland) in your browser, with a link to VIES.';
+const summary =
+  'Enter an EU VAT number with its country prefix to check that it matches the format for that country. This is a format check for all 27 EU states plus Northern Ireland. Confirming a number is real and active needs the official VIES service.';
+
+const strings = {
+  validHeadline: 'Valid VAT number format',
+  invalidHeadline: 'Not a valid VAT number format',
+  validNote: 'The number matches the format for its country. This confirms the format, not that the VAT number is registered or active.',
+  err: {
+    empty: 'Enter a VAT number to check.',
+    tooshort: 'A VAT number starts with a two-letter country prefix, such as DE or FR, followed by the national number.',
+    country: 'The prefix {cc} is not an EU VAT country. Start with a country prefix like DE, FR, or IT.',
+    greek: 'Greece uses the prefix EL for VAT numbers, not GR. Try again with EL.',
+    pattern: 'The number does not match the expected format for {country}.',
+  },
+  labelCountry: 'Country',
+  labelFormatted: 'Formatted',
+  disclaimer:
+    'This checks the format for the country only. To confirm a VAT number is real and currently active, use the European Commission\'s VIES service.',
+};
+
+const faq = [
+  {
+    question: 'Does a valid format mean the VAT number is registered?',
+    answer:
+      'No. This confirms only that the number is shaped correctly for its country. To confirm a VAT number belongs to a real, currently registered trader, use the European Commission\'s VIES service, which checks the number against the member states\' live databases.',
+  },
+  {
+    question: 'Why does Greece use EL instead of GR?',
+    answer:
+      'It is a long-standing quirk. For VAT purposes Greece uses the prefix EL, even though its ISO country code is GR. Using GR is one of the most common reasons a Greek VAT number fails a format check, so this tool points it out.',
+  },
+  {
+    question: 'Which countries does this cover?',
+    answer:
+      'All 27 EU member states, each with its own format, plus Northern Ireland, which uses the XI prefix for goods-trade VAT numbers after Brexit. Great Britain VAT numbers use the separate GB scheme, which has its own validator on this site.',
+  },
+  {
+    question: 'Why is a format check not enough on its own?',
+    answer:
+      'Formats catch typos and obviously wrong numbers, but many well-formed numbers were never issued. Only VIES can confirm a number is active, and for reclaiming VAT or zero-rating a cross-border sale, that live confirmation is what matters.',
+  },
+  {
+    question: 'Is my VAT number sent anywhere when I check it?',
+    answer:
+      'No. The format check runs entirely in your browser. Nothing you type is transmitted, stored, or logged. VIES is a separate step you would do yourself on the European Commission\'s own site.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="euvat" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="euvat-form" novalidate>
+      <div class="field" id="euvat-field">
+        <label for="euvat-input">EU VAT number</label>
+        <span class="hint">Include the country prefix, such as DE or FR. Spaces are ignored.</span>
+        <input type="text" id="euvat-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DE123456789" />
+        <span class="error-msg" id="euvat-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate VAT number</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/euvat-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      Every EU VAT number starts with a two-letter country prefix, then a national number whose
+      shape is set by that country. The prefix is almost always the country's ISO code, with two
+      exceptions: Greece uses EL, and Northern Ireland uses XI. The tool reads the prefix, then
+      checks the rest against that country's pattern.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Country</th><th>Prefix</th><th>Format of the national part</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Germany</td><td>DE</td><td>9 digits</td></tr>
+          <tr><td>France</td><td>FR</td><td>2 letters or digits, then 9 digits</td></tr>
+          <tr><td>Italy</td><td>IT</td><td>11 digits</td></tr>
+          <tr><td>Spain</td><td>ES</td><td>a letter or digit, 7 digits, then a letter or digit</td></tr>
+          <tr><td>Netherlands</td><td>NL</td><td>9 digits, then B, then 2 digits</td></tr>
+          <tr><td>Greece</td><td>EL</td><td>9 digits (prefix EL, not GR)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Because each country is different, a number that is valid for one country will usually fail
+      for another. What this tool cannot do is confirm the number is real and active. That requires
+      the European Commission's
+      <a href="https://ec.europa.eu/taxation_customs/vies" target="_blank" rel="noopener noreferrer">VIES service</a>,
+      which checks the number against the live databases of the member states.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number DE123456789, which is made up rather than a real registration. The
+      prefix DE means Germany, and a German VAT number is nine digits. The part after the prefix,
+      123456789, is nine digits, so it matches the German format and passes the check. The same
+      digits under a different prefix, such as IT123456789, would fail, because Italy expects
+      eleven digits.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      Businesses trading across the EU need a customer's or supplier's VAT number to be right
+      before they zero-rate a cross-border sale or reclaim VAT. A format check is a fast first pass
+      that catches a wrong prefix or a mistyped number, so you only take the well-formed ones to
+      VIES for the live confirmation. If you deal with the United Kingdom too, the separate
+      <a href={toolPath('uk-vat', locale)}>UK VAT validator</a> handles GB numbers, which use their
+      own check-digit scheme.
+    </p>
+  </Fragment>
+</ToolLayout>

@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'es';
+const title = 'Validador de formato de EIN (EE. UU.) | Check and Validate';
+const description =
+  'Validador de formato de EIN de EE. UU. gratuito. Comprueba que un número de identificación patronal tiene el formato NN-NNNNNNN y un prefijo válido del IRS, y descubre cómo encontrar tu EIN.';
+const summary =
+  'Introduce un número de identificación patronal (EIN) de EE. UU. para comprobar que tiene nueve cifras en el formato NN-NNNNNNN y un prefijo válido del IRS. Esto comprueba solo el formato. No confirma que el EIN esté registrado a nombre de una empresa.';
+
+const strings = {
+  validHeadline: 'Formato de EIN válido',
+  invalidHeadline: 'No es un formato de EIN válido',
+  validNote: 'El número tiene nueve cifras y un prefijo que usa el IRS. Esto confirma el formato, no que el EIN esté registrado.',
+  err: {
+    empty: 'Introduce un EIN para comprobarlo.',
+    format: 'Un EIN tiene exactamente nueve cifras, escritas NN-NNNNNNN. Introduce solo cifras.',
+    prefix: 'El prefijo {prefix} no es uno de los que asigna el IRS, así que no es un formato de EIN válido.',
+  },
+  labelFormatted: 'Formateado',
+  labelPrefix: 'Prefijo del IRS',
+};
+
+const faq = [
+  {
+    question: '¿Cuál es la diferencia entre un EIN, un SSN y un TIN?',
+    answer:
+      'TIN, o número de identificación del contribuyente, es el término general. Un EIN es el TIN de una empresa. Un SSN es el TIN de una persona. Los tres tienen nueve cifras, pero un EIN se escribe NN-NNNNNNN, mientras que un SSN se escribe NNN-NN-NNNN.',
+  },
+  {
+    question: '¿Es el EIN información pública?',
+    answer:
+      'A menudo, sí. A diferencia de un SSN, el EIN de una empresa no se trata como un secreto. Aparece en documentos públicos, en formularios W-9 y en la documentación de la empresa, y los EIN de las entidades sin ánimo de lucro se pueden consultar en los registros de exención fiscal del IRS. Aun así, conviene manejarlo con cuidado.',
+  },
+  {
+    question: '¿Puedo verificar el EIN de otra empresa con esta herramienta?',
+    answer:
+      'Solo su formato. Esta herramienta confirma que un número tiene la forma de un EIN real y usa un prefijo válido del IRS. No puede decirte a qué empresa pertenece un EIN, porque no existe una consulta pública general de todos los EIN.',
+  },
+  {
+    question: '¿Qué hace que un formato de EIN no sea válido?',
+    answer:
+      'Dos cosas: el número de cifras incorrecto, o unas dos primeras cifras que el IRS no utiliza. El IRS asigna los EIN a partir de un conjunto concreto de prefijos ligados a la oficina o al método que los emitió, así que un prefijo fuera de ese conjunto no puede ser un EIN real.',
+  },
+  {
+    question: '¿Se envía mi EIN a algún sitio cuando lo compruebo?',
+    answer:
+      'No. La comprobación se realiza por completo en tu navegador. Nada de lo que escribes se transmite, se guarda ni se registra.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="ein" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="ein-form" novalidate>
+      <div class="field" id="ein-field">
+        <label for="ein-input">EIN</label>
+        <span class="hint">Nueve cifras, con o sin el guion.</span>
+        <input type="text" inputmode="numeric" id="ein-input" class="mono" autocomplete="off" spellcheck="false" placeholder="12-3456789" />
+        <span class="error-msg" id="ein-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar EIN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/ein-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un número de identificación patronal es el identificador fiscal que el IRS da a una empresa,
+      igual que un número de la seguridad social identifica a una persona. Tiene nueve cifras,
+      escritas con un guion después de las dos primeras, así: NN-NNNNNNN.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Parte</th><th>Cifras</th><th>Qué es</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Prefijo</td><td>2</td><td>La oficina o el método del IRS (como la solicitud en línea) que asignó el EIN</td></tr>
+          <tr><td>Serie</td><td>7</td><td>El resto del número, único dentro de ese prefijo</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      La herramienta comprueba que haya exactamente nueve cifras y que las dos primeras sean un
+      prefijo que el IRS use de verdad. El IRS solo emite EIN a partir de una lista fija de
+      prefijos, así que un número con un prefijo fuera de esa lista no puede ser un EIN auténtico.
+      No confirma, ni puede confirmar, que el EIN esté registrado a nombre de una empresa real,
+      porque no existe una base de datos pública de todos los EIN emitidos.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de ejemplo 12-3456789, que es inventado y no corresponde al EIN de una
+      empresa real. El prefijo es 12, que está en la lista del IRS, y hay nueve cifras en total, así
+      que supera la comprobación de formato. Un número como 07-1234567 fallaría, porque 07 no es un
+      prefijo que asigne el IRS.
+    </p>
+
+    <h2>Cómo encontrar tu EIN</h2>
+    <p>
+      Si has extraviado tu EIN, no hace falta que solicites uno nuevo. Está registrado en varios
+      sitios a los que normalmente puedes acceder con rapidez:
+    </p>
+    <ul class="prose">
+      <li>El aviso de confirmación del IRS (CP 575) que recibiste cuando se emitió el EIN por primera vez. Esta es la fuente original.</li>
+      <li>Una declaración de impuestos de la empresa presentada anteriormente. El EIN aparece impreso en la parte superior.</li>
+      <li>La documentación de una cuenta bancaria, un préstamo o una licencia abiertos a nombre de la empresa, que casi siempre recoge el EIN.</li>
+      <li>Avisos o cartas antiguas del IRS dirigidas a la empresa.</li>
+      <li>Si nada de eso funciona, llama a la línea de impuestos para empresas y casos especiales del IRS y, una vez que verifiquen que estás autorizado, pueden dártelo por teléfono.</li>
+    </ul>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Los propietarios de empresas, los contables y cualquiera que rellene un formulario W-9 o una
+      declaración usan esto para confirmar que un EIN está bien escrito antes de que vaya en la
+      documentación, ya que una cifra cambiada de sitio puede retrasar una presentación. También es
+      una comprobación rápida cuando copias un EIN de un documento a otro y quieres asegurarte de
+      que el formato y el prefijo son correctos.
+    </p>
+  </Fragment>
+</ToolLayout>

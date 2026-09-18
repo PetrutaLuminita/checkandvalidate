@@ -1,0 +1,134 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'es';
+const title = 'Validador de número de IVA de la UE | Check and Validate';
+const description =
+  'Verificador de formato de número de IVA de la UE gratuito. Valida el formato de un número de IVA de cualquiera de los 27 países de la UE (más Irlanda del Norte) en tu navegador, con un enlace a VIES.';
+const summary =
+  'Introduce un número de IVA de la UE con su prefijo de país para comprobar que coincide con el formato de ese país. Es una comprobación de formato para los 27 estados de la UE más Irlanda del Norte. Confirmar que un número es real y está activo requiere el servicio oficial VIES.';
+
+const strings = {
+  validHeadline: 'Formato de número de IVA válido',
+  invalidHeadline: 'No es un formato de número de IVA válido',
+  validNote: 'El número coincide con el formato de su país. Esto confirma el formato, no que el número de IVA esté registrado o activo.',
+  err: {
+    empty: 'Introduce un número de IVA para comprobarlo.',
+    tooshort: 'Un número de IVA empieza por un prefijo de país de dos letras, como DE o FR, seguido del número nacional.',
+    country: 'El prefijo {cc} no es un país con IVA de la UE. Empieza por un prefijo de país como DE, FR o IT.',
+    greek: 'Grecia usa el prefijo EL para los números de IVA, no GR. Inténtalo de nuevo con EL.',
+    pattern: 'El número no coincide con el formato esperado para {country}.',
+  },
+  labelCountry: 'País',
+  labelFormatted: 'Formateado',
+  disclaimer:
+    'Esto comprueba solo el formato del país. Para confirmar que un número de IVA es real y está actualmente activo, usa el servicio VIES de la Comisión Europea.',
+};
+
+const faq = [
+  {
+    question: '¿Un formato válido significa que el número de IVA está registrado?',
+    answer:
+      'No. Esto confirma únicamente que el número tiene la forma correcta para su país. Para confirmar que un número de IVA pertenece a un operador real y actualmente registrado, usa el servicio VIES de la Comisión Europea, que comprueba el número contra las bases de datos en vivo de los estados miembros.',
+  },
+  {
+    question: '¿Por qué Grecia usa EL en lugar de GR?',
+    answer:
+      'Es una peculiaridad de siempre. A efectos del IVA, Grecia usa el prefijo EL, aunque su código de país ISO sea GR. Usar GR es uno de los motivos más habituales por los que un número de IVA griego falla una comprobación de formato, así que esta herramienta lo señala.',
+  },
+  {
+    question: '¿Qué países cubre esto?',
+    answer:
+      'Los 27 estados miembros de la UE, cada uno con su propio formato, más Irlanda del Norte, que usa el prefijo XI para los números de IVA de comercio de bienes tras el Brexit. Los números de IVA de Gran Bretaña usan el sistema GB aparte, que tiene su propio validador en este sitio.',
+  },
+  {
+    question: '¿Por qué una comprobación de formato no basta por sí sola?',
+    answer:
+      'Los formatos detectan erratas y números claramente incorrectos, pero muchos números bien formados nunca se emitieron. Solo VIES puede confirmar que un número está activo, y para recuperar el IVA o aplicar tipo cero a una venta transfronteriza, esa confirmación en vivo es lo que importa.',
+  },
+  {
+    question: '¿Se envía mi número de IVA a algún sitio cuando lo compruebo?',
+    answer:
+      'No. La comprobación de formato se realiza por completo en tu navegador. Nada de lo que escribes se transmite, se guarda ni se registra. VIES es un paso aparte que harías tú mismo en el sitio propio de la Comisión Europea.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="euvat" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="euvat-form" novalidate>
+      <div class="field" id="euvat-field">
+        <label for="euvat-input">Número de IVA de la UE</label>
+        <span class="hint">Incluye el prefijo de país, como DE o FR. Los espacios se ignoran.</span>
+        <input type="text" id="euvat-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DE123456789" />
+        <span class="error-msg" id="euvat-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar número de IVA</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/euvat-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Todo número de IVA de la UE empieza por un prefijo de país de dos letras y, a continuación, un
+      número nacional cuya forma fija cada país. El prefijo es casi siempre el código ISO del país,
+      con dos excepciones: Grecia usa EL e Irlanda del Norte usa XI. La herramienta lee el prefijo y
+      luego comprueba el resto contra el patrón de ese país.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>País</th><th>Prefijo</th><th>Formato de la parte nacional</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Alemania</td><td>DE</td><td>9 cifras</td></tr>
+          <tr><td>Francia</td><td>FR</td><td>2 letras o cifras, luego 9 cifras</td></tr>
+          <tr><td>Italia</td><td>IT</td><td>11 cifras</td></tr>
+          <tr><td>España</td><td>ES</td><td>una letra o cifra, 7 cifras, luego una letra o cifra</td></tr>
+          <tr><td>Países Bajos</td><td>NL</td><td>9 cifras, luego B, luego 2 cifras</td></tr>
+          <tr><td>Grecia</td><td>EL</td><td>9 cifras (prefijo EL, no GR)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Como cada país es diferente, un número que es válido para un país normalmente fallará para
+      otro. Lo que esta herramienta no puede hacer es confirmar que el número es real y está activo.
+      Eso requiere el
+      <a href="https://ec.europa.eu/taxation_customs/vies" target="_blank" rel="noopener noreferrer">servicio VIES</a>
+      de la Comisión Europea, que comprueba el número contra las bases de datos en vivo de los
+      estados miembros.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de ejemplo DE123456789, que es inventado y no corresponde a un registro
+      real. El prefijo DE significa Alemania, y un número de IVA alemán tiene nueve cifras. La parte
+      después del prefijo, 123456789, tiene nueve cifras, así que coincide con el formato alemán y
+      supera la comprobación. Las mismas cifras con un prefijo diferente, como IT123456789,
+      fallarían, porque Italia espera once cifras.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Las empresas que comercian por toda la UE necesitan que el número de IVA de un cliente o un
+      proveedor sea correcto antes de aplicar tipo cero a una venta transfronteriza o recuperar el
+      IVA. Una comprobación de formato es un primer filtro rápido que detecta un prefijo incorrecto
+      o un número mal escrito, para que solo lleves a VIES los que están bien formados y obtengas la
+      confirmación en vivo. Si además tratas con el Reino Unido, el
+      <a href={toolPath('uk-vat', locale)}>validador de IVA del Reino Unido</a> aparte gestiona los
+      números GB, que usan su propio sistema de dígito de control.
+    </p>
+  </Fragment>
+</ToolLayout>

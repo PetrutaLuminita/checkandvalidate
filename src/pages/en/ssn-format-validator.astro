@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'US SSN Format Validator | Check and Validate';
+const description =
+  'Free US SSN format validator. Check whether a Social Security Number has a valid structure. Format only, private, no lookup of any person. Runs in your browser.';
+const summary =
+  'Check whether a US Social Security Number follows the structural rules for its area, group, and serial parts. This checks the format only. It performs no lookup, sends nothing anywhere, and cannot confirm that an SSN was ever issued or belongs to any person.';
+
+const calloutText =
+  'Your SSN never leaves this page. There is no server here to send it to, so the digits you type are not transmitted, saved, logged, or seen by anyone. This tool checks the shape of the number only, performs no lookup, and cannot tell whether an SSN was ever issued or who it belongs to.';
+
+const strings = {
+  validHeadline: 'Valid SSN structure',
+  invalidHeadline: 'Not a valid SSN structure',
+  validNote: 'The number follows the structural rules. This does not mean the SSN was ever issued or belongs to anyone. It is a format check only.',
+  err: {
+    empty: 'Enter a number to check.',
+    format: 'An SSN has exactly nine digits, written AAA-GG-SSSS. Enter digits only.',
+    area: 'The area (first three digits) is {area}, which is never issued. The area cannot be 000, 666, or 900 to 999.',
+    group: 'The group (middle two digits) cannot be 00.',
+    serial: 'The serial (last four digits) cannot be 0000.',
+  },
+  labelFormatted: 'Formatted',
+  disclaimer:
+    'This checks the structure of the number only. It does not confirm the SSN was ever issued, does not identify any person, and never sends the number anywhere.',
+};
+
+const faq = [
+  {
+    question: 'Does this look up or verify a real person?',
+    answer:
+      'No, and it cannot. There is no lookup of any kind. The tool only checks whether the nine digits follow the structural rules the Social Security Administration uses. It never contacts a server, and it cannot tell whether a number was issued or who holds it.',
+  },
+  {
+    question: 'Is it safe to type an SSN here?',
+    answer:
+      'The number never leaves your browser. Nothing is transmitted, stored, or logged, and there is no server behind this page to receive it. That said, for a check of the format alone you can change a couple of digits and the tool works exactly the same.',
+  },
+  {
+    question: 'What makes an SSN structurally invalid?',
+    answer:
+      'Three rules. The area, the first three digits, cannot be 000, 666, or anything from 900 to 999. The group, the middle two digits, cannot be 00. The serial, the last four digits, cannot be 0000. A number that breaks any of these was never a valid SSN.',
+  },
+  {
+    question: 'Why are numbers starting with 900 or above invalid?',
+    answer:
+      'Those ranges are reserved and were never assigned as SSNs. The 900 to 999 range, in particular, overlaps with individual taxpayer identification numbers (ITINs), which are a different thing, so it can never be a genuine SSN area.',
+  },
+  {
+    question: 'Does a valid structure mean the SSN is real?',
+    answer:
+      'No. A number can follow every structural rule and still never have been issued to anyone. This is a format sanity check, not a verification. Only the Social Security Administration can confirm a real SSN.',
+  },
+];
+---
+
+<ToolLayout
+  title={title}
+  description={description}
+  locale={locale}
+  toolId="ssn"
+  summary={summary}
+  faq={faq}
+  calloutText={calloutText}
+  calloutEmphasis={true}
+>
+  <Fragment slot="tool">
+    <form class="calc-box" id="ssn-form" novalidate>
+      <div class="field" id="ssn-field">
+        <label for="ssn-input">Number to check</label>
+        <span class="hint">Nine digits. Nothing you type is sent anywhere.</span>
+        <input type="text" inputmode="numeric" id="ssn-input" class="mono" autocomplete="off" spellcheck="false" placeholder="123-45-6789" />
+        <span class="error-msg" id="ssn-error"></span>
+      </div>
+      <button type="submit" class="btn">Check format</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/ssn-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      A Social Security Number is nine digits, written in three groups as AAA-GG-SSSS. Since 2011
+      the numbers have been assigned randomly, but a set of structural rules still says which
+      combinations were never valid. This tool applies those rules and nothing else. It reads the
+      shape of the number; it does not and cannot look anyone up.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Part</th><th>Digits</th><th>Rule</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Area</td><td>First 3</td><td>Not 000, not 666, not 900 to 999</td></tr>
+          <tr><td>Group</td><td>Middle 2</td><td>Not 00</td></tr>
+          <tr><td>Serial</td><td>Last 4</td><td>Not 0000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number 123-45-6789, which is the standard placeholder rather than a real
+      SSN. The area is 123, which is not 000, 666, or in the 900s. The group is 45, which is not
+      00. The serial is 6789, which is not 0000. Every rule passes, so the number is structurally
+      valid. A number like 666-45-6789 would fail on the area rule, and 123-00-6789 would fail on
+      the group rule.
+    </p>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      This is for checking the shape of a number, not a person. A developer building a form, a
+      teacher explaining the structure, or someone confirming a number was typed with the right
+      number of digits can use it to catch a formatting mistake. Because it is a structure check
+      and nothing is sent anywhere, there is never a reason to enter a real SSN, and the tool works
+      exactly the same on a made-up one.
+    </p>
+  </Fragment>
+</ToolLayout>

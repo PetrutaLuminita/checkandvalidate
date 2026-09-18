@@ -1,0 +1,133 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'ro';
+const title = 'Validator număr TVA UE | Check and Validate';
+const description =
+  'Verificator gratuit de format al numărului de TVA din UE. Validează formatul unui număr de TVA pentru oricare dintre cele 27 de țări UE (plus Irlanda de Nord) în browserul tău, cu un link către VIES.';
+const summary =
+  'Introdu un număr de TVA din UE cu prefixul său de țară ca să verifici că respectă formatul pentru acea țară. Este o verificare de format pentru toate cele 27 de state UE plus Irlanda de Nord. Confirmarea că un număr este real și activ necesită serviciul oficial VIES.';
+
+const strings = {
+  validHeadline: 'Format de număr TVA valid',
+  invalidHeadline: 'Format de număr TVA invalid',
+  validNote: 'Numărul respectă formatul pentru țara sa. Aceasta confirmă formatul, nu că numărul de TVA este înregistrat sau activ.',
+  err: {
+    empty: 'Introdu un număr de TVA pentru verificare.',
+    tooshort: 'Un număr de TVA începe cu un prefix de țară din două litere, precum DE sau FR, urmat de numărul național.',
+    country: 'Prefixul {cc} nu este o țară de TVA din UE. Începe cu un prefix de țară precum DE, FR sau IT.',
+    greek: 'Grecia folosește prefixul EL pentru numerele de TVA, nu GR. Încearcă din nou cu EL.',
+    pattern: 'Numărul nu respectă formatul așteptat pentru {country}.',
+  },
+  labelCountry: 'Țară',
+  labelFormatted: 'Formatat',
+  disclaimer:
+    'Aceasta verifică doar formatul pentru țară. Ca să confirmi că un număr de TVA este real și activ în prezent, folosește serviciul VIES al Comisiei Europene.',
+};
+
+const faq = [
+  {
+    question: 'Un format valid înseamnă că numărul de TVA este înregistrat?',
+    answer:
+      'Nu. Aceasta confirmă doar că numărul este format corect pentru țara sa. Ca să confirmi că un număr de TVA aparține unui comerciant real, înregistrat în prezent, folosește serviciul VIES al Comisiei Europene, care verifică numărul în bazele de date în timp real ale statelor membre.',
+  },
+  {
+    question: 'De ce folosește Grecia EL în loc de GR?',
+    answer:
+      'Este o ciudățenie de multă vreme. În scopuri de TVA, Grecia folosește prefixul EL, deși codul său de țară ISO este GR. Folosirea lui GR este unul dintre cele mai frecvente motive pentru care un număr de TVA grecesc pică la verificarea de format, așa că acest instrument o semnalează.',
+  },
+  {
+    question: 'Ce țări acoperă?',
+    answer:
+      'Toate cele 27 de state membre UE, fiecare cu propriul format, plus Irlanda de Nord, care folosește prefixul XI pentru numerele de TVA la comerțul cu bunuri, după Brexit. Numerele de TVA din Marea Britanie folosesc schema GB separată, care are propriul validator pe acest site.',
+  },
+  {
+    question: 'De ce nu este suficientă o verificare de format în sine?',
+    answer:
+      'Formatele prind greșelile de tastare și numerele evident greșite, dar multe numere bine formate nu au fost niciodată emise. Doar VIES poate confirma că un număr este activ, iar pentru recuperarea TVA-ului sau pentru scutirea unei vânzări transfrontaliere, acea confirmare în timp real este cea care contează.',
+  },
+  {
+    question: 'Numărul meu de TVA este trimis undeva când îl verific?',
+    answer:
+      'Nu. Verificarea de format rulează în întregime în browserul tău. Nimic din ce introduci nu este transmis, salvat sau înregistrat. VIES este un pas separat pe care l-ai face chiar tu pe site-ul propriu al Comisiei Europene.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="euvat" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="euvat-form" novalidate>
+      <div class="field" id="euvat-field">
+        <label for="euvat-input">Număr de TVA UE</label>
+        <span class="hint">Include prefixul de țară, precum DE sau FR. Spațiile sunt ignorate.</span>
+        <input type="text" id="euvat-input" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DE123456789" />
+        <span class="error-msg" id="euvat-error"></span>
+      </div>
+      <button type="submit" class="btn">Validează numărul de TVA</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+      <p class="result-disclaimer" id="result-disclaimer" hidden></p>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/euvat-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cum funcționează</h2>
+    <p>
+      Orice număr de TVA din UE începe cu un prefix de țară din două litere, apoi cu un număr
+      național a cărui formă este stabilită de acea țară. Prefixul este aproape întotdeauna codul
+      ISO al țării, cu două excepții: Grecia folosește EL, iar Irlanda de Nord folosește XI.
+      Instrumentul citește prefixul, apoi verifică restul după tiparul acelei țări.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Țară</th><th>Prefix</th><th>Formatul părții naționale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Germania</td><td>DE</td><td>9 cifre</td></tr>
+          <tr><td>Franța</td><td>FR</td><td>2 litere sau cifre, apoi 9 cifre</td></tr>
+          <tr><td>Italia</td><td>IT</td><td>11 cifre</td></tr>
+          <tr><td>Spania</td><td>ES</td><td>o literă sau cifră, 7 cifre, apoi o literă sau cifră</td></tr>
+          <tr><td>Țările de Jos</td><td>NL</td><td>9 cifre, apoi B, apoi 2 cifre</td></tr>
+          <tr><td>Grecia</td><td>EL</td><td>9 cifre (prefixul EL, nu GR)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Fiindcă fiecare țară este diferită, un număr valid pentru o țară va pica de obicei pentru
+      alta. Ce nu poate face acest instrument este să confirme că numărul este real și activ. Asta
+      necesită serviciul
+      <a href="https://ec.europa.eu/taxation_customs/vies" target="_blank" rel="noopener noreferrer">VIES</a>
+      al Comisiei Europene, care verifică numărul în bazele de date în timp real ale statelor
+      membre.
+    </p>
+    <h3>Exemplu rezolvat</h3>
+    <p>
+      Luăm numărul de exemplu DE123456789, care este inventat, nu o înregistrare reală. Prefixul DE
+      înseamnă Germania, iar un număr de TVA german are nouă cifre. Partea de după prefix,
+      123456789, are nouă cifre, deci respectă formatul german și trece verificarea. Aceleași cifre
+      sub un prefix diferit, precum IT123456789, ar pica, fiindcă Italia așteaptă unsprezece cifre.
+    </p>
+
+    <h2>Când ai nevoie de asta</h2>
+    <p>
+      Firmele care fac comerț în UE au nevoie ca numărul de TVA al unui client sau furnizor să fie
+      corect înainte să scutească o vânzare transfrontalieră sau să recupereze TVA-ul. O verificare
+      de format este o primă trecere rapidă, care prinde un prefix greșit sau un număr scris greșit,
+      așa că duci la VIES doar pe cele bine formate, pentru confirmarea în timp real. Dacă lucrezi
+      și cu Regatul Unit, validatorul separat de
+      <a href={toolPath('uk-vat', locale)}>TVA din Regatul Unit</a> se ocupă de numerele GB, care
+      folosesc propria schemă de cifră de control.
+    </p>
+  </Fragment>
+</ToolLayout>

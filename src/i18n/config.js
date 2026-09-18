@@ -17,11 +17,11 @@ export const localeNames = {
   es: 'Español',
 };
 
-// The five interactive tools, in the order they appear across the site
-// (homepage grid, header, footer, related tools). Grouped loosely: bank/tax
-// numbers first (IBAN, UK VAT), then personal ID documents (Spanish DNI/NIE,
-// UK driving licence, Romanian CNP). `name` is the H1 / link text per language,
-// `desc` is the short blurb used on the homepage grid and card links.
+// The interactive tools, in the order they appear across the site (homepage
+// grid, header, footer, related tools). Grouped loosely: bank and payment
+// numbers, then tax/VAT numbers, then identity documents, then other. `name` is
+// the H1 / link text per language, `desc` is the short blurb used on the
+// homepage grid and card links.
 export const tools = [
   {
     id: 'iban',
@@ -35,6 +35,20 @@ export const tools = [
       en: 'Validate an IBAN with the mod-97 checksum and the official per-country length, and see exactly which check failed.',
       ro: 'Validează un IBAN cu algoritmul mod-97 și cu lungimea oficială pe țară și vezi exact ce verificare a eșuat.',
       es: 'Valida un IBAN con el algoritmo mod-97 y la longitud oficial por país, y descubre exactamente qué comprobación ha fallado.',
+    },
+  },
+  {
+    id: 'swift',
+    slugs: { en: 'swift-bic-validator', ro: 'validator-swift-bic', es: 'validador-swift-bic' },
+    name: {
+      en: 'SWIFT / BIC Code Checker',
+      ro: 'Verificator cod SWIFT/BIC',
+      es: 'Verificador de código SWIFT/BIC',
+    },
+    desc: {
+      en: 'Check the structure of a SWIFT/BIC code and its country, and break it into its bank, location, and branch parts. Format only, no bank lookup.',
+      ro: 'Verifică structura unui cod SWIFT/BIC și țara lui și îl împarte în codul băncii, locație și sucursală. Doar format, fără căutare în bancă.',
+      es: 'Comprueba la estructura de un código SWIFT/BIC y su país, y lo divide en las partes de banco, localidad y oficina. Solo formato, sin consultar el banco.',
     },
   },
   {
@@ -52,6 +66,34 @@ export const tools = [
     },
   },
   {
+    id: 'euvat',
+    slugs: { en: 'eu-vat-validator', ro: 'validator-tva-ue', es: 'validador-iva-ue' },
+    name: {
+      en: 'EU VAT Number Validator',
+      ro: 'Validator număr TVA UE',
+      es: 'Validador de número de IVA de la UE',
+    },
+    desc: {
+      en: 'Check the format of a VAT number for any EU country (plus Northern Ireland). Format check only; confirm it is active with VIES.',
+      ro: 'Verifică formatul unui număr de TVA pentru orice țară din UE (plus Irlanda de Nord). Doar verificare de format; confirmă-l ca activ cu VIES.',
+      es: 'Comprueba el formato de un número de IVA de cualquier país de la UE (más Irlanda del Norte). Solo formato; confírmalo como activo con VIES.',
+    },
+  },
+  {
+    id: 'ein',
+    slugs: { en: 'ein-validator', ro: 'validator-ein', es: 'validador-ein' },
+    name: {
+      en: 'US EIN Format Validator',
+      ro: 'Validator format EIN (SUA)',
+      es: 'Validador de formato de EIN (EE. UU.)',
+    },
+    desc: {
+      en: 'Check that a US EIN has the NN-NNNNNNN format and a valid IRS prefix, plus a guide on how to find your EIN.',
+      ro: 'Verifică dacă un EIN american are formatul NN-NNNNNNN și un prefix IRS valid, plus un ghid despre cum îți găsești EIN-ul.',
+      es: 'Comprueba que un EIN de EE. UU. tenga el formato NN-NNNNNNN y un prefijo válido del IRS, además de una guía para encontrar tu EIN.',
+    },
+  },
+  {
     id: 'credit-card',
     slugs: { en: 'credit-card-validator', ro: 'validator-card-credit', es: 'validador-tarjeta-credito' },
     name: {
@@ -63,6 +105,20 @@ export const tools = [
       en: 'Check whether a card number is mathematically valid with the Luhn algorithm and see its likely network. Nothing is ever sent anywhere.',
       ro: 'Verifică dacă un număr de card este valid matematic cu algoritmul Luhn și vezi rețeaua lui probabilă. Nimic nu este trimis vreodată nicăieri.',
       es: 'Comprueba si un número de tarjeta es matemáticamente válido con el algoritmo de Luhn y descubre su red probable. Nada se envía nunca a ningún sitio.',
+    },
+  },
+  {
+    id: 'routing',
+    slugs: { en: 'routing-number-validator', ro: 'validator-numar-routing', es: 'validador-numero-routing' },
+    name: {
+      en: 'US Routing Number (ABA) Validator',
+      ro: 'Validator număr de routing (ABA, SUA)',
+      es: 'Validador de número de ruta (ABA, EE. UU.)',
+    },
+    desc: {
+      en: 'Validate a US bank routing number with the 9-digit ABA checksum, and see its Federal Reserve region.',
+      ro: 'Validează un număr de routing bancar american cu suma de control ABA de 9 cifre și vezi regiunea Federal Reserve.',
+      es: 'Valida un número de ruta bancaria de EE. UU. con la suma de control ABA de 9 dígitos y descubre su región de la Reserva Federal.',
     },
   },
   {
@@ -109,6 +165,20 @@ export const tools = [
       en: 'Check the structure and control digit of a Romanian CNP, and read back the birth date, sex, and county it encodes.',
       ro: 'Verifică structura și cifra de control a unui CNP românesc și află data nașterii, sexul și județul codificate în el.',
       es: 'Comprueba la estructura y el dígito de control de un CNP rumano y muestra la fecha de nacimiento, el sexo y el condado que codifica.',
+    },
+  },
+  {
+    id: 'ssn',
+    slugs: { en: 'ssn-format-validator', ro: 'validator-format-ssn', es: 'validador-formato-ssn' },
+    name: {
+      en: 'US SSN Format Validator',
+      ro: 'Validator format SSN (SUA)',
+      es: 'Validador de formato de SSN (EE. UU.)',
+    },
+    desc: {
+      en: 'Check whether a US SSN has a valid structure (area, group, and serial rules). Format only, private, no lookup of any person.',
+      ro: 'Verifică dacă un SSN american are o structură validă (reguli de zonă, grup și serie). Doar format, privat, fără căutarea vreunei persoane.',
+      es: 'Comprueba si un SSN de EE. UU. tiene una estructura válida (reglas de área, grupo y serie). Solo formato, privado, sin buscar a ninguna persona.',
     },
   },
   {

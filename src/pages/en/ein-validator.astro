@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+
+const locale = 'en';
+const title = 'US EIN Format Validator | Check and Validate';
+const description =
+  'Free US EIN format validator. Check that an Employer Identification Number has the NN-NNNNNNN format and a valid IRS prefix, and learn how to find your EIN.';
+const summary =
+  'Enter a US Employer Identification Number (EIN) to check that it has nine digits in the NN-NNNNNNN format and a valid IRS prefix. This checks the format only. It does not confirm the EIN is registered to a business.';
+
+const strings = {
+  validHeadline: 'Valid EIN format',
+  invalidHeadline: 'Not a valid EIN format',
+  validNote: 'The number has nine digits and a prefix the IRS uses. This confirms the format, not that the EIN is registered.',
+  err: {
+    empty: 'Enter an EIN to check.',
+    format: 'An EIN has exactly nine digits, written NN-NNNNNNN. Enter digits only.',
+    prefix: 'The prefix {prefix} is not one the IRS assigns, so this is not a valid EIN format.',
+  },
+  labelFormatted: 'Formatted',
+  labelPrefix: 'IRS prefix',
+};
+
+const faq = [
+  {
+    question: 'What is the difference between an EIN, an SSN, and a TIN?',
+    answer:
+      'TIN, or Taxpayer Identification Number, is the umbrella term. An EIN is the TIN for a business. An SSN is the TIN for an individual. All three are nine digits, but an EIN is written NN-NNNNNNN while an SSN is written NNN-NN-NNNN.',
+  },
+  {
+    question: 'Is an EIN public information?',
+    answer:
+      'Often, yes. Unlike an SSN, a business EIN is not treated as a secret. It appears on public filings, W-9 forms, and business documents, and non-profit EINs are searchable in IRS tax-exempt records. It should still be handled with care.',
+  },
+  {
+    question: 'Can I verify another company\'s EIN with this tool?',
+    answer:
+      'Only its format. This tool confirms a number is shaped like a real EIN and uses a valid IRS prefix. It cannot tell you which business an EIN belongs to, because there is no public master lookup of every EIN.',
+  },
+  {
+    question: 'What makes an EIN format invalid?',
+    answer:
+      'Two things: the wrong number of digits, or a first two digits that the IRS does not use. The IRS assigns EINs from a specific set of prefixes tied to the campus or method that issued them, so a prefix outside that set cannot be a real EIN.',
+  },
+  {
+    question: 'Is my EIN sent anywhere when I check it?',
+    answer:
+      'No. The check runs entirely in your browser. Nothing you type is transmitted, stored, or logged.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="ein" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="ein-form" novalidate>
+      <div class="field" id="ein-field">
+        <label for="ein-input">EIN</label>
+        <span class="hint">Nine digits, with or without the dash.</span>
+        <input type="text" inputmode="numeric" id="ein-input" class="mono" autocomplete="off" spellcheck="false" placeholder="12-3456789" />
+        <span class="error-msg" id="ein-error"></span>
+      </div>
+      <button type="submit" class="btn">Validate EIN</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/ein-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>How It Works</h2>
+    <p>
+      An Employer Identification Number is the tax ID the IRS gives a business, the way a Social
+      Security Number identifies a person. It is nine digits, written with a dash after the first
+      two, as NN-NNNNNNN.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Part</th><th>Digits</th><th>What it is</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Prefix</td><td>2</td><td>The IRS campus or method (such as the online application) that assigned the EIN</td></tr>
+          <tr><td>Serial</td><td>7</td><td>The rest of the number, unique within that prefix</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      The tool checks that there are exactly nine digits and that the first two are a prefix the
+      IRS actually uses. The IRS only issues EINs from a set list of prefixes, so a number with a
+      prefix outside that list cannot be a genuine EIN. It does not, and cannot, confirm that the
+      EIN is registered to a real business, because there is no public database of every issued
+      EIN.
+    </p>
+    <h3>Worked Example</h3>
+    <p>
+      Take the sample number 12-3456789, which is made up rather than a real business EIN. The
+      prefix is 12, which is on the IRS list, and there are nine digits in total, so it passes the
+      format check. A number like 07-1234567 would fail, because 07 is not a prefix the IRS
+      assigns.
+    </p>
+
+    <h2>How to Find Your EIN</h2>
+    <p>
+      If you have misplaced your EIN, you do not need to apply for a new one. It is recorded in
+      several places you can usually reach quickly:
+    </p>
+    <ul class="prose">
+      <li>The IRS confirmation notice (CP 575) you received when the EIN was first issued. This is the original source.</li>
+      <li>A previously filed business tax return. The EIN is printed at the top.</li>
+      <li>The paperwork for a bank account, loan, or licence opened under the business, which almost always records the EIN.</li>
+      <li>Older IRS notices or letters addressed to the business.</li>
+      <li>If none of those work, call the IRS Business and Specialty Tax Line and, after they verify you are authorised, they can give it to you over the phone.</li>
+    </ul>
+
+    <h2>When You Would Use This</h2>
+    <p>
+      Business owners, bookkeepers, and anyone filling in a W-9 or a tax form use this to confirm
+      an EIN is written correctly before it goes on paperwork, since a transposed digit can hold
+      up a filing. It is also a quick sanity check when you are copying an EIN from one document to
+      another and want to be sure the format and prefix are right.
+    </p>
+  </Fragment>
+</ToolLayout>

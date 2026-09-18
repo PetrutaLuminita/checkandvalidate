@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { toolPath } from '../../i18n/config.js';
+
+const locale = 'es';
+const title = 'Validador de número de ruta (ABA, EE. UU.) | Check and Validate';
+const description =
+  'Verificador de número de ruta bancaria de EE. UU. gratuito. Valida un número de ruta ABA de 9 cifras con la suma de control oficial y ve su región de la Reserva Federal, todo en tu navegador.';
+const summary =
+  'Introduce un número de ruta bancaria de EE. UU. para comprobar que tiene nueve cifras y supera la suma de control ABA. Si es válido, la herramienta muestra la región de la Reserva Federal a la que apuntan sus primeras cifras. Esto comprueba la forma del número, no si el banco es real.';
+
+const strings = {
+  validHeadline: 'Número de ruta válido',
+  invalidHeadline: 'No es un número de ruta válido',
+  validNote: 'El número tiene nueve cifras y supera la suma de control ABA. Esto confirma la forma, no que pertenezca a un banco activo.',
+  err: {
+    empty: 'Introduce un número de ruta para comprobarlo.',
+    format: 'Un número de ruta tiene exactamente nueve cifras. Introduce solo cifras.',
+    range: 'Las dos primeras cifras no están en un rango que use el ABA, así que no puede ser un número de ruta válido.',
+    checksum: 'El número no supera la suma de control ABA, así que al menos una cifra es incorrecta o hay dos cambiadas de sitio.',
+  },
+  labelType: 'Región',
+  regions: {
+    regionPrimary: 'Banco de la Reserva Federal (principal)',
+    regionThrift: 'Entidad de ahorro',
+    regionAch: 'Transacción electrónica (ACH)',
+    regionTraveler: 'Cheque de viaje',
+  },
+};
+
+const faq = [
+  {
+    question: '¿Un resultado válido significa que el banco es real?',
+    answer:
+      'No. Que pase significa que las nueve cifras son coherentes entre sí según la suma de control ABA, que es como un formulario detecta un número mal escrito. No confirma que el número pertenezca a un banco abierto y activo. Eso lo puede confirmar tu propio banco o el registro del ABA.',
+  },
+  {
+    question: '¿Qué es un número de ruta?',
+    answer:
+      'Es un código de nueve cifras que identifica un banco o una cooperativa de crédito de EE. UU. en pagos como depósitos directos, transferencias bancarias y cheques. A veces se le llama número ABA, por la American Bankers Association, que introdujo el sistema.',
+  },
+  {
+    question: '¿Cuál es la diferencia entre un número de ruta y un número de cuenta?',
+    answer:
+      'El número de ruta identifica el banco; el número de cuenta identifica tu cuenta concreta en ese banco. En un cheque en papel, el número de ruta es el primer grupo de nueve cifras de la parte inferior, y el número de cuenta va a continuación.',
+  },
+  {
+    question: '¿Por qué los números de ruta tienen un dígito de control?',
+    answer:
+      'La última cifra se calcula a partir de las otras ocho para que la suma ponderada dé un múltiplo de diez. Existe para detectar cifras sueltas incorrectas y la mayoría de las parejas cambiadas de sitio antes de que se envíe un pago, no para demostrar que el banco existe.',
+  },
+  {
+    question: '¿Se envía mi número de ruta a algún sitio?',
+    answer:
+      'No. La comprobación se realiza por completo en tu navegador. Nada de lo que escribes se transmite, se guarda ni se registra.',
+  },
+];
+---
+
+<ToolLayout title={title} description={description} locale={locale} toolId="routing" summary={summary} faq={faq}>
+  <Fragment slot="tool">
+    <form class="calc-box" id="routing-form" novalidate>
+      <div class="field" id="routing-field">
+        <label for="routing-input">Número de ruta</label>
+        <span class="hint">Nueve cifras. Los espacios y los guiones se ignoran.</span>
+        <input type="text" inputmode="numeric" id="routing-input" class="mono" autocomplete="off" spellcheck="false" placeholder="123456780" />
+        <span class="error-msg" id="routing-error"></span>
+      </div>
+      <button type="submit" class="btn">Validar número de ruta</button>
+    </form>
+
+    <div class="result-box" id="result-box" hidden>
+      <div class="result-headline" id="result-headline"></div>
+      <p class="result-note" id="result-note"></p>
+      <ul class="info-list" id="result-info"></ul>
+    </div>
+
+    <script type="application/json" id="tool-i18n" set:html={JSON.stringify(strings)}></script>
+    <script>
+      import '../../scripts/routing-ui.js';
+    </script>
+  </Fragment>
+
+  <Fragment slot="body">
+    <h2>Cómo funciona</h2>
+    <p>
+      Un número de ruta bancaria de EE. UU. tiene nueve cifras, y la última es un dígito de control
+      calculado a partir de las otras ocho. Esa relación incorporada es lo que permite a un
+      formulario de pago rechazar un número mal escrito sin contactar con el banco. Las dos primeras
+      cifras también caen en rangos fijos ligados a la Reserva Federal, que la herramienta lee para
+      indicar una región.
+    </p>
+    <p>
+      La suma de control pondera las cifras en un patrón que se repite de 3, 7 y 1, y luego comprueba
+      que el total sea un múltiplo de diez. Si escribimos las nueve cifras como d1 a d9, la regla es:
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Grupo</th><th>Cifras</th><th>Peso</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>d1, d4, d7</td><td>por 3</td></tr>
+          <tr><td>2</td><td>d2, d5, d8</td><td>por 7</td></tr>
+          <tr><td>3</td><td>d3, d6, d9</td><td>por 1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Suma los tres grupos ponderados y el número es válido cuando ese total se divide de forma
+      exacta entre diez.
+    </p>
+    <h3>Ejemplo resuelto</h3>
+    <p>
+      Tomemos el número de ejemplo 123456780, que es inventado y no corresponde al de un banco real.
+      El primer grupo es 3 por (1 más 4 más 7), que da 36. El segundo es 7 por (2 más 5 más 8), que
+      da 105. El tercero es (3 más 6 más 0), que da 9. Al sumarlos se obtiene 150, un múltiplo de
+      diez, así que el número supera la suma de control ABA.
+    </p>
+
+    <h2>Cuándo lo necesitas</h2>
+    <p>
+      Dar de alta un depósito directo, un pago de facturas o una transferencia bancaria implica
+      introducir un número de ruta, y una sola cifra incorrecta puede desviar o devolver el pago.
+      Una comprobación rápida de la suma de control lo detecta antes de que cause un problema. Como
+      es un número de pago de EE. UU., encaja de forma natural con el
+      <a href={toolPath('credit-card', locale)}>validador de tarjetas de crédito</a>, que usa una
+      idea de dígito de control parecida.
+    </p>
+  </Fragment>
+</ToolLayout>

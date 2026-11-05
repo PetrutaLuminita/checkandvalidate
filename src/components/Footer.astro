@@ -27,6 +27,7 @@ const siteLinks = staticPages.map((page) => ({ name: page.nav[locale], href: sta
           {siteLinks.map((link) => (
             <li><a href={link.href}>{link.name}</a></li>
           ))}
+          <li><button type="button" class="footer-link-button" id="cookie-settings">{strings.cookieSettings}</button></li>
         </ul>
       </div>
       <div>

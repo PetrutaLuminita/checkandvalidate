@@ -2,7 +2,6 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieConsent from '../components/CookieConsent.astro';
-import Analytics from '@vercel/analytics/astro';
 import { defaultLocale } from '../i18n/config.js';
 import { t } from '../i18n/ui.js';
 import '../styles/global.css';
@@ -51,10 +50,9 @@ const schemaOutput = schema
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Google AdSense ownership verification / loader. Loads on every page,
-         exactly as supplied by AdSense. is:inline keeps Astro from bundling or
-         altering it. The live ad unit <ins> code comes later, after approval. -->
-    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1835532025355533" crossorigin="anonymous"></script>
+    <!-- Proves ownership of the site to AdSense without loading anything. The ad
+         loader itself only runs after consent, see CookieConsent.astro. -->
+    <meta name="google-adsense-account" content="ca-pub-1835532025355533" />
 
     {hreflangs.map((alt) => (
       <link rel="alternate" hreflang={alt.code} href={alt.href} />
@@ -94,6 +92,5 @@ const schemaOutput = schema
     </main>
     <Footer locale={locale} />
     <CookieConsent locale={locale} />
-    <Analytics />
   </body>
 </html>

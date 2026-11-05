@@ -352,6 +352,19 @@ code {
   color: var(--color-accent);
 }
 
+.footer-link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.footer-link-button:hover {
+  color: var(--color-accent);
+}
+
 .footer-bottom {
   border-top: 1px solid var(--color-border);
   padding-top: 16px;

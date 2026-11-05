@@ -8,7 +8,7 @@ const strings = t(locale);
 const pageId = 'privacy';
 const path = staticPath(pageId, locale);
 const alternates = alternatesFor('static', pageId);
-const lastUpdated = '7 iulie 2026';
+const lastUpdated = '5 noiembrie 2026';
 
 const title = 'Politică de confidențialitate | Check and Validate';
 const description =
@@ -47,18 +47,32 @@ const schema = {
     sistem de conturi și nu trebuie să te înregistrezi.
   </p>
 
-  <h2>Module cookie</h2>
+  <h2>Mai întâi, alegerea ta</h2>
   <p>
-    Acest site folosește module cookie în două scopuri: pentru a reține dacă ai acceptat sau
-    refuzat notificarea privind modulele cookie și pentru a susține publicitatea descrisă mai jos.
-    Browserul îți permite să blochezi sau să ștergi modulele cookie oricând din setările sale, deși
-    acest lucru poate face ca banner-ul cookie să reapară la următoarea vizită.
+    Publicitatea și analiza de trafic nu se încarcă atunci când ajungi pe site. Se încarcă doar dacă
+    apeși Accept în banner. Dacă apeși Refuz sau nu alegi nimic, niciuna dintre ele nu rulează, iar
+    toate validatoarele funcționează în continuare complet.
+  </p>
+  <p>
+    Te poți răzgândi oricând, folosind butonul Setări cookie din subsolul fiecărei pagini. Dacă îți
+    retragi consimțământul, pagina se reîncarcă fără acele scripturi. Modulele cookie pe care
+    furnizorii de publicitate le-au salvat deja rămân în browser până când expiră sau până când le
+    ștergi din setările acestuia.
+  </p>
+
+  <h2>Ce se salvează în browserul tău</h2>
+  <p>
+    Acest site îți salvează alegerea în spațiul de stocare local al browserului, ca să nu fii
+    întrebat la fiecare vizită. Această valoare rămâne pe dispozitivul tău și nu este folosită
+    pentru a te urmări. Dacă accepți, furnizorii de publicitate pot salva și modulele cookie descrise
+    mai jos. Browserul îți permite să blochezi sau să ștergi oricând toate acestea, dar banner-ul va
+    reapărea la următoarea vizită.
   </p>
 
   <h2>Google AdSense și publicitatea de la terți</h2>
   <p>
-    Check and Validate folosește Google AdSense pentru a afișa reclame, ceea ce permite site-ului să
-    rămână gratuit. Google și alți furnizori de publicitate terți folosesc module cookie pentru a
+    Dacă accepți, Check and Validate folosește Google AdSense, ceea ce permite site-ului să rămână
+    gratuit. Google și alți furnizori de publicitate terți folosesc module cookie pentru a
     afișa reclame pe baza vizitelor anterioare ale unui utilizator pe acest site și pe alte site-uri
     de pe web. Acest lucru este numit uneori publicitate bazată pe interese sau publicitate
     personalizată. Funcționează prin urmărirea tiparelor de navigare la nivel de browser sau de
@@ -80,28 +94,27 @@ const schema = {
     Ambele îți permit să renunți la publicitatea bazată pe interese pe multe site-uri și
     agenți de publicitate participanți, nu doar pe acesta.
   </p>
-  <p>
-    Poți dezactiva complet modulele cookie și din setările browserului, ceea ce se aplică atât
-    modulelor cookie folosite pentru publicitate, cât și celui folosit de acest site pentru a reține
-    alegerea ta din banner-ul cookie. Acest lucru poate face ca unele facilități, cum ar fi
-    reținerea acelei alegeri între vizite, să nu mai funcționeze așa cum te-ai aștepta.
-  </p>
-
   <h2>Vizitatorii din Spațiul Economic European și Regatul Unit</h2>
   <p>
-    Deoarece acest site se adresează vizitatorilor din Uniunea Europeană, inclusiv din România și
-    Spania, precum și din Regatul Unit, vizitatorilor din aceste regiuni li se afișează un mesaj de
-    consimțământ care le permite să aleagă dacă doresc să permită publicitatea personalizată, în
-    conformitate cu cerințele certificate de consimțământ ale Google. Alegerea ta este reținută,
-    astfel încât să nu fii întrebat la fiecare vizită.
+    Toți vizitatorii au aceeași alegere, oriunde s-ar afla. Niciun script de publicitate sau de
+    analiză de trafic nu se încarcă pentru nimeni până când acesta nu acceptă.
   </p>
 
   <h2>Analiză de trafic</h2>
   <p>
-    Acest site poate folosi un instrument de analiză respectuos față de confidențialitate pentru a
-    înțelege traficul general, cum ar fi ce pagini sunt vizitate și aproximativ câți oameni vizitează
-    site-ul, astfel încât acesta să poată fi îmbunătățit. Orice analiză folosită aici nu te
-    identifică personal și este separată de modulele cookie de publicitate descrise mai sus.
+    Dacă accepți, acest site folosește Vercel Web Analytics pentru a înțelege traficul general, cum
+    ar fi ce pagini sunt vizitate și aproximativ câți oameni vizitează site-ul. Înregistrează date
+    precum adresa paginii, site-ul de pe care ai venit, locația ta aproximativă și tipul de dispozitiv
+    și de browser. Nu folosește module cookie de la terți. Recunoaște o vizită printr-un hash al
+    cererii tale, care este șters după 24 de ore, și nu te identifică personal.
+  </p>
+
+  <h2>Găzduire</h2>
+  <p>
+    Site-ul este găzduit pe Vercel. Ca orice furnizor de găzduire, Vercel prelucrează date tehnice
+    ale cererilor, cum ar fi adresa ta IP, pentru a-ți livra paginile și pentru a menține serviciul
+    în siguranță. Banner-ul cookie nu influențează acest lucru, deoarece fără aceste date nu poate fi
+    livrată nicio pagină.
   </p>
 
   <h2>Confidențialitatea copiilor</h2>

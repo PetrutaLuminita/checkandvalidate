@@ -1,20 +1,18 @@
 ---
-// Consent banner with a REAL choice, not just a notice. Nothing ad-related
-// runs until the visitor clicks Accept. If they click Reject, no advertising
-// scripts or cookies load and the site keeps working fully, because every
-// validator runs locally in the browser and needs no ads to function.
+// Consent banner with a REAL choice, not just a notice. Advertising and analytics
+// do not load until the visitor clicks Accept. If they click Reject, neither
+// loads and the site keeps working fully, because every validator runs locally
+// in the browser. The "Cookie settings" button in the footer reopens this banner
+// so the choice can be changed at any time.
 //
 // The banner is translated per language and links to this language's own
 // Privacy Policy with a relative path. It deliberately does not name a specific
 // ad vendor.
 //
-// EEA / UK note: Romania and Spain are in the EU, so Google requires a
-// certified consent management platform (Funding Choices) before serving
-// personalized ads. Do not hand-roll an IAB TCF signal. Once approved, add
-// Google's Funding Choices script at the integration point in BaseLayout.astro
-// <head>, and forward the choice below to it in `loadAdScripts()`. This banner
-// and its localStorage gate are the fallback until that certified CMP is wired
-// in.
+// EEA / UK note: Google requires a certified consent management platform before
+// it will serve ads to visitors in those regions, and this banner is not one. Do
+// not hand-roll an IAB TCF signal. Before ads go live, add Google's Funding Choices
+// at the integration point in BaseLayout.astro <head>.
 import { staticPath } from '../i18n/config.js';
 import { t } from '../i18n/ui.js';
 
@@ -40,27 +38,43 @@ const privacyHref = staticPath('privacy', locale);
   // One consent choice, remembered across the whole site and every language.
   // Values: 'accepted' | 'rejected'. Absence means "not asked yet".
   const STORAGE_KEY = 'cav-cookie-consent';
+  const AD_LOADER =
+    'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1835532025355533';
   const banner = document.getElementById('cookie-banner');
   const acceptBtn = document.getElementById('cookie-accept');
   const declineBtn = document.getElementById('cookie-decline');
+  const settingsBtn = document.getElementById('cookie-settings');
 
-  // The ONLY place advertising is allowed to start. It is called after Accept,
-  // or on load for a returning visitor who already accepted. It never runs on
-  // Reject or before a choice is made, so no ad script or ad cookie can load
-  // without consent.
-  function loadAdScripts() {
-    if ((window as any).__cavAdsLoaded) return; // load at most once
-    (window as any).__cavAdsLoaded = true;
+  // The ONLY place advertising and analytics are allowed to start. It is called
+  // after Accept, or on load for a returning visitor who already accepted. It
+  // never runs on Reject or before a choice is made.
+  async function loadConsentedScripts() {
+    if ((window as any).__cavConsentedLoaded) return; // load at most once
+    (window as any).__cavConsentedLoaded = true;
 
-    // INTEGRATION POINT (leave until AdSense is approved):
-    // Inject the ad loader here so it is gated behind consent, e.g.
-    //   const s = document.createElement('script');
-    //   s.async = true;
-    //   s.crossOrigin = 'anonymous';
-    //   s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX';
-    //   document.head.appendChild(s);
-    // If Google Funding Choices / Consent Mode is used, forward the granted
-    // consent signal to it here before the ad loader runs.
+    const adScript = document.createElement('script');
+    adScript.async = true;
+    adScript.crossOrigin = 'anonymous';
+    adScript.src = AD_LOADER;
+    document.head.appendChild(adScript);
+
+    // Same setup as @vercel/analytics/astro, which cannot be used here because
+    // the component starts collecting as soon as the page renders.
+    const { inject, pageview } = await import('@vercel/analytics');
+    inject(
+      {
+        disableAutoTrack: true,
+        framework: 'astro',
+        basePath: import.meta.env.PUBLIC_VERCEL_OBSERVABILITY_BASEPATH,
+      },
+      import.meta.env.PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG
+    );
+    const path = window.location.pathname;
+    pageview({ route: path, path });
+  }
+
+  function readConsent() {
+    try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; /* private mode */ }
   }
 
   function setConsent(value: string) {
@@ -68,17 +82,26 @@ const privacyHref = staticPath('privacy', locale);
     if (banner) banner.hidden = true;
   }
 
-  let stored = null;
-  try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) { /* private mode */ }
-
+  const stored = readConsent();
   if (stored === 'accepted') {
-    // Returning visitor who already consented: start ads without re-asking.
-    loadAdScripts();
+    // Returning visitor who already consented: load without re-asking.
+    loadConsentedScripts();
   } else if (stored !== 'rejected') {
-    // No choice yet: ask. (If 'rejected', do nothing and load no ads.)
+    // No choice yet: ask. (If 'rejected', do nothing and load nothing.)
     if (banner) banner.hidden = false;
   }
 
-  acceptBtn?.addEventListener('click', () => { setConsent('accepted'); loadAdScripts(); });
-  declineBtn?.addEventListener('click', () => { setConsent('rejected'); });
+  acceptBtn?.addEventListener('click', () => {
+    setConsent('accepted');
+    loadConsentedScripts();
+  });
+  declineBtn?.addEventListener('click', () => {
+    setConsent('rejected');
+    // Scripts already running on this page cannot be unloaded, so a visitor who
+    // withdraws consent gets a fresh page without them.
+    if ((window as any).__cavConsentedLoaded) window.location.reload();
+  });
+  settingsBtn?.addEventListener('click', () => {
+    if (banner) banner.hidden = false;
+  });
 </script>

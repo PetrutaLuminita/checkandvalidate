@@ -1,10 +1,43 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/:path((?!.*\\.).+)",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "</:path.md>; rel=\"alternate\"; type=\"text/markdown\", </.well-known/agent-skills/check-and-validate/SKILL.md>; rel=\"describedby\"; type=\"text/markdown\""
+        },
+        {
+          "key": "Vary",
+          "value": "Accept"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/markdown; charset=utf-8"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/((?!ads\\.txt$).*)",
-      "has": [{ "type": "host", "value": "www.checkandvalidate.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.checkandvalidate.com"
+        }
+      ],
       "destination": "https://checkandvalidate.com/$1",
       "statusCode": 301
     },
@@ -12,6 +45,18 @@
       "source": "/",
       "destination": "/en",
       "statusCode": 301
+    },
+    {
+      "source": "/:path((?!.*\\.).+)",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "(?!.*text/html.*text/markdown).*text/markdown.*"
+        }
+      ],
+      "destination": "/:path.md",
+      "statusCode": 307
     }
   ]
 }

@@ -1,0 +1,23 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Check and Validate",
+    "identifier": "https://checkandvalidate.com"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:checkandvalidate.com:skill:check-and-validate",
+      "displayName": "Check and Validate identifier checks",
+      "description": "Which format and check digit rules apply to IBAN, SWIFT/BIC, VAT, EIN, routing and ISBN numbers, what each result does and does not prove, and which page runs each check in the browser.",
+      "type": "application/agent-skills+md",
+      "url": "https://checkandvalidate.com/.well-known/agent-skills/check-and-validate/SKILL.md",
+      "representativeQueries": [
+        "is this IBAN valid",
+        "check the format of an EU VAT number",
+        "what does a valid ABA routing number checksum prove",
+        "convert an ISBN-10 to ISBN-13",
+        "break a SWIFT code into its bank, country and branch parts"
+      ]
+    }
+  ]
+}

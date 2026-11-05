@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/build-agent-files.mjs",
     "postbuild": "node scripts/submit-indexnow.mjs",
     "preview": "astro preview",
     "astro": "astro"
@@ -15,5 +15,9 @@
     "@astrojs/sitemap": "3.2.1",
     "@vercel/analytics": "^2.0.1",
     "astro": "^4.16.0"
+  },
+  "devDependencies": {
+    "turndown": "^7.2.5",
+    "turndown-plugin-gfm": "^1.0.2"
   }
 }
